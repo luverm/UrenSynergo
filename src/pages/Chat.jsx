@@ -81,22 +81,26 @@ export default function Chat() {
       setOnlineUsers(users);
     });
 
-    // New messages via postgres_changes
-    channel.on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, async (payload) => {
-      const msg = payload.new;
+    // New messages via broadcast (instant, no replication config needed)
+    channel.on("broadcast", { event: "new_message" }, async ({ payload }) => {
+      const msg = payload;
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
       // Fetch profile if unknown
-      if (!profiles[msg.user_id]) {
-        const { data } = await supabase
+      setProfiles((prev) => {
+        if (prev[msg.user_id]) return prev;
+        supabase
           .from("profiles")
           .select("id, display_name, avatar_url, email")
           .eq("id", msg.user_id)
-          .single();
-        if (data) setProfiles((prev) => ({ ...prev, [data.id]: data }));
-      }
+          .single()
+          .then(({ data }) => {
+            if (data) setProfiles((p) => ({ ...p, [data.id]: data }));
+          });
+        return prev;
+      });
     });
 
     // Typing broadcast
@@ -154,7 +158,25 @@ export default function Chat() {
     const content = input.trim();
     setInput("");
 
-    await supabase.from("chat_messages").insert([{ user_id: user.id, content }]);
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .insert([{ user_id: user.id, content }])
+      .select()
+      .single();
+
+    if (data) {
+      // Add to own messages immediately
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === data.id)) return prev;
+        return [...prev, data];
+      });
+      // Broadcast to other clients
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "new_message",
+        payload: data,
+      });
+    }
     setSending(false);
     inputRef.current?.focus();
   };
