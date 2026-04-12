@@ -64,17 +64,17 @@ export default function Profile() {
 
   const inp = {
     width: "100%", padding: "14px 18px", borderRadius: 2,
-    border: "1px solid rgba(200,165,92,0.15)", background: "rgba(255,255,255,0.03)",
-    color: "#FAFAF8", fontSize: 15, fontFamily: "'Outfit', sans-serif", fontWeight: 300,
+    border: "1px solid rgba(255,107,53,0.15)", background: "rgba(255,255,255,0.03)",
+    color: "#F5F3EE", fontSize: 15, fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
     outline: "none", boxSizing: "border-box", transition: "border-color 0.2s",
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "'Outfit', sans-serif", color: "#FAFAF8", padding: "40px 20px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600;1,700&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 20px", boxSizing: "border-box" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        input:focus { border-color: rgba(200,165,92,0.5) !important; }
+        input:focus { border-color: rgba(255,107,53,0.5) !important; }
       `}</style>
 
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
@@ -82,15 +82,15 @@ export default function Profile() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <button onClick={() => navigate("/")} style={{
             padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6B6B6B", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             ← Terug
           </button>
           <button onClick={signOut} style={{
             padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6B6B6B", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             Uitloggen
           </button>
@@ -98,18 +98,18 @@ export default function Profile() {
 
         {/* Header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 36 }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 400, fontStyle: "italic", color: "#FAFAF8", letterSpacing: "-0.01em" }}>Profiel</div>
-          <div style={{ width: 40, height: 1, background: "#C8A55C", margin: "12px 0", opacity: 0.3 }} />
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Profiel</div>
+          <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
         </div>
 
         {/* Messages */}
         {error && (
-          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(200,80,60,0.08)", border: "1px solid rgba(200,80,60,0.15)", color: "#C8503C", fontSize: 14 }}>
+          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14 }}>
             {error}
           </div>
         )}
         {success && (
-          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(200,165,92,0.08)", border: "1px solid rgba(200,165,92,0.2)", color: "#C8A55C", fontSize: 14 }}>
+          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(255,107,53,0.08)", border: "1px solid rgba(255,107,53,0.2)", color: "#FF6B35", fontSize: 14 }}>
             {success}
           </div>
         )}
@@ -120,18 +120,18 @@ export default function Profile() {
             onClick={() => fileRef.current?.click()}
             style={{
               width: 100, height: 100, borderRadius: 2, margin: "0 auto 16px", cursor: "pointer",
-              background: avatarPreview ? `url(${avatarPreview}) center/cover` : "rgba(200,165,92,0.1)",
+              background: avatarPreview ? `url(${avatarPreview}) center/cover` : "rgba(255,107,53,0.1)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              border: "1px solid rgba(200,165,92,0.2)", transition: "all 0.2s",
+              border: "1px solid rgba(255,107,53,0.2)", transition: "all 0.2s",
             }}
           >
             {!avatarPreview && (
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontStyle: "italic", color: "#C8A55C" }}>{initial}</span>
+              <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 36, color: "#FF6B35" }}>{initial}</span>
             )}
           </div>
           <button onClick={() => fileRef.current?.click()} style={{
-            background: "none", border: "none", color: "#C8A55C", fontSize: 13, fontWeight: 400,
-            cursor: "pointer", fontFamily: "'Outfit', sans-serif",
+            background: "none", border: "none", color: "#FF6B35", fontSize: 13, fontWeight: 400,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
           }}>
             Foto wijzigen
           </button>
@@ -141,21 +141,21 @@ export default function Profile() {
         {/* Form */}
         <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Weergavenaam</label>
+            <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Weergavenaam</label>
             <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Je naam" style={inp} />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>E-mailadres</label>
-            <div style={{ ...inp, background: "rgba(255,255,255,0.01)", color: "#6B6B6B" }}>{user.email}</div>
+            <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>E-mailadres</label>
+            <div style={{ ...inp, background: "rgba(255,255,255,0.01)", color: "#6E6E72" }}>{user.email}</div>
           </div>
 
           <button onClick={handleSave} disabled={saving} style={{
             width: "100%", padding: "15px", borderRadius: 2, border: "none",
-            background: !saving ? "#C8A55C" : "rgba(255,255,255,0.04)",
-            color: !saving ? "#0A0A0A" : "rgba(255,255,255,0.15)",
+            background: !saving ? "#FF6B35" : "rgba(255,255,255,0.04)",
+            color: !saving ? "#0E0E10" : "rgba(255,255,255,0.15)",
             fontSize: 14, fontWeight: 600, cursor: !saving ? "pointer" : "default",
-            fontFamily: "'Outfit', sans-serif", transition: "all 0.25s", letterSpacing: 0.5,
+            fontFamily: "'DM Sans', sans-serif", transition: "all 0.25s", letterSpacing: 0.5,
           }}>
             {saving ? "Opslaan..." : "Opslaan"}
           </button>

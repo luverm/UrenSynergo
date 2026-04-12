@@ -21,7 +21,7 @@ function isImage(type) {
 function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-      <div style={{ width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)", borderTopColor: "#C8A55C", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+      <div style={{ width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)", borderTopColor: "#FF6B35", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
     </div>
   );
 }
@@ -31,7 +31,7 @@ function Avatar({ url, name, size = 32 }) {
     return <div style={{ width: size, height: size, borderRadius: 2, background: `url(${url}) center/cover`, flexShrink: 0 }} />;
   }
   return (
-    <div style={{ width: size, height: size, borderRadius: 2, background: "rgba(200,165,92,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: size * 0.4, color: "#C8A55C", flexShrink: 0 }}>
+    <div style={{ width: size, height: size, borderRadius: 2, background: "rgba(255,107,53,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontSize: size * 0.4, color: "#FF6B35", flexShrink: 0 }}>
       {(name || "?").charAt(0).toUpperCase()}
     </div>
   );
@@ -164,34 +164,34 @@ export default function GroupDetail() {
 
   const inp = {
     width: "100%", padding: "14px 18px", borderRadius: 2,
-    border: "1px solid rgba(200,165,92,0.15)", background: "rgba(255,255,255,0.03)",
-    color: "#FAFAF8", fontSize: 15, fontFamily: "'Outfit', sans-serif", fontWeight: 300,
+    border: "1px solid rgba(255,107,53,0.15)", background: "rgba(255,255,255,0.03)",
+    color: "#F5F3EE", fontSize: 15, fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
     outline: "none", boxSizing: "border-box", transition: "border-color 0.2s",
   };
 
   if (loading) return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "'Outfit', sans-serif", color: "#FAFAF8" }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE" }}>
       <Spinner />
     </div>
   );
 
   if (!group) return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "'Outfit', sans-serif", color: "#FAFAF8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 15, color: "#6B6B6B" }}>Project niet gevonden</div>
-        <button onClick={() => navigate("/groups")} style={{ marginTop: 16, background: "none", border: "none", color: "#C8A55C", cursor: "pointer", fontFamily: "'Outfit', sans-serif", fontSize: 14 }}>Terug naar projecten</button>
+        <div style={{ fontSize: 15, color: "#6E6E72" }}>Project niet gevonden</div>
+        <button onClick={() => navigate("/groups")} style={{ marginTop: 16, background: "none", border: "none", color: "#FF6B35", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 14 }}>Terug naar projecten</button>
       </div>
     </div>
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "'Outfit', sans-serif", color: "#FAFAF8", padding: "40px 20px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600;1,700&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 20px", boxSizing: "border-box" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
-        textarea:focus { border-color: rgba(200,165,92,0.5) !important; }
-        input:focus { border-color: rgba(200,165,92,0.5) !important; }
+        textarea:focus { border-color: rgba(255,107,53,0.5) !important; }
+        input:focus { border-color: rgba(255,107,53,0.5) !important; }
       `}</style>
 
       <div style={{ maxWidth: 600, margin: "0 auto" }}>
@@ -199,15 +199,15 @@ export default function GroupDetail() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <button onClick={() => navigate("/groups")} style={{
             padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6B6B6B", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             ← Projecten
           </button>
           <button onClick={() => { setShowMembers(!showMembers); if (!showMembers) fetchAllProfiles(); }} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.2)",
-            background: showMembers ? "rgba(200,165,92,0.06)" : "transparent", color: "#C8A55C", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
+            background: showMembers ? "rgba(255,107,53,0.06)" : "transparent", color: "#FF6B35", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             {members.length} {members.length === 1 ? "lid" : "leden"}
           </button>
@@ -215,22 +215,22 @@ export default function GroupDetail() {
 
         {/* Group header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 400, fontStyle: "italic", color: "#FAFAF8", letterSpacing: "-0.01em" }}>{group.name}</div>
-          {group.description && <div style={{ fontSize: 14, color: "#6B6B6B", fontWeight: 300, marginTop: 6 }}>{group.description}</div>}
-          <div style={{ width: 40, height: 1, background: "#C8A55C", margin: "14px 0", opacity: 0.3 }} />
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.01em" }}>{group.name}</div>
+          {group.description && <div style={{ fontSize: 14, color: "#6E6E72", fontWeight: 300, marginTop: 6 }}>{group.description}</div>}
+          <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "14px 0", opacity: 0.3 }} />
         </div>
 
         {error && (
-          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(200,80,60,0.08)", border: "1px solid rgba(200,80,60,0.15)", color: "#C8503C", fontSize: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>{error}</span>
-            <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#C8503C", cursor: "pointer", fontSize: 16 }}>✕</button>
+            <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#CC5228", cursor: "pointer", fontSize: 16 }}>✕</button>
           </div>
         )}
 
         {/* Members panel */}
         {showMembers && (
           <div style={{ padding: 20, borderRadius: 2, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 20, animation: "fadeUp 0.3s cubic-bezier(.22,1,.36,1) both" }}>
-            <div style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12 }}>Leden</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12 }}>Leden</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
               {members.map((m) => {
                 const p = profiles[m.user_id];
@@ -238,7 +238,7 @@ export default function GroupDetail() {
                   <div key={m.user_id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <Avatar url={p?.avatar_url} name={p?.display_name || p?.email} size={28} />
                     <span style={{ fontSize: 14, fontWeight: 400 }}>{p?.display_name || p?.email?.split("@")[0]}</span>
-                    <span style={{ fontSize: 11, color: "#6B6B6B", marginLeft: "auto" }}>{m.role === "owner" ? "Eigenaar" : "Lid"}</span>
+                    <span style={{ fontSize: 11, color: "#6E6E72", marginLeft: "auto" }}>{m.role === "owner" ? "Eigenaar" : "Lid"}</span>
                   </div>
                 );
               })}
@@ -247,8 +247,8 @@ export default function GroupDetail() {
               <div style={{ display: "flex", gap: 8 }}>
                 <input value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="E-mail of naam" style={{ ...inp, flex: 1, padding: "10px 14px", fontSize: 13 }} />
                 <button onClick={handleInvite} style={{
-                  padding: "10px 16px", borderRadius: 2, border: "none", background: "#C8A55C", color: "#0A0A0A",
-                  fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Outfit', sans-serif", whiteSpace: "nowrap",
+                  padding: "10px 16px", borderRadius: 2, border: "none", background: "#FF6B35", color: "#0E0E10",
+                  fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap",
                 }}>
                   Uitnodigen
                 </button>
@@ -269,28 +269,28 @@ export default function GroupDetail() {
           {postFiles.length > 0 && (
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
               {postFiles.map((f, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderRadius: 2, background: "rgba(200,165,92,0.06)", border: "1px solid rgba(200,165,92,0.15)", fontSize: 12, color: "#E4CFA0" }}>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderRadius: 2, background: "rgba(255,107,53,0.06)", border: "1px solid rgba(255,107,53,0.15)", fontSize: 12, color: "#FF9B73" }}>
                   <span>{f.name}</span>
-                  <button onClick={() => removeFile(i)} style={{ background: "none", border: "none", color: "#C8503C", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
+                  <button onClick={() => removeFile(i)} style={{ background: "none", border: "none", color: "#CC5228", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
                 </div>
               ))}
             </div>
           )}
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => fileRef.current?.click()} style={{
-              padding: "10px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.2)",
-              background: "transparent", color: "#C8A55C", fontSize: 12, fontWeight: 500,
-              cursor: "pointer", fontFamily: "'Outfit', sans-serif",
+              padding: "10px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
+              background: "transparent", color: "#FF6B35", fontSize: 12, fontWeight: 500,
+              cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
             }}>
               + Bestanden
             </button>
             <input ref={fileRef} type="file" multiple onChange={handleFileSelect} style={{ display: "none" }} />
             <button onClick={handlePost} disabled={(!postContent.trim() && postFiles.length === 0) || posting} style={{
               flex: 1, padding: "10px", borderRadius: 2, border: "none",
-              background: (postContent.trim() || postFiles.length > 0) && !posting ? "#C8A55C" : "rgba(255,255,255,0.04)",
-              color: (postContent.trim() || postFiles.length > 0) && !posting ? "#0A0A0A" : "rgba(255,255,255,0.15)",
+              background: (postContent.trim() || postFiles.length > 0) && !posting ? "#FF6B35" : "rgba(255,255,255,0.04)",
+              color: (postContent.trim() || postFiles.length > 0) && !posting ? "#0E0E10" : "rgba(255,255,255,0.15)",
               fontSize: 13, fontWeight: 600, cursor: (postContent.trim() || postFiles.length > 0) && !posting ? "pointer" : "default",
-              fontFamily: "'Outfit', sans-serif", transition: "all 0.25s",
+              fontFamily: "'DM Sans', sans-serif", transition: "all 0.25s",
             }}>
               {posting ? "Plaatsen..." : "Plaatsen"}
             </button>
@@ -301,8 +301,8 @@ export default function GroupDetail() {
         {posts.length > 0 && (
           <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-              <div style={{ width: 12, height: 1, background: "#C8A55C" }} />
-              <span style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", textTransform: "uppercase", letterSpacing: 1.5 }}>Updates</span>
+              <div style={{ width: 12, height: 1, background: "#FF6B35" }} />
+              <span style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", textTransform: "uppercase", letterSpacing: 1.5 }}>Updates</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {posts.map((post) => {
@@ -315,14 +315,14 @@ export default function GroupDetail() {
                       <Avatar url={author?.avatar_url} name={author?.display_name || author?.email} size={30} />
                       <div style={{ flex: 1 }}>
                         <span style={{ fontSize: 14, fontWeight: 500 }}>{author?.display_name || author?.email?.split("@")[0]}</span>
-                        <span style={{ fontSize: 11, color: "#6B6B6B", marginLeft: 8 }}>{timeAgo(post.created_at)}</span>
+                        <span style={{ fontSize: 11, color: "#6E6E72", marginLeft: 8 }}>{timeAgo(post.created_at)}</span>
                       </div>
                       {post.user_id === user.id && (
                         <button onClick={() => handleDeletePost(post.id)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.15)", cursor: "pointer", fontSize: 14, padding: 4 }}>🗑️</button>
                       )}
                     </div>
                     {/* Content */}
-                    {post.content && <div style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.7, color: "#FAFAF8", whiteSpace: "pre-wrap", marginBottom: files.length > 0 ? 14 : 0 }}>{post.content}</div>}
+                    {post.content && <div style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.7, color: "#F5F3EE", whiteSpace: "pre-wrap", marginBottom: files.length > 0 ? 14 : 0 }}>{post.content}</div>}
                     {/* Files */}
                     {files.length > 0 && (
                       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -332,8 +332,8 @@ export default function GroupDetail() {
                           ) : (
                             <a key={f.id} href={f.file_url} target="_blank" rel="noopener noreferrer" style={{
                               display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 2,
-                              background: "rgba(200,165,92,0.04)", border: "1px solid rgba(200,165,92,0.12)",
-                              color: "#C8A55C", textDecoration: "none", fontSize: 13, fontWeight: 400,
+                              background: "rgba(255,107,53,0.04)", border: "1px solid rgba(255,107,53,0.12)",
+                              color: "#FF6B35", textDecoration: "none", fontSize: 13, fontWeight: 400,
                             }}>
                               📎 {f.file_name}
                             </a>
@@ -351,7 +351,7 @@ export default function GroupDetail() {
         {posts.length === 0 && (
           <div style={{ padding: "48px 20px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
             <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.5 }}>💬</div>
-            <div style={{ fontSize: 15, color: "#6B6B6B", fontWeight: 400 }}>Nog geen updates</div>
+            <div style={{ fontSize: 15, color: "#6E6E72", fontWeight: 400 }}>Nog geen updates</div>
             <div style={{ fontSize: 13, color: "rgba(255,255,255,0.15)", marginTop: 4, fontWeight: 300 }}>Deel je eerste update met het team</div>
           </div>
         )}
