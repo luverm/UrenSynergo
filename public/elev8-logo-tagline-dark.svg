@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="540" height="160" viewBox="0 0 540 160" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <g transform="translate(20,96)"><text x="0" y="0" style="font-family:'Syne',sans-serif;font-weight:800;font-size:90px;fill:#F5F3EE;letter-spacing:-4px">ELEV</text></g>
+  <g transform="matrix(0.870592,0,0,0.870592,-3.252002,12.423142)"><path d="M310,22C330,22 336,28 336,42C336,52 330,56 318,58C332,60 340,66 340,78C340,90 330,96 310,96C290,96 280,90 280,78C280,66 288,60 302,58C290,56 284,52 284,42C284,28 290,22 310,22Z" fill="none" stroke="#FF6B35" stroke-width="4.5"/></g>
+  <g transform="matrix(1,0,0,0.209869,-56.586598,26.539327)"><path d="M358,94L358,28" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/></g>
+  <g transform="matrix(1,0,0,0.209869,-56.586598,26.539327)"><path d="M349.336,61L358,24L366.308,61" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g transform="translate(26.069824,107.628458)"><text x="0" y="0" style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;fill:#FF6B35;letter-spacing:3.5px">ONLY UP FROM HERE</text></g>
+</svg>

@@ -143,11 +143,9 @@ export default function Layout() {
         fontFamily: "'DM Sans', sans-serif",
       }}>
         {/* Logo */}
-        <div style={{ padding: "28px 24px 20px" }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: "#F5F3EE", letterSpacing: "-0.03em", lineHeight: 1 }}>
-            ELEV<span style={{ color: "#FF6B35" }}>8</span>
-          </div>
-          <div style={{ width: 24, height: 1, background: "#FF6B35", marginTop: 10, opacity: 0.3 }} />
+        <div style={{ padding: "24px 20px 16px" }}>
+          <img src="/elev8-logo-dark.svg" alt="ELEV8" style={{ width: 140, display: "block" }} />
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 9, fontWeight: 700, color: "#FF6B35", letterSpacing: 3.5, marginTop: 6, textTransform: "uppercase" }}>Only up from here</div>
         </div>
 
         {/* Nav */}

@@ -181,9 +181,12 @@ export default function Dashboard() {
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 4 }}>
-          <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Uren</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <img src="/elev8-8-standalone.svg" alt="" style={{ width: 24, height: 32, opacity: 0.5 }} />
+            <div>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Uren</div>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6E6E72", fontWeight: 300 }}>Periode: {getPeriodLabel(period)}</p>
+            </div>
           </div>
           <div style={{ padding: "6px 14px", borderRadius: 2, background: daysLeft <= 3 ? "rgba(204,82,40,0.08)" : "rgba(255,255,255,0.03)", fontSize: 11, fontWeight: 500, color: daysLeft <= 3 ? "#CC5228" : "#6E6E72", marginTop: 4, whiteSpace: "nowrap", letterSpacing: 0.5 }}>
             Reset over {daysLeft} {daysLeft === 1 ? "dag" : "dagen"}

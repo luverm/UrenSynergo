@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+  <!-- ELEV8 Favicon / App Icon -->
+  <path d="M16 4 C24 4,27 6,27 12 C27 16,24 18,20 19 C25 20,29 22,29 28 C29 34,24 36,16 36 C8 36,3 34,3 28 C3 22,7 20,12 19 C8 18,5 16,5 12 C5 6,8 4,16 4Z" stroke="#FF6B35" stroke-width="2.5" fill="none"/>
+  <line x1="34" y1="34" x2="34" y2="8" stroke="#FF6B35" stroke-width="2.2" stroke-linecap="round"/>
+  <polyline points="29,14 34,6 39,14" fill="none" stroke="#FF6B35" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

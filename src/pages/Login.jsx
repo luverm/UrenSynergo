@@ -48,7 +48,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", backgroundImage: "url(/elev8-pattern.svg)", backgroundSize: "200px 200px", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
       <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
@@ -57,10 +57,8 @@ export default function Login() {
 
       <div style={{ maxWidth: 400, width: "100%", animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 56, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.03em", lineHeight: 1 }}>
-            ELEV<span style={{ color: "#FF6B35", fontWeight: 700 }}>8</span>
-          </div>
-          <div style={{ width: 60, height: 1, background: "#FF6B35", margin: "16px auto", opacity: 0.4 }} />
+          <img src="/elev8-logo-tagline-dark.svg" alt="ELEV8" style={{ width: 260, margin: "0 auto", display: "block" }} />
+          <div style={{ marginTop: 20 }} />
           <p style={{ margin: 0, fontSize: 14, color: "#6E6E72", fontWeight: 300, letterSpacing: 0.5 }}>
             {isSignUp ? "Maak een nieuw account aan" : "Log in om je uren te registreren"}
           </p>

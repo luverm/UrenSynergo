@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+  <!-- ELEV8 Pattern Element — Use as repeating background at low opacity -->
+  <path d="M80 20 C110 20,120 30,120 50 C120 65,110 70,95 73 C115 76,125 85,125 100 C125 118,110 125,80 125 C50 125,35 118,35 100 C35 85,45 76,65 73 C50 70,40 65,40 50 C40 30,50 20,80 20Z" stroke="#FF6B35" stroke-width="2" fill="none" opacity="0.15"/>
+  <line x1="150" y1="120" x2="150" y2="30" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" opacity="0.15"/>
+  <polyline points="138,48 150,28 162,48" fill="none" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.15"/>
+</svg>
