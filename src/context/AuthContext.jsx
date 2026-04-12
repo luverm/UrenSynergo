@@ -46,10 +46,14 @@ export function AuthProvider({ children }) {
     setProfile(null);
   };
 
+  const refreshProfile = async () => {
+    if (user) await fetchProfile(user.id);
+  };
+
   const isAdmin = profile?.is_admin || ADMIN_EMAILS.includes(user?.email);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut, isAdmin }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut, isAdmin, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

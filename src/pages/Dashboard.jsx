@@ -216,16 +216,27 @@ export default function Dashboard() {
       <div style={{ maxWidth: 520, margin: "0 auto" }}>
         {/* User bar */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 2, background: "rgba(200,165,92,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#C8A55C", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-              {displayName.charAt(0).toUpperCase()}
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/profile")}>
+            {profile?.avatar_url ? (
+              <div style={{ width: 36, height: 36, borderRadius: 2, background: `url(${profile.avatar_url}) center/cover`, flexShrink: 0 }} />
+            ) : (
+              <div style={{ width: 36, height: 36, borderRadius: 2, background: "rgba(200,165,92,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#C8A55C", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div>
               <div style={{ fontSize: 14, fontWeight: 500 }}>{displayName}</div>
               <div style={{ fontSize: 11, color: "#6B6B6B", fontWeight: 300 }}>{user.email}</div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => navigate("/groups")} style={{
+              padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.25)",
+              background: "rgba(200,165,92,0.06)", color: "#C8A55C", fontSize: 11, fontWeight: 500,
+              cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            }}>
+              Projecten
+            </button>
             {isAdmin && (
               <button onClick={() => navigate("/admin")} style={{
                 padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.25)",

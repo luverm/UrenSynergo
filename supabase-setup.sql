@@ -92,7 +92,125 @@ create policy "Users delete own entries" on entries
 -- DROP POLICY IF EXISTS "Allow all deletes" ON entries;
 
 -- =============================================================================
--- 5. ADMIN INSTELLEN
+-- 5. PROFILE CUSTOMIZATION
+-- =============================================================================
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_url text DEFAULT '';
+
+CREATE POLICY "Users update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- =============================================================================
+-- 6. PROJECT GROUPS
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS groups (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text NOT NULL,
+  description text DEFAULT '',
+  owner_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE groups ENABLE ROW LEVEL SECURITY;
+
+CREATE TABLE IF NOT EXISTS group_members (
+  group_id uuid REFERENCES groups(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  role text DEFAULT 'member',
+  joined_at timestamptz DEFAULT now(),
+  PRIMARY KEY (group_id, user_id)
+);
+ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
+
+-- =============================================================================
+-- 7. POSTS & FILES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS posts (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  group_id uuid REFERENCES groups(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  content text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+CREATE TABLE IF NOT EXISTS post_files (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  post_id uuid REFERENCES posts(id) ON DELETE CASCADE,
+  file_url text NOT NULL,
+  file_name text NOT NULL,
+  file_type text DEFAULT '',
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE post_files ENABLE ROW LEVEL SECURITY;
+
+-- =============================================================================
+-- 8. RLS POLICIES voor groups/posts
+-- =============================================================================
+
+-- Groups
+CREATE POLICY "Authenticated users create groups" ON groups
+  FOR INSERT WITH CHECK (auth.uid() = owner_id);
+CREATE POLICY "Members read groups" ON groups
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM group_members WHERE group_id = id AND user_id = auth.uid())
+  );
+CREATE POLICY "Owner manages group" ON groups
+  FOR UPDATE USING (auth.uid() = owner_id);
+CREATE POLICY "Owner deletes group" ON groups
+  FOR DELETE USING (auth.uid() = owner_id);
+
+-- Group members
+CREATE POLICY "Members read members" ON group_members
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM group_members gm WHERE gm.group_id = group_members.group_id AND gm.user_id = auth.uid())
+  );
+CREATE POLICY "Owner manages members" ON group_members
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM groups WHERE id = group_id AND owner_id = auth.uid())
+  );
+CREATE POLICY "Owner removes members" ON group_members
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM groups WHERE id = group_id AND owner_id = auth.uid())
+  );
+
+-- Posts
+CREATE POLICY "Members read posts" ON posts
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM group_members WHERE group_id = posts.group_id AND user_id = auth.uid())
+  );
+CREATE POLICY "Members create posts" ON posts
+  FOR INSERT WITH CHECK (
+    auth.uid() = user_id AND
+    EXISTS (SELECT 1 FROM group_members WHERE group_id = posts.group_id AND user_id = auth.uid())
+  );
+CREATE POLICY "Author deletes posts" ON posts
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- Post files
+CREATE POLICY "Members read files" ON post_files
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM posts p
+      JOIN group_members gm ON gm.group_id = p.group_id
+      WHERE p.id = post_files.post_id AND gm.user_id = auth.uid()
+    )
+  );
+CREATE POLICY "Members create files" ON post_files
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM posts p
+      JOIN group_members gm ON gm.group_id = p.group_id
+      WHERE p.id = post_files.post_id AND gm.user_id = auth.uid()
+    )
+  );
+
+-- Admin overrides
+CREATE POLICY "Admins read all groups" ON groups FOR SELECT USING (is_admin());
+CREATE POLICY "Admins read all members" ON group_members FOR SELECT USING (is_admin());
+CREATE POLICY "Admins read all posts" ON posts FOR SELECT USING (is_admin());
+CREATE POLICY "Admins read all files" ON post_files FOR SELECT USING (is_admin());
+
+-- =============================================================================
+-- 9. ADMIN INSTELLEN
 -- =============================================================================
 -- Na registratie van de admin gebruiker, voer dit uit:
--- UPDATE profiles SET is_admin = true WHERE email = 'admin@synergo.com';
+-- UPDATE profiles SET is_admin = true WHERE email = 'admin@gmail.com';
