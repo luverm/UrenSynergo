@@ -185,13 +185,17 @@ export default function GroupDetail() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 20px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
       <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         textarea:focus { border-color: rgba(255,107,53,0.5) !important; }
         input:focus { border-color: rgba(255,107,53,0.5) !important; }
+        @media (max-width: 600px) {
+          .gd-invite { flex-direction: column !important; }
+          .gd-post-actions { flex-direction: column !important; }
+        }
       `}</style>
 
       <div style={{ maxWidth: 600, margin: "0 auto" }}>
@@ -244,7 +248,7 @@ export default function GroupDetail() {
               })}
             </div>
             {isOwner && (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div className="gd-invite" style={{ display: "flex", gap: 8 }}>
                 <input value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="E-mail of naam" style={{ ...inp, flex: 1, padding: "10px 14px", fontSize: 13 }} />
                 <button onClick={handleInvite} style={{
                   padding: "10px 16px", borderRadius: 2, border: "none", background: "#FF6B35", color: "#0E0E10",
@@ -276,7 +280,7 @@ export default function GroupDetail() {
               ))}
             </div>
           )}
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="gd-post-actions" style={{ display: "flex", gap: 8 }}>
             <button onClick={() => fileRef.current?.click()} style={{
               padding: "10px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
               background: "transparent", color: "#FF6B35", fontSize: 12, fontWeight: 500,

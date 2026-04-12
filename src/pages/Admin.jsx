@@ -88,11 +88,14 @@ export default function Admin() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 20px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
       <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) {
+          .admin-stats { flex-direction: column !important; }
+        }
       `}</style>
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
@@ -138,7 +141,7 @@ export default function Admin() {
         {!loading && (
           <>
             {/* Summary stats */}
-            <div style={{ display: "flex", gap: 1, marginBottom: 28, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
+            <div className="admin-stats" style={{ display: "flex", gap: 1, marginBottom: 28, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
               <div style={{ flex: 1, padding: "20px 20px", background: "rgba(255,255,255,0.02)", borderLeft: "2px solid #FF6B35" }}>
                 <div style={{ fontSize: 10, color: "#6E6E72", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Medewerkers</div>
                 <div style={{ fontSize: 28, fontWeight: 300, color: "#F5F3EE" }}>{employees.length}</div>

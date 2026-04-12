@@ -33,6 +33,7 @@ export default function Chat() {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState({});
   const [loading, setLoading] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const myName = profile?.display_name || user.email?.split("@")[0] || "Anoniem";
   const myAvatar = profile?.avatar_url || "";
@@ -206,10 +207,17 @@ export default function Chat() {
         @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
         textarea:focus { border-color: rgba(255,107,53,0.5) !important; outline: none; }
+        @media (max-width: 600px) {
+          .chat-sidebar { display: none !important; }
+          .chat-sidebar.open { display: flex !important; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100% !important; z-index: 100; background: #0E0E10; border: none !important; padding-top: 60px !important; }
+          .chat-messages { padding: 12px 12px !important; }
+          .chat-input-wrap { padding: 8px 12px !important; }
+          .chat-topbar { padding: 10px 12px !important; }
+        }
       `}</style>
 
       {/* Top bar */}
-      <div style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
+      <div className="chat-topbar" style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button onClick={() => navigate("/")} style={{
             padding: "6px 14px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
@@ -222,17 +230,20 @@ export default function Chat() {
             Chat
           </div>
         </div>
-        <div style={{ fontSize: 11, color: "#6E6E72" }}>
+        <button onClick={() => setShowSidebar(!showSidebar)} style={{ fontSize: 11, color: "#6E6E72", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
           <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: 99, background: "#FF6B35", marginRight: 6, verticalAlign: "middle" }} />
           {onlineUsers.length} online
-        </div>
+        </button>
       </div>
 
       {/* Main area */}
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
         {/* Online users sidebar */}
-        <div style={{ width: 200, borderRight: "1px solid rgba(255,255,255,0.04)", padding: "16px 0", overflowY: "auto", flexShrink: 0 }}>
-          <div style={{ padding: "0 16px", fontSize: 10, fontWeight: 500, color: "#6E6E72", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 12 }}>Online</div>
+        <div className={`chat-sidebar${showSidebar ? " open" : ""}`} style={{ width: 200, borderRight: "1px solid rgba(255,255,255,0.04)", padding: "16px 0", overflowY: "auto", flexShrink: 0, flexDirection: "column" }}>
+          <div style={{ padding: "0 16px", fontSize: 10, fontWeight: 500, color: "#6E6E72", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>Online</span>
+            {showSidebar && <button onClick={() => setShowSidebar(false)} style={{ background: "none", border: "none", color: "#6E6E72", cursor: "pointer", fontSize: 16 }}>✕</button>}
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {onlineUsers.map((u) => (
               <div key={u.user_id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 16px" }}>
@@ -252,7 +263,7 @@ export default function Chat() {
         {/* Chat area */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           {/* Messages */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
+          <div className="chat-messages" style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
             {loading && (
               <div style={{ textAlign: "center", padding: 40, color: "#6E6E72", fontSize: 13 }}>Laden...</div>
             )}
@@ -300,7 +311,7 @@ export default function Chat() {
           </div>
 
           {/* Input */}
-          <div style={{ padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", gap: 8, flexShrink: 0 }}>
+          <div className="chat-input-wrap" style={{ padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", gap: 8, flexShrink: 0 }}>
             <textarea
               ref={inputRef}
               value={input}

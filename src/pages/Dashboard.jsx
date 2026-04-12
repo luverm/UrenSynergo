@@ -204,18 +204,24 @@ export default function Dashboard() {
   const displayName = profile?.display_name || user.email?.split("@")[0] || "Medewerker";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 20px", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
       <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
         @keyframes spin { to { transform: rotate(360deg); } }
         input:focus { border-color: rgba(255,107,53,0.5) !important; }
+        @media (max-width: 600px) {
+          .dash-userbar { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+          .dash-nav { flex-wrap: wrap !important; }
+          .dash-ring { flex-direction: column !important; align-items: center !important; text-align: center; gap: 16px !important; }
+          .dash-ring svg { width: 120px !important; height: 120px !important; }
+        }
       `}</style>
 
       <div style={{ maxWidth: 520, margin: "0 auto" }}>
         {/* User bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
+        <div className="dash-userbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/profile")}>
             {profile?.avatar_url ? (
               <div style={{ width: 36, height: 36, borderRadius: 2, background: `url(${profile.avatar_url}) center/cover`, flexShrink: 0 }} />
@@ -229,7 +235,7 @@ export default function Dashboard() {
               <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 300 }}>{user.email}</div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="dash-nav" style={{ display: "flex", gap: 8 }}>
             <button onClick={() => navigate("/chat")} style={{
               padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.25)",
               background: "rgba(255,107,53,0.06)", color: "#FF6B35", fontSize: 11, fontWeight: 500,
@@ -285,7 +291,7 @@ export default function Dashboard() {
         )}
 
         {/* Ring + Stats */}
-        <div style={{ display: "flex", alignItems: "center", gap: 32, margin: "36px 0", animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
+        <div className="dash-ring" style={{ display: "flex", alignItems: "center", gap: 32, margin: "36px 0", animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
           <Ring total={totalHours} max={Math.max(totalHours, 40)} />
           <div>
             <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 500, marginBottom: 4, letterSpacing: 1, textTransform: "uppercase" }}>Totaal gewerkt</div>
