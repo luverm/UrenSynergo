@@ -143,9 +143,15 @@ export default function Layout() {
         fontFamily: "'DM Sans', sans-serif",
       }}>
         {/* Logo */}
-        <div style={{ padding: "24px 20px 16px" }}>
-          <img src="/elev8-logo-dark.svg" alt="ELEV8" style={{ width: 140, display: "block" }} />
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 9, fontWeight: 700, color: "#FF6B35", letterSpacing: 3.5, marginTop: 6, textTransform: "uppercase" }}>Only up from here</div>
+        <div style={{ padding: "24px 20px 16px", display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, color: "#F5F3EE", letterSpacing: "-0.03em" }}>ELEV</span>
+          <svg width="30" height="40" viewBox="0 0 60 80" fill="none" style={{ marginTop: -2 }}>
+            <path d="M30 4 C46 4,52 10,52 24 C52 34,46 38,36 40 C48 42,56 48,56 60 C56 72,46 78,30 78 C14 78,4 72,4 60 C4 48,12 42,24 40 C14 38,8 34,8 24 C8 10,14 4,30 4Z" stroke="#FF6B35" strokeWidth="4" fill="none"/>
+          </svg>
+          <svg width="14" height="36" viewBox="0 0 32 80" fill="none" style={{ marginLeft: -6, marginTop: -2 }}>
+            <line x1="16" y1="76" x2="16" y2="8" stroke="#FF6B35" strokeWidth="4" strokeLinecap="round"/>
+            <polyline points="4,24 16,6 28,24" fill="none" stroke="#FF6B35" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
 
         {/* Nav */}
