@@ -39,7 +39,7 @@ function daysUntilReset() {
 }
 
 const ICONS = ["📊", "🌐", "🎬", "📝", "📧", "🎨", "📱", "🔧", "📞", "💡", "📦", "🖥️"];
-const COLORS = ["#E86B2C", "#2C8BE8", "#7B2CE8", "#2CE874", "#E8D02C", "#E82C6B", "#2CE8D0", "#C42CE8", "#E8862C", "#2C6BE8"];
+const COLORS = ["#006AB3", "#A0B925", "#6AAC9E", "#EF7B62", "#C9B062", "#052851", "#ECF3DA", "#2C8BE8", "#7B2CE8", "#E86B2C"];
 
 function Bar({ hours, max, color }) {
   const pct = max > 0 ? (hours / max) * 100 : 0;
@@ -61,11 +61,11 @@ function Ring({ total, max }) {
   return (
     <svg width="160" height="160" viewBox="0 0 160 160" style={{ display: "block" }}>
       <circle cx="80" cy="80" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="12" />
-      <circle cx="80" cy="80" r={r} fill="none" stroke="#2CE874" strokeWidth="12" strokeLinecap="round"
+      <circle cx="80" cy="80" r={r} fill="none" stroke="#A0B925" strokeWidth="12" strokeLinecap="round"
         strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} transform="rotate(-90 80 80)"
         style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(.22,1,.36,1)" }} />
-      <text x="80" y="72" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="800" fontFamily="'DM Sans', sans-serif">{total}</text>
-      <text x="80" y="96" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="12" fontWeight="500" fontFamily="'DM Sans', sans-serif" letterSpacing="1">UREN</text>
+      <text x="80" y="72" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="800" fontFamily="'Exo 2', sans-serif">{total}</text>
+      <text x="80" y="96" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="12" fontWeight="500" fontFamily="'Exo 2', sans-serif" letterSpacing="1">UREN</text>
     </svg>
   );
 }
@@ -75,7 +75,7 @@ function Spinner() {
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
       <div style={{
         width: 32, height: 32, border: "3px solid rgba(255,255,255,0.1)",
-        borderTopColor: "#2CE874", borderRadius: "50%",
+        borderTopColor: "#A0B925", borderRadius: "50%",
         animation: "spin 0.8s linear infinite",
       }} />
     </div>
@@ -197,27 +197,27 @@ export default function Dashboard() {
   const inp = {
     width: "100%", padding: "12px 16px", borderRadius: 10,
     border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)",
-    color: "#fff", fontSize: 15, fontFamily: "'DM Sans', sans-serif",
+    color: "#fff", fontSize: 15, fontFamily: "'Exo 2', sans-serif",
     outline: "none", boxSizing: "border-box", transition: "border-color 0.2s",
   };
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "Medewerker";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E1117", fontFamily: "'DM Sans', sans-serif", color: "#fff", padding: "40px 20px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", background: "#052851", fontFamily: "'Exo 2', sans-serif", color: "#fff", padding: "40px 20px", boxSizing: "border-box" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
         @keyframes spin { to { transform: rotate(360deg); } }
-        input:focus { border-color: rgba(44,139,232,0.5) !important; }
+        input:focus { border-color: rgba(0,106,179,0.5) !important; }
       `}</style>
 
       <div style={{ maxWidth: 520, margin: "0 auto" }}>
         {/* User bar */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 99, background: "rgba(44,139,232,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#5BA8F0" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 99, background: "rgba(0,106,179,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#006AB3" }}>
               {displayName.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -228,9 +228,9 @@ export default function Dashboard() {
           <div style={{ display: "flex", gap: 8 }}>
             {isAdmin && (
               <button onClick={() => navigate("/admin")} style={{
-                padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(123,44,232,0.3)",
-                background: "rgba(123,44,232,0.1)", color: "#B07BE8", fontSize: 12, fontWeight: 600,
-                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(106,172,158,0.3)",
+                background: "rgba(106,172,158,0.1)", color: "#6AAC9E", fontSize: 12, fontWeight: 600,
+                cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
               }}>
                 Admin
               </button>
@@ -238,7 +238,7 @@ export default function Dashboard() {
             <button onClick={signOut} style={{
               padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)",
               background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", fontSize: 12, fontWeight: 600,
-              cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
             }}>
               Uitloggen
             </button>
@@ -248,20 +248,20 @@ export default function Dashboard() {
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <div>
-            <div style={{ display: "inline-block", padding: "4px 14px", borderRadius: 99, background: "rgba(44,139,232,0.12)", color: "#5BA8F0", fontSize: 12, fontWeight: 600, letterSpacing: 1.2, marginBottom: 12, textTransform: "uppercase" }}>Urenregistratie</div>
+            <div style={{ display: "inline-block", padding: "4px 14px", borderRadius: 99, background: "rgba(0,106,179,0.12)", color: "#006AB3", fontSize: 12, fontWeight: 600, letterSpacing: 1.2, marginBottom: 12, textTransform: "uppercase" }}>Urenregistratie</div>
             <h1 style={{ fontSize: 32, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.5, background: "linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.5))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Synergo</h1>
             <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,0.35)" }}>Periode: {getPeriodLabel(period)}</p>
           </div>
-          <div style={{ padding: "6px 12px", borderRadius: 99, background: daysLeft <= 3 ? "rgba(232,44,107,0.12)" : "rgba(255,255,255,0.04)", fontSize: 12, fontWeight: 600, color: daysLeft <= 3 ? "#E82C6B" : "rgba(255,255,255,0.35)", marginTop: 8, whiteSpace: "nowrap" }}>
+          <div style={{ padding: "6px 12px", borderRadius: 99, background: daysLeft <= 3 ? "rgba(239,123,98,0.12)" : "rgba(255,255,255,0.04)", fontSize: 12, fontWeight: 600, color: daysLeft <= 3 ? "#EF7B62" : "rgba(255,255,255,0.35)", marginTop: 8, whiteSpace: "nowrap" }}>
             Reset over {daysLeft} {daysLeft === 1 ? "dag" : "dagen"}
           </div>
         </div>
 
         {/* Error banner */}
         {error && (
-          <div style={{ margin: "16px 0", padding: "12px 16px", borderRadius: 10, background: "rgba(232,44,107,0.1)", border: "1px solid rgba(232,44,107,0.2)", color: "#E82C6B", fontSize: 14, fontWeight: 500, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ margin: "16px 0", padding: "12px 16px", borderRadius: 10, background: "rgba(239,123,98,0.1)", border: "1px solid rgba(239,123,98,0.2)", color: "#EF7B62", fontSize: 14, fontWeight: 500, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>{error}</span>
-            <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#E82C6B", cursor: "pointer", fontSize: 16 }}>✕</button>
+            <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#EF7B62", cursor: "pointer", fontSize: 16 }}>✕</button>
           </div>
         )}
 
@@ -271,7 +271,7 @@ export default function Dashboard() {
           <div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 500, marginBottom: 4 }}>Totaal gewerkt</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-              <span style={{ fontSize: 36, fontWeight: 800, color: "#2CE874" }}>{totalHours}</span>
+              <span style={{ fontSize: 36, fontWeight: 800, color: "#A0B925" }}>{totalHours}</span>
               <span style={{ fontSize: 14, color: "rgba(255,255,255,0.3)" }}>uur</span>
             </div>
             <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", marginTop: 8 }}>{entries.length} {entries.length === 1 ? "taak" : "taken"} geregistreerd</div>
@@ -280,9 +280,9 @@ export default function Dashboard() {
 
         {/* Add button */}
         <button onClick={() => { resetForm(); setShowForm(!showForm); }} style={{
-          width: "100%", padding: "14px", borderRadius: 12, border: "1px dashed rgba(44,139,232,0.3)",
-          background: showForm ? "rgba(44,139,232,0.08)" : "transparent", color: "#5BA8F0",
-          fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+          width: "100%", padding: "14px", borderRadius: 12, border: "1px dashed rgba(0,106,179,0.3)",
+          background: showForm ? "rgba(0,106,179,0.08)" : "transparent", color: "#006AB3",
+          fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
           marginBottom: 16, transition: "all 0.25s ease", animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both",
         }}>
           {showForm ? "✕ Annuleren" : "+ Uren toevoegen"}
@@ -312,8 +312,8 @@ export default function Dashboard() {
                 {ICONS.map((icon, i) => (
                   <button key={i} onClick={() => setSelectedIcon(i)} style={{
                     width: 38, height: 38, borderRadius: 8, border: "none",
-                    background: selectedIcon === i ? "rgba(44,139,232,0.2)" : "rgba(255,255,255,0.04)",
-                    fontSize: 16, cursor: "pointer", outline: selectedIcon === i ? "2px solid #5BA8F0" : "none", transition: "all 0.15s",
+                    background: selectedIcon === i ? "rgba(0,106,179,0.2)" : "rgba(255,255,255,0.04)",
+                    fontSize: 16, cursor: "pointer", outline: selectedIcon === i ? "2px solid #006AB3" : "none", transition: "all 0.15s",
                   }}>{icon}</button>
                 ))}
               </div>
@@ -332,10 +332,10 @@ export default function Dashboard() {
             </div>
             <button onClick={handleSubmit} disabled={!task.trim() || !hours || saving} style={{
               width: "100%", padding: "14px", borderRadius: 12, border: "none",
-              background: task.trim() && hours && !saving ? "linear-gradient(135deg, #2CE874, #1BA854)" : "rgba(255,255,255,0.06)",
-              color: task.trim() && hours && !saving ? "#0E1117" : "rgba(255,255,255,0.2)",
+              background: task.trim() && hours && !saving ? "linear-gradient(135deg, #A0B925, #8AA01F)" : "rgba(255,255,255,0.06)",
+              color: task.trim() && hours && !saving ? "#052851" : "rgba(255,255,255,0.2)",
               fontSize: 15, fontWeight: 700, cursor: task.trim() && hours && !saving ? "pointer" : "default",
-              fontFamily: "'DM Sans', sans-serif", transition: "all 0.25s",
+              fontFamily: "'Exo 2', sans-serif", transition: "all 0.25s",
             }}>
               {saving ? "Opslaan..." : editId ? "✓ Bijwerken" : "✓ Toevoegen"}
             </button>
@@ -349,7 +349,7 @@ export default function Dashboard() {
         {!loading && entries.length > 0 && (
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-              <div style={{ width: 8, height: 8, borderRadius: 99, background: "#2CE874" }} />
+              <div style={{ width: 8, height: 8, borderRadius: 99, background: "#A0B925" }} />
               <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>Geregistreerd</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -391,7 +391,7 @@ export default function Dashboard() {
         <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Reset: elke 18e van de maand</span>
           {entries.length > 0 && (
-            <div style={{ padding: "6px 14px", borderRadius: 99, background: "rgba(44,232,116,0.08)", fontSize: 13, fontWeight: 700, color: "#2CE874" }}>Totaal: {totalHours} uur</div>
+            <div style={{ padding: "6px 14px", borderRadius: 99, background: "rgba(160,185,37,0.08)", fontSize: 13, fontWeight: 700, color: "#A0B925" }}>Totaal: {totalHours} uur</div>
           )}
         </div>
       </div>

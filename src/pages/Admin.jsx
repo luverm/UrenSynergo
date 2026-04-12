@@ -42,7 +42,7 @@ function Spinner() {
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
       <div style={{
         width: 32, height: 32, border: "3px solid rgba(255,255,255,0.1)",
-        borderTopColor: "#B07BE8", borderRadius: "50%",
+        borderTopColor: "#6AAC9E", borderRadius: "50%",
         animation: "spin 0.8s linear infinite",
       }} />
     </div>
@@ -83,13 +83,13 @@ export default function Admin() {
   const inp = {
     width: "100%", padding: "10px 14px", borderRadius: 10,
     border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)",
-    color: "#fff", fontSize: 14, fontFamily: "'DM Sans', sans-serif",
+    color: "#fff", fontSize: 14, fontFamily: "'Exo 2', sans-serif",
     outline: "none", boxSizing: "border-box",
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E1117", fontFamily: "'DM Sans', sans-serif", color: "#fff", padding: "40px 20px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", background: "#052851", fontFamily: "'Exo 2', sans-serif", color: "#fff", padding: "40px 20px", boxSizing: "border-box" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -101,14 +101,14 @@ export default function Admin() {
           <button onClick={() => navigate("/")} style={{
             padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)",
             background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+            cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
           }}>
             ← Terug
           </button>
           <button onClick={signOut} style={{
             padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)",
             background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", fontSize: 12, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+            cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
           }}>
             Uitloggen
           </button>
@@ -116,7 +116,7 @@ export default function Admin() {
 
         {/* Header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 24 }}>
-          <div style={{ display: "inline-block", padding: "4px 14px", borderRadius: 99, background: "rgba(123,44,232,0.12)", color: "#B07BE8", fontSize: 12, fontWeight: 600, letterSpacing: 1.2, marginBottom: 12, textTransform: "uppercase" }}>Admin portaal</div>
+          <div style={{ display: "inline-block", padding: "4px 14px", borderRadius: 99, background: "rgba(106,172,158,0.12)", color: "#6AAC9E", fontSize: 12, fontWeight: 600, letterSpacing: 1.2, marginBottom: 12, textTransform: "uppercase" }}>Admin portaal</div>
           <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.5, background: "linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.5))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Medewerkers Overzicht</h1>
         </div>
 
@@ -125,7 +125,7 @@ export default function Admin() {
           <label style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.4)", marginBottom: 6, display: "block" }}>Periode</label>
           <select value={period} onChange={(e) => { setPeriod(e.target.value); setSelectedEmployee(null); }} style={{ ...inp, cursor: "pointer" }}>
             {periodOptions.map((p) => (
-              <option key={p.key} value={p.key} style={{ background: "#1a1d24" }}>{p.label}</option>
+              <option key={p.key} value={p.key} style={{ background: "#04203F" }}>{p.label}</option>
             ))}
           </select>
         </div>
@@ -136,24 +136,24 @@ export default function Admin() {
           <>
             {/* Summary stats */}
             <div style={{ display: "flex", gap: 12, marginBottom: 24, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(123,44,232,0.06)", border: "1px solid rgba(123,44,232,0.15)" }}>
+              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(106,172,158,0.06)", border: "1px solid rgba(106,172,158,0.15)" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Medewerkers</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#B07BE8" }}>{employees.length}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#6AAC9E" }}>{employees.length}</div>
               </div>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(44,232,116,0.06)", border: "1px solid rgba(44,232,116,0.15)" }}>
+              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(160,185,37,0.06)", border: "1px solid rgba(160,185,37,0.15)" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Totaal uren</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#2CE874" }}>{grandTotal}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#A0B925" }}>{grandTotal}</div>
               </div>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(44,139,232,0.06)", border: "1px solid rgba(44,139,232,0.15)" }}>
+              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(0,106,179,0.06)", border: "1px solid rgba(0,106,179,0.15)" }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Registraties</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#5BA8F0" }}>{entries.length}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: "#006AB3" }}>{entries.length}</div>
               </div>
             </div>
 
             {/* Employee list */}
             <div style={{ animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 8, height: 8, borderRadius: 99, background: "#B07BE8" }} />
+                <div style={{ width: 8, height: 8, borderRadius: 99, background: "#6AAC9E" }} />
                 <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>Medewerkers</span>
               </div>
 
@@ -166,12 +166,12 @@ export default function Admin() {
                   return (
                     <button key={emp.id} onClick={() => setSelectedEmployee(isSelected ? null : emp)} style={{
                       display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 14,
-                      background: isSelected ? "rgba(123,44,232,0.08)" : "rgba(255,255,255,0.03)",
-                      border: isSelected ? "1px solid rgba(123,44,232,0.25)" : "1px solid rgba(255,255,255,0.04)",
+                      background: isSelected ? "rgba(106,172,158,0.08)" : "rgba(255,255,255,0.03)",
+                      border: isSelected ? "1px solid rgba(106,172,158,0.25)" : "1px solid rgba(255,255,255,0.04)",
                       cursor: "pointer", transition: "all 0.25s ease", width: "100%", textAlign: "left",
-                      fontFamily: "'DM Sans', sans-serif", color: "#fff",
+                      fontFamily: "'Exo 2', sans-serif", color: "#fff",
                     }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 99, background: "rgba(44,139,232,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "#5BA8F0", flexShrink: 0 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 99, background: "rgba(0,106,179,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "#006AB3", flexShrink: 0 }}>
                         {(emp.display_name || emp.email.split("@")[0]).charAt(0).toUpperCase()}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -179,7 +179,7 @@ export default function Admin() {
                         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{emp.email}</div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: total > 0 ? "#2CE874" : "rgba(255,255,255,0.15)" }}>{total}u</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: total > 0 ? "#A0B925" : "rgba(255,255,255,0.15)" }}>{total}u</div>
                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>{taskCount} {taskCount === 1 ? "taak" : "taken"}</div>
                       </div>
                     </button>
@@ -192,7 +192,7 @@ export default function Admin() {
             {selectedEmployee && (
               <div style={{ marginTop: 24, animation: "fadeUp 0.3s cubic-bezier(.22,1,.36,1) both" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 99, background: "#2CE874" }} />
+                  <div style={{ width: 8, height: 8, borderRadius: 99, background: "#A0B925" }} />
                   <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>
                     Uren van {selectedEmployee.display_name || selectedEmployee.email.split("@")[0]}
                   </span>
