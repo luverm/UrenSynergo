@@ -41,8 +41,8 @@ function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
       <div style={{
-        width: 32, height: 32, border: "3px solid rgba(255,255,255,0.1)",
-        borderTopColor: "#6AAC9E", borderRadius: "50%",
+        width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)",
+        borderTopColor: "#C8A55C", borderRadius: "50%",
         animation: "spin 0.8s linear infinite",
       }} />
     </div>
@@ -81,15 +81,15 @@ export default function Admin() {
   const selectedEntries = selectedEmployee ? getEmployeeEntries(selectedEmployee.id) : [];
 
   const inp = {
-    width: "100%", padding: "10px 14px", borderRadius: 10,
-    border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)",
-    color: "#fff", fontSize: 14, fontFamily: "'Exo 2', sans-serif",
+    width: "100%", padding: "12px 16px", borderRadius: 2,
+    border: "1px solid rgba(200,165,92,0.15)", background: "rgba(255,255,255,0.03)",
+    color: "#FAFAF8", fontSize: 14, fontFamily: "'Outfit', sans-serif", fontWeight: 300,
     outline: "none", boxSizing: "border-box",
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#052851", fontFamily: "'Exo 2', sans-serif", color: "#fff", padding: "40px 20px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "'Outfit', sans-serif", color: "#FAFAF8", padding: "40px 20px", boxSizing: "border-box" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600;1,700&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -97,35 +97,38 @@ export default function Admin() {
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
           <button onClick={() => navigate("/")} style={{
-            padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)",
-            background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
+            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
+            background: "transparent", color: "#6B6B6B", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             ← Terug
           </button>
           <button onClick={signOut} style={{
-            padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)",
-            background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", fontSize: 12, fontWeight: 600,
-            cursor: "pointer", fontFamily: "'Exo 2', sans-serif",
+            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
+            background: "transparent", color: "#6B6B6B", fontSize: 11, fontWeight: 500,
+            cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
           }}>
             Uitloggen
           </button>
         </div>
 
         {/* Header */}
-        <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 24 }}>
-          <div style={{ display: "inline-block", padding: "4px 14px", borderRadius: 99, background: "rgba(106,172,158,0.12)", color: "#6AAC9E", fontSize: 12, fontWeight: 600, letterSpacing: 1.2, marginBottom: 12, textTransform: "uppercase" }}>Admin portaal</div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.5, background: "linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.5))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Medewerkers Overzicht</h1>
+        <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
+          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 400, fontStyle: "italic", color: "#FAFAF8", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 4 }}>
+            ELEV<span style={{ color: "#C8A55C", fontWeight: 700 }}>8</span>
+          </div>
+          <div style={{ width: 40, height: 1, background: "#C8A55C", margin: "12px 0", opacity: 0.3 }} />
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 400, fontStyle: "italic", margin: 0, color: "#FAFAF8", letterSpacing: "-0.01em" }}>Medewerkers Overzicht</h1>
         </div>
 
         {/* Period selector */}
-        <div style={{ marginBottom: 24, animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.4)", marginBottom: 6, display: "block" }}>Periode</label>
+        <div style={{ marginBottom: 28, animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
+          <label style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Periode</label>
           <select value={period} onChange={(e) => { setPeriod(e.target.value); setSelectedEmployee(null); }} style={{ ...inp, cursor: "pointer" }}>
             {periodOptions.map((p) => (
-              <option key={p.key} value={p.key} style={{ background: "#04203F" }}>{p.label}</option>
+              <option key={p.key} value={p.key} style={{ background: "#141414" }}>{p.label}</option>
             ))}
           </select>
         </div>
@@ -135,29 +138,29 @@ export default function Admin() {
         {!loading && (
           <>
             {/* Summary stats */}
-            <div style={{ display: "flex", gap: 12, marginBottom: 24, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(106,172,158,0.06)", border: "1px solid rgba(106,172,158,0.15)" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Medewerkers</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#6AAC9E" }}>{employees.length}</div>
+            <div style={{ display: "flex", gap: 1, marginBottom: 28, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
+              <div style={{ flex: 1, padding: "20px 20px", background: "rgba(255,255,255,0.02)", borderLeft: "2px solid #C8A55C" }}>
+                <div style={{ fontSize: 10, color: "#6B6B6B", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Medewerkers</div>
+                <div style={{ fontSize: 28, fontWeight: 300, color: "#FAFAF8" }}>{employees.length}</div>
               </div>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(160,185,37,0.06)", border: "1px solid rgba(160,185,37,0.15)" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Totaal uren</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#A0B925" }}>{grandTotal}</div>
+              <div style={{ flex: 1, padding: "20px 20px", background: "rgba(255,255,255,0.02)", borderLeft: "2px solid #C8A55C" }}>
+                <div style={{ fontSize: 10, color: "#6B6B6B", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Totaal uren</div>
+                <div style={{ fontSize: 28, fontWeight: 300, color: "#C8A55C" }}>{grandTotal}</div>
               </div>
-              <div style={{ flex: 1, padding: "16px 20px", borderRadius: 14, background: "rgba(0,106,179,0.06)", border: "1px solid rgba(0,106,179,0.15)" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Registraties</div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#006AB3" }}>{entries.length}</div>
+              <div style={{ flex: 1, padding: "20px 20px", background: "rgba(255,255,255,0.02)", borderLeft: "2px solid rgba(200,165,92,0.3)" }}>
+                <div style={{ fontSize: 10, color: "#6B6B6B", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Registraties</div>
+                <div style={{ fontSize: 28, fontWeight: 300, color: "#FAFAF8" }}>{entries.length}</div>
               </div>
             </div>
 
             {/* Employee list */}
             <div style={{ animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 8, height: 8, borderRadius: 99, background: "#6AAC9E" }} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>Medewerkers</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                <div style={{ width: 12, height: 1, background: "#C8A55C" }} />
+                <span style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", textTransform: "uppercase", letterSpacing: 1.5 }}>Medewerkers</span>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 {employees.map((emp) => {
                   const total = getEmployeeTotal(emp.id);
                   const taskCount = getEmployeeEntries(emp.id).length;
@@ -165,22 +168,22 @@ export default function Admin() {
 
                   return (
                     <button key={emp.id} onClick={() => setSelectedEmployee(isSelected ? null : emp)} style={{
-                      display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 14,
-                      background: isSelected ? "rgba(106,172,158,0.08)" : "rgba(255,255,255,0.03)",
-                      border: isSelected ? "1px solid rgba(106,172,158,0.25)" : "1px solid rgba(255,255,255,0.04)",
+                      display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 2,
+                      background: isSelected ? "rgba(200,165,92,0.06)" : "rgba(255,255,255,0.02)",
+                      border: isSelected ? "1px solid rgba(200,165,92,0.2)" : "1px solid rgba(255,255,255,0.04)",
                       cursor: "pointer", transition: "all 0.25s ease", width: "100%", textAlign: "left",
-                      fontFamily: "'Exo 2', sans-serif", color: "#fff",
+                      fontFamily: "'Outfit', sans-serif", color: "#FAFAF8",
                     }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 99, background: "rgba(0,106,179,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "#006AB3", flexShrink: 0 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 2, background: "rgba(200,165,92,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 600, color: "#C8A55C", fontFamily: "'Playfair Display', serif", fontStyle: "italic", flexShrink: 0 }}>
                         {(emp.display_name || emp.email.split("@")[0]).charAt(0).toUpperCase()}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 15, fontWeight: 600 }}>{emp.display_name || emp.email.split("@")[0]}</div>
-                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{emp.email}</div>
+                        <div style={{ fontSize: 15, fontWeight: 500 }}>{emp.display_name || emp.email.split("@")[0]}</div>
+                        <div style={{ fontSize: 12, color: "#6B6B6B", fontWeight: 300 }}>{emp.email}</div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: total > 0 ? "#A0B925" : "rgba(255,255,255,0.15)" }}>{total}u</div>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>{taskCount} {taskCount === 1 ? "taak" : "taken"}</div>
+                        <div style={{ fontSize: 18, fontWeight: 300, color: total > 0 ? "#C8A55C" : "rgba(255,255,255,0.1)" }}>{total}u</div>
+                        <div style={{ fontSize: 11, color: "#6B6B6B", fontWeight: 300 }}>{taskCount} {taskCount === 1 ? "taak" : "taken"}</div>
                       </div>
                     </button>
                   );
@@ -191,30 +194,30 @@ export default function Admin() {
             {/* Selected employee entries */}
             {selectedEmployee && (
               <div style={{ marginTop: 24, animation: "fadeUp 0.3s cubic-bezier(.22,1,.36,1) both" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 99, background: "#A0B925" }} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                  <div style={{ width: 12, height: 1, background: "#C8A55C" }} />
+                  <span style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B", textTransform: "uppercase", letterSpacing: 1.5 }}>
                     Uren van {selectedEmployee.display_name || selectedEmployee.email.split("@")[0]}
                   </span>
                 </div>
 
                 {selectedEntries.length === 0 ? (
-                  <div style={{ padding: "24px 20px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.25)" }}>Geen uren geregistreerd in deze periode</div>
+                  <div style={{ padding: "24px 20px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+                    <div style={{ fontSize: 14, color: "#6B6B6B", fontWeight: 300 }}>Geen uren geregistreerd in deze periode</div>
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                     {selectedEntries.map((item) => (
                       <div key={item.id} style={{
-                        display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", borderRadius: 12,
-                        background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.04)",
+                        display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", borderRadius: 2,
+                        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
                       }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 8, background: `${item.color}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
+                        <div style={{ width: 36, height: 36, borderRadius: 2, background: `${item.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{ fontSize: 14, fontWeight: 600 }}>{item.task}</span>
-                          {item.note && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginLeft: 8 }}>{item.note}</span>}
+                          <span style={{ fontSize: 14, fontWeight: 500 }}>{item.task}</span>
+                          {item.note && <span style={{ fontSize: 12, color: "#6B6B6B", marginLeft: 8, fontWeight: 300 }}>{item.note}</span>}
                         </div>
-                        <span style={{ fontSize: 15, fontWeight: 700, color: item.color, flexShrink: 0 }}>{item.hours}u</span>
+                        <span style={{ fontSize: 15, fontWeight: 600, color: item.color, flexShrink: 0 }}>{item.hours}u</span>
                       </div>
                     ))}
                   </div>
@@ -223,9 +226,9 @@ export default function Admin() {
             )}
 
             {employees.length === 0 && (
-              <div style={{ padding: "40px 20px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>👥</div>
-                <div style={{ fontSize: 15, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>Nog geen medewerkers geregistreerd</div>
+              <div style={{ padding: "48px 20px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+                <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.5 }}>👥</div>
+                <div style={{ fontSize: 15, color: "#6B6B6B", fontWeight: 400 }}>Nog geen medewerkers geregistreerd</div>
               </div>
             )}
           </>
