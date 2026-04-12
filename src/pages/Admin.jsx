@@ -71,6 +71,21 @@ export default function Admin() {
   const grandTotal = entries.reduce((s, e) => s + Number(e.hours), 0);
   const selectedEntries = selectedEmployee ? getEmployeeEntries(selectedEmployee.id) : [];
 
+  const handleDeleteEntry = async (entryId) => {
+    await supabase.from("entries").delete().eq("id", entryId);
+    setEntries(entries.filter((e) => e.id !== entryId));
+  };
+
+  const handleDeleteEmployee = async (emp) => {
+    if (!confirm(`Weet je zeker dat je ${emp.display_name || emp.email} wilt verwijderen? Dit verwijdert ook al hun uren.`)) return;
+    await supabase.from("entries").delete().eq("user_id", emp.id);
+    await supabase.from("profiles").delete().eq("id", emp.id);
+    await supabase.auth.admin.deleteUser(emp.id).catch(() => {});
+    setEmployees(employees.filter((e) => e.id !== emp.id));
+    setEntries(entries.filter((e) => e.user_id !== emp.id));
+    if (selectedEmployee?.id === emp.id) setSelectedEmployee(null);
+  };
+
   const inp = {
     width: "100%", padding: "12px 16px", borderRadius: 2,
     border: "1px solid rgba(255,107,53,0.15)", background: "rgba(255,255,255,0.03)",
@@ -142,9 +157,12 @@ export default function Admin() {
                         <div style={{ fontSize: 15, fontWeight: 500 }}>{emp.display_name || emp.email.split("@")[0]}</div>
                         <div style={{ fontSize: 12, color: "#6E6E72", fontWeight: 300 }}>{emp.email}</div>
                       </div>
-                      <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 18, fontWeight: 300, color: total > 0 ? "#FF6B35" : "rgba(255,255,255,0.1)" }}>{total}u</div>
-                        <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 300 }}>{taskCount} {taskCount === 1 ? "taak" : "taken"}</div>
+                      <div style={{ textAlign: "right", flexShrink: 0, display: "flex", alignItems: "center", gap: 12 }}>
+                        <div>
+                          <div style={{ fontSize: 18, fontWeight: 300, color: total > 0 ? "#FF6B35" : "rgba(255,255,255,0.1)" }}>{total}u</div>
+                          <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 300 }}>{taskCount} {taskCount === 1 ? "taak" : "taken"}</div>
+                        </div>
+                        <div onClick={(e) => { e.stopPropagation(); handleDeleteEmployee(emp); }} style={{ color: "rgba(255,255,255,0.15)", cursor: "pointer", fontSize: 14, padding: 4, transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#CC5228"} onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.15)"}>🗑️</div>
                       </div>
                     </button>
                   );
@@ -174,6 +192,7 @@ export default function Admin() {
                           {item.note && <span style={{ fontSize: 12, color: "#6E6E72", marginLeft: 8, fontWeight: 300 }}>{item.note}</span>}
                         </div>
                         <span style={{ fontSize: 15, fontWeight: 600, color: item.color, flexShrink: 0 }}>{item.hours}u</span>
+                        <button onClick={() => handleDeleteEntry(item.id)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.15)", cursor: "pointer", fontSize: 14, padding: 4, transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#CC5228"} onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.15)"}>🗑️</button>
                       </div>
                     ))}
                   </div>

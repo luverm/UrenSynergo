@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
-const ADMIN_EMAILS = ["admin@gmail.com"];
+const ADMIN_EMAILS = ["admin@gmail.com", "lucasvermair@gmail.com"];
 
 const AuthContext = createContext(null);
 
