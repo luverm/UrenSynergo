@@ -210,7 +210,27 @@ CREATE POLICY "Admins read all posts" ON posts FOR SELECT USING (is_admin());
 CREATE POLICY "Admins read all files" ON post_files FOR SELECT USING (is_admin());
 
 -- =============================================================================
--- 9. ADMIN INSTELLEN
+-- 9. LIVE CHAT
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  content text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated read messages" ON chat_messages
+  FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated insert messages" ON chat_messages
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- ⚠️ BELANGRIJK: Schakel Realtime in voor chat_messages!
+-- Ga naar Supabase Dashboard → Database → Replication
+-- En schakel "chat_messages" in onder de supabase_realtime publication.
+
+-- =============================================================================
+-- 10. ADMIN INSTELLEN
 -- =============================================================================
 -- Na registratie van de admin gebruiker, voer dit uit:
 -- UPDATE profiles SET is_admin = true WHERE email = 'admin@gmail.com';

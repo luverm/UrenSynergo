@@ -230,6 +230,13 @@ export default function Dashboard() {
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => navigate("/chat")} style={{
+              padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.25)",
+              background: "rgba(200,165,92,0.06)", color: "#C8A55C", fontSize: 11, fontWeight: 500,
+              cursor: "pointer", fontFamily: "'Outfit', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            }}>
+              Chat
+            </button>
             <button onClick={() => navigate("/groups")} style={{
               padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(200,165,92,0.25)",
               background: "rgba(200,165,92,0.06)", color: "#C8A55C", fontSize: 11, fontWeight: 500,
