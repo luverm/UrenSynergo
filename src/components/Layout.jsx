@@ -1,0 +1,226 @@
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useIsMobile } from "../hooks/useIsMobile";
+
+const NAV_ITEMS = [
+  {
+    path: "/",
+    label: "Uren",
+    match: (p) => p === "/",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+  },
+  {
+    path: "/chat",
+    label: "Chat",
+    match: (p) => p === "/chat",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
+  {
+    path: "/groups",
+    label: "Projecten",
+    match: (p) => p.startsWith("/groups"),
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
+];
+
+const ADMIN_ITEM = {
+  path: "/admin",
+  label: "Admin",
+  match: (p) => p === "/admin",
+  icon: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+};
+
+const PROFILE_ITEM = {
+  path: "/profile",
+  match: (p) => p === "/profile",
+};
+
+function Avatar({ url, name, size = 32 }) {
+  if (url) return <div style={{ width: size, height: size, borderRadius: 2, background: `url(${url}) center/cover`, flexShrink: 0 }} />;
+  return (
+    <div style={{ width: size, height: size, borderRadius: 2, background: "rgba(255,107,53,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Syne', sans-serif", fontSize: size * 0.4, fontWeight: 700, color: "#FF6B35", flexShrink: 0 }}>
+      {(name || "?").charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
+export default function Layout() {
+  const { user, profile, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useIsMobile();
+
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "Gebruiker";
+  const items = isAdmin ? [...NAV_ITEMS, ADMIN_ITEM] : NAV_ITEMS;
+
+  if (isMobile) {
+    return (
+      <>
+        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+        <style>{`
+          @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+          @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+          ::-webkit-scrollbar { width: 0; }
+        `}</style>
+
+        {/* Content */}
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 64, background: "#0E0E10", overflowY: "auto" }}>
+          <Outlet />
+        </div>
+
+        {/* Bottom tab bar */}
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, height: 64,
+          background: "#0E0E10", borderTop: "1px solid rgba(255,255,255,0.04)",
+          display: "flex", alignItems: "center", justifyContent: "space-around",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)", zIndex: 50,
+        }}>
+          {items.map((item) => {
+            const active = item.match(location.pathname);
+            return (
+              <button key={item.path} onClick={() => navigate(item.path)} style={{
+                background: "none", border: "none", cursor: "pointer", padding: "8px 16px",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                color: active ? "#FF6B35" : "#6E6E72", transition: "color 0.15s ease",
+                transform: active ? "scale(1.05)" : "scale(1)",
+              }}>
+                {item.icon}
+                {active && <div style={{ width: 4, height: 4, borderRadius: 99, background: "#FF6B35" }} />}
+              </button>
+            );
+          })}
+          {/* Profile tab */}
+          <button onClick={() => navigate("/profile")} style={{
+            background: "none", border: "none", cursor: "pointer", padding: "8px",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+          }}>
+            <Avatar url={profile?.avatar_url} name={displayName} size={24} />
+            {PROFILE_ITEM.match(location.pathname) && <div style={{ width: 4, height: 4, borderRadius: 99, background: "#FF6B35" }} />}
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  // Desktop layout
+  return (
+    <>
+      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+      <style>{`
+        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+      `}</style>
+
+      {/* Sidebar */}
+      <div style={{
+        position: "fixed", top: 0, left: 0, bottom: 0, width: 240,
+        background: "#0E0E10", borderRight: "1px solid rgba(255,255,255,0.04)",
+        display: "flex", flexDirection: "column", zIndex: 50,
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        {/* Logo */}
+        <div style={{ padding: "28px 24px 20px" }}>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: "#F5F3EE", letterSpacing: "-0.03em", lineHeight: 1 }}>
+            ELEV<span style={{ color: "#FF6B35" }}>8</span>
+          </div>
+          <div style={{ width: 24, height: 1, background: "#FF6B35", marginTop: 10, opacity: 0.3 }} />
+        </div>
+
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: "4px 8px", display: "flex", flexDirection: "column", gap: 2 }}>
+          {items.map((item) => {
+            const active = item.match(location.pathname);
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  padding: "10px 16px", borderRadius: 2, border: "none",
+                  background: active ? "rgba(255,107,53,0.06)" : "transparent",
+                  borderLeft: active ? "2px solid #FF6B35" : "2px solid transparent",
+                  color: active ? "#F5F3EE" : "#6E6E72",
+                  fontSize: 14, fontWeight: active ? 500 : 400,
+                  fontFamily: "'DM Sans', sans-serif",
+                  cursor: "pointer", transition: "all 0.15s ease",
+                  textAlign: "left", width: "100%",
+                }}
+                onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+                onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* User block */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.04)", padding: "16px" }}>
+          <div
+            onClick={() => navigate("/profile")}
+            style={{
+              display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
+              padding: "8px 8px", borderRadius: 2, transition: "background 0.15s ease",
+              background: PROFILE_ITEM.match(location.pathname) ? "rgba(255,107,53,0.06)" : "transparent",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = PROFILE_ITEM.match(location.pathname) ? "rgba(255,107,53,0.06)" : "transparent"; }}
+          >
+            <Avatar url={profile?.avatar_url} name={displayName} size={32} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: "#F5F3EE", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName}</div>
+              <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div>
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); signOut(); }}
+              title="Uitloggen"
+              style={{
+                background: "none", border: "none", cursor: "pointer", padding: 4,
+                color: "#6E6E72", transition: "color 0.15s ease", flexShrink: 0,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "#FF6B35"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "#6E6E72"; }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{
+        marginLeft: 240, height: "100vh", background: "#0E0E10",
+        overflow: "auto",
+      }}>
+        <Outlet />
+      </div>
+    </>
+  );
+}

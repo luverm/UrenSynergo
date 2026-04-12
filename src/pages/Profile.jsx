@@ -1,11 +1,9 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
   const { user, profile, refreshProfile, signOut } = useAuth();
-  const navigate = useNavigate();
   const fileRef = useRef(null);
 
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
@@ -70,39 +68,15 @@ export default function Profile() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        input:focus { border-color: rgba(255,107,53,0.5) !important; }
-      `}</style>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
+      <style>{`input:focus { border-color: rgba(255,107,53,0.5) !important; }`}</style>
 
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
-        {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <button onClick={() => navigate("/")} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            ← Terug
-          </button>
-          <button onClick={signOut} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            Uitloggen
-          </button>
-        </div>
-
-        {/* Header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 36 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Profiel</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Profiel</div>
           <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
         </div>
 
-        {/* Messages */}
         {error && (
           <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14 }}>
             {error}
@@ -114,7 +88,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Avatar */}
         <div style={{ textAlign: "center", marginBottom: 32, animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
           <div
             onClick={() => fileRef.current?.click()}
@@ -138,7 +111,6 @@ export default function Profile() {
           <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
         </div>
 
-        {/* Form */}
         <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Weergavenaam</label>
@@ -158,6 +130,14 @@ export default function Profile() {
             fontFamily: "'DM Sans', sans-serif", transition: "all 0.25s", letterSpacing: 0.5,
           }}>
             {saving ? "Opslaan..." : "Opslaan"}
+          </button>
+
+          <button onClick={signOut} style={{
+            width: "100%", padding: "12px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.06)",
+            background: "transparent", color: "#6E6E72", fontSize: 13, fontWeight: 400,
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", marginTop: 12,
+          }}>
+            Uitloggen
           </button>
         </div>
       </div>

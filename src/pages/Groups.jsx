@@ -6,17 +6,13 @@ import { useAuth } from "../context/AuthContext";
 function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-      <div style={{
-        width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)",
-        borderTopColor: "#FF6B35", borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }} />
+      <div style={{ width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)", borderTopColor: "#FF6B35", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
     </div>
   );
 }
 
 export default function Groups() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,37 +70,12 @@ export default function Groups() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:400px; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        input:focus, textarea:focus { border-color: rgba(255,107,53,0.5) !important; }
-      `}</style>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
+      <style>{`input:focus, textarea:focus { border-color: rgba(255,107,53,0.5) !important; }`}</style>
 
-      <div style={{ maxWidth: 560, margin: "0 auto" }}>
-        {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <button onClick={() => navigate("/")} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            ← Terug
-          </button>
-          <button onClick={signOut} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            Uitloggen
-          </button>
-        </div>
-
-        {/* Header */}
+      <div style={{ maxWidth: 600, margin: "0 auto" }}>
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Projecten</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Projecten</div>
           <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
         </div>
 
@@ -114,7 +85,6 @@ export default function Groups() {
           </div>
         )}
 
-        {/* Create button */}
         <button onClick={() => setShowForm(!showForm)} style={{
           width: "100%", padding: "14px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
           background: showForm ? "rgba(255,107,53,0.06)" : "transparent", color: "#FF6B35",
@@ -125,7 +95,6 @@ export default function Groups() {
           {showForm ? "✕ Annuleren" : "+ Nieuw project"}
         </button>
 
-        {/* Create form */}
         {showForm && (
           <div style={{ padding: 24, borderRadius: 2, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 20, animation: "slideDown 0.4s cubic-bezier(.22,1,.36,1) both", overflow: "hidden" }}>
             <div style={{ marginBottom: 16 }}>
@@ -150,7 +119,6 @@ export default function Groups() {
 
         {loading && <Spinner />}
 
-        {/* Groups list */}
         {!loading && groups.length > 0 && (
           <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
@@ -165,7 +133,7 @@ export default function Groups() {
                   cursor: "pointer", transition: "all 0.25s ease", width: "100%", textAlign: "left",
                   fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE",
                 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 2, background: "rgba(255,107,53,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 600, color: "#FF6B35", fontFamily: "'Syne', sans-serif", flexShrink: 0 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 2, background: "rgba(255,107,53,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "#FF6B35", fontFamily: "'Syne', sans-serif", flexShrink: 0 }}>
                     {group.name.charAt(0).toUpperCase()}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>

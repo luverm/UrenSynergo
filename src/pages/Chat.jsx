@@ -201,35 +201,20 @@ export default function Chat() {
   };
 
   return (
-    <div style={{ height: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", flexDirection: "column" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ height: "100%", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", flexDirection: "column" }}>
       <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
         textarea:focus { border-color: rgba(255,107,53,0.5) !important; outline: none; }
         @media (max-width: 600px) {
           .chat-sidebar { display: none !important; }
-          .chat-sidebar.open { display: flex !important; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100% !important; z-index: 100; background: #0E0E10; border: none !important; padding-top: 60px !important; }
+          .chat-sidebar.open { display: flex !important; position: fixed; top: 0; left: 0; right: 0; bottom: 64px; width: 100% !important; z-index: 100; background: #0E0E10; border: none !important; padding-top: 20px !important; }
           .chat-messages { padding: 12px 12px !important; }
           .chat-input-wrap { padding: 8px 12px !important; }
-          .chat-topbar { padding: 10px 12px !important; }
         }
       `}</style>
 
-      {/* Top bar */}
-      <div className="chat-topbar" style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={() => navigate("/")} style={{
-            padding: "6px 14px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            ← Terug
-          </button>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 400,  }}>
-            Chat
-          </div>
-        </div>
+      {/* Chat header */}
+      <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 700 }}>Chat</div>
         <button onClick={() => setShowSidebar(!showSidebar)} style={{ fontSize: 11, color: "#6E6E72", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
           <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: 99, background: "#FF6B35", marginRight: 6, verticalAlign: "middle" }} />
           {onlineUsers.length} online

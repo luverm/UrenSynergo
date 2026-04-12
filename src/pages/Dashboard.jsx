@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 
@@ -45,11 +44,7 @@ function Bar({ hours, max, color }) {
   const pct = max > 0 ? (hours / max) * 100 : 0;
   return (
     <div style={{ height: 4, borderRadius: 0, background: "rgba(255,255,255,0.06)", overflow: "hidden", flex: 1 }}>
-      <div style={{
-        width: `${pct}%`, height: "100%", borderRadius: 0,
-        background: color,
-        transition: "width 0.6s cubic-bezier(.22,1,.36,1)",
-      }} />
+      <div style={{ width: `${pct}%`, height: "100%", background: color, transition: "width 0.6s cubic-bezier(.22,1,.36,1)" }} />
     </div>
   );
 }
@@ -73,18 +68,13 @@ function Ring({ total, max }) {
 function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-      <div style={{
-        width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)",
-        borderTopColor: "#FF6B35", borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }} />
+      <div style={{ width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)", borderTopColor: "#FF6B35", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
     </div>
   );
 }
 
 export default function Dashboard() {
-  const { user, profile, signOut, isAdmin } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -109,7 +99,6 @@ export default function Dashboard() {
         .eq("period", period)
         .eq("user_id", user.id)
         .order("created_at", { ascending: true });
-
       if (fetchError) throw fetchError;
       setEntries(data || []);
     } catch (e) {
@@ -119,9 +108,7 @@ export default function Dashboard() {
     }
   }, [period, user.id]);
 
-  useEffect(() => {
-    fetchEntries();
-  }, [fetchEntries]);
+  useEffect(() => { fetchEntries(); }, [fetchEntries]);
 
   const totalHours = entries.reduce((s, e) => s + Number(e.hours), 0);
   const maxHours = entries.length > 0 ? Math.max(...entries.map((e) => Number(e.hours))) : 1;
@@ -136,30 +123,13 @@ export default function Dashboard() {
     if (!task.trim() || !hours) return;
     setSaving(true);
     setError(null);
-
-    const entry = {
-      task: task.trim(),
-      hours: parseFloat(hours),
-      note: note.trim(),
-      icon: ICONS[selectedIcon],
-      color: COLORS[selectedColor],
-      period,
-      user_id: user.id,
-    };
-
+    const entry = { task: task.trim(), hours: parseFloat(hours), note: note.trim(), icon: ICONS[selectedIcon], color: COLORS[selectedColor], period, user_id: user.id };
     try {
       if (editId) {
-        const { error: updateError } = await supabase
-          .from("entries")
-          .update(entry)
-          .eq("id", editId)
-          .select();
+        const { error: updateError } = await supabase.from("entries").update(entry).eq("id", editId).select();
         if (updateError) throw updateError;
       } else {
-        const { error: insertError } = await supabase
-          .from("entries")
-          .insert([entry])
-          .select();
+        const { error: insertError } = await supabase.from("entries").insert([entry]).select();
         if (insertError) throw insertError;
       }
       await fetchEntries();
@@ -172,13 +142,10 @@ export default function Dashboard() {
   };
 
   const handleEdit = (entry) => {
-    setTask(entry.task);
-    setHours(String(entry.hours));
-    setNote(entry.note || "");
+    setTask(entry.task); setHours(String(entry.hours)); setNote(entry.note || "");
     setSelectedIcon(Math.max(0, ICONS.indexOf(entry.icon)));
     setSelectedColor(Math.max(0, COLORS.indexOf(entry.color)));
-    setEditId(entry.id);
-    setShowForm(true);
+    setEditId(entry.id); setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -201,97 +168,38 @@ export default function Dashboard() {
     outline: "none", boxSizing: "border-box", transition: "border-color 0.2s",
   };
 
-  const displayName = profile?.display_name || user.email?.split("@")[0] || "Medewerker";
-
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
       <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes slideDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
         input:focus { border-color: rgba(255,107,53,0.5) !important; }
         @media (max-width: 600px) {
-          .dash-userbar { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
-          .dash-nav { flex-wrap: wrap !important; }
           .dash-ring { flex-direction: column !important; align-items: center !important; text-align: center; gap: 16px !important; }
           .dash-ring svg { width: 120px !important; height: 120px !important; }
         }
       `}</style>
 
-      <div style={{ maxWidth: 520, margin: "0 auto" }}>
-        {/* User bar */}
-        <div className="dash-userbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/profile")}>
-            {profile?.avatar_url ? (
-              <div style={{ width: 36, height: 36, borderRadius: 2, background: `url(${profile.avatar_url}) center/cover`, flexShrink: 0 }} />
-            ) : (
-              <div style={{ width: 36, height: 36, borderRadius: 2, background: "rgba(255,107,53,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#FF6B35", fontFamily: "'Syne', sans-serif",  }}>
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 500 }}>{displayName}</div>
-              <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 300 }}>{user.email}</div>
-            </div>
-          </div>
-          <div className="dash-nav" style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => navigate("/chat")} style={{
-              padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.25)",
-              background: "rgba(255,107,53,0.06)", color: "#FF6B35", fontSize: 11, fontWeight: 500,
-              cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-            }}>
-              Chat
-            </button>
-            <button onClick={() => navigate("/groups")} style={{
-              padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.25)",
-              background: "rgba(255,107,53,0.06)", color: "#FF6B35", fontSize: 11, fontWeight: 500,
-              cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-            }}>
-              Projecten
-            </button>
-            {isAdmin && (
-              <button onClick={() => navigate("/admin")} style={{
-                padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.25)",
-                background: "rgba(255,107,53,0.06)", color: "#FF6B35", fontSize: 11, fontWeight: 500,
-                cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-              }}>
-                Admin
-              </button>
-            )}
-            <button onClick={signOut} style={{
-              padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-              background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-              cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-            }}>
-              Uitloggen
-            </button>
-          </div>
-        </div>
-
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 4 }}>
           <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 36, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 8 }}>
-              ELEV<span style={{ color: "#FF6B35", fontWeight: 700 }}>8</span>
-            </div>
-            <p style={{ margin: 0, fontSize: 13, color: "#6E6E72", fontWeight: 300 }}>Periode: {getPeriodLabel(period)}</p>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Uren</div>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: "#6E6E72", fontWeight: 300 }}>Periode: {getPeriodLabel(period)}</p>
           </div>
-          <div style={{ padding: "6px 14px", borderRadius: 2, background: daysLeft <= 3 ? "rgba(204,82,40,0.08)" : "rgba(255,255,255,0.03)", fontSize: 11, fontWeight: 500, color: daysLeft <= 3 ? "#CC5228" : "#6E6E72", marginTop: 8, whiteSpace: "nowrap", letterSpacing: 0.5 }}>
+          <div style={{ padding: "6px 14px", borderRadius: 2, background: daysLeft <= 3 ? "rgba(204,82,40,0.08)" : "rgba(255,255,255,0.03)", fontSize: 11, fontWeight: 500, color: daysLeft <= 3 ? "#CC5228" : "#6E6E72", marginTop: 4, whiteSpace: "nowrap", letterSpacing: 0.5 }}>
             Reset over {daysLeft} {daysLeft === 1 ? "dag" : "dagen"}
           </div>
         </div>
+        <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0 28px", opacity: 0.3 }} />
 
-        {/* Error banner */}
         {error && (
-          <div style={{ margin: "16px 0", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14, fontWeight: 400, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14, fontWeight: 400, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>{error}</span>
             <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#CC5228", cursor: "pointer", fontSize: 16 }}>✕</button>
           </div>
         )}
 
         {/* Ring + Stats */}
-        <div className="dash-ring" style={{ display: "flex", alignItems: "center", gap: 32, margin: "36px 0", animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
+        <div className="dash-ring" style={{ display: "flex", alignItems: "center", gap: 32, margin: "0 0 32px", animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
           <Ring total={totalHours} max={Math.max(totalHours, 40)} />
           <div>
             <div style={{ fontSize: 11, color: "#6E6E72", fontWeight: 500, marginBottom: 4, letterSpacing: 1, textTransform: "uppercase" }}>Totaal gewerkt</div>
@@ -308,8 +216,8 @@ export default function Dashboard() {
           width: "100%", padding: "14px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
           background: showForm ? "rgba(255,107,53,0.06)" : "transparent", color: "#FF6B35",
           fontSize: 14, fontWeight: 500, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-          marginBottom: 16, transition: "all 0.25s ease", animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both",
-          letterSpacing: 0.5,
+          marginBottom: 16, transition: "all 0.25s ease", letterSpacing: 0.5,
+          animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both",
         }}>
           {showForm ? "✕ Annuleren" : "+ Uren toevoegen"}
         </button>
@@ -331,7 +239,6 @@ export default function Dashboard() {
                 <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Bijv. preview website" style={inp} />
               </div>
             </div>
-            {/* Icon picker */}
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Icoon</label>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -344,7 +251,6 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            {/* Color picker */}
             <div style={{ marginBottom: 20 }}>
               <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Kleur</label>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -368,10 +274,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Loading */}
         {loading && <Spinner />}
 
-        {/* Entry list */}
         {!loading && entries.length > 0 && (
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
@@ -413,7 +317,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Footer */}
         <div style={{ marginTop: 36, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)", fontWeight: 300 }}>Reset: elke 18e van de maand</span>
           {entries.length > 0 && (

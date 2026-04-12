@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { useAuth } from "../context/AuthContext";
 
 function getCurrentPeriod() {
   const now = new Date();
@@ -40,18 +38,12 @@ function getPeriodOptions() {
 function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-      <div style={{
-        width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)",
-        borderTopColor: "#FF6B35", borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }} />
+      <div style={{ width: 32, height: 32, border: "2px solid rgba(255,255,255,0.06)", borderTopColor: "#FF6B35", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
     </div>
   );
 }
 
 export default function Admin() {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +69,6 @@ export default function Admin() {
   const getEmployeeEntries = (userId) => entries.filter((e) => e.user_id === userId);
   const getEmployeeTotal = (userId) => getEmployeeEntries(userId).reduce((s, e) => s + Number(e.hours), 0);
   const grandTotal = entries.reduce((s, e) => s + Number(e.hours), 0);
-
   const selectedEntries = selectedEmployee ? getEmployeeEntries(selectedEmployee.id) : [];
 
   const inp = {
@@ -88,45 +79,15 @@ export default function Admin() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
-      <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 600px) {
-          .admin-stats { flex-direction: column !important; }
-        }
-      `}</style>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
+      <style>{`@media (max-width: 600px) { .admin-stats { flex-direction: column !important; } }`}</style>
 
-      <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <button onClick={() => navigate("/")} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            ← Terug
-          </button>
-          <button onClick={signOut} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            Uitloggen
-          </button>
-        </div>
-
-        {/* Header */}
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 4 }}>
-            ELEV<span style={{ color: "#FF6B35", fontWeight: 700 }}>8</span>
-          </div>
+          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, margin: 0, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Medewerkers Overzicht</h1>
           <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 400, margin: 0, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Medewerkers Overzicht</h1>
         </div>
 
-        {/* Period selector */}
         <div style={{ marginBottom: 28, animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
           <label style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", marginBottom: 8, display: "block", letterSpacing: 1, textTransform: "uppercase" }}>Periode</label>
           <select value={period} onChange={(e) => { setPeriod(e.target.value); setSelectedEmployee(null); }} style={{ ...inp, cursor: "pointer" }}>
@@ -140,7 +101,6 @@ export default function Admin() {
 
         {!loading && (
           <>
-            {/* Summary stats */}
             <div className="admin-stats" style={{ display: "flex", gap: 1, marginBottom: 28, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
               <div style={{ flex: 1, padding: "20px 20px", background: "rgba(255,255,255,0.02)", borderLeft: "2px solid #FF6B35" }}>
                 <div style={{ fontSize: 10, color: "#6E6E72", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Medewerkers</div>
@@ -156,7 +116,6 @@ export default function Admin() {
               </div>
             </div>
 
-            {/* Employee list */}
             <div style={{ animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
                 <div style={{ width: 12, height: 1, background: "#FF6B35" }} />
@@ -168,7 +127,6 @@ export default function Admin() {
                   const total = getEmployeeTotal(emp.id);
                   const taskCount = getEmployeeEntries(emp.id).length;
                   const isSelected = selectedEmployee?.id === emp.id;
-
                   return (
                     <button key={emp.id} onClick={() => setSelectedEmployee(isSelected ? null : emp)} style={{
                       display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderRadius: 2,
@@ -177,7 +135,7 @@ export default function Admin() {
                       cursor: "pointer", transition: "all 0.25s ease", width: "100%", textAlign: "left",
                       fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE",
                     }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 2, background: "rgba(255,107,53,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 600, color: "#FF6B35", fontFamily: "'Syne', sans-serif", flexShrink: 0 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 2, background: "rgba(255,107,53,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "#FF6B35", fontFamily: "'Syne', sans-serif", flexShrink: 0 }}>
                         {(emp.display_name || emp.email.split("@")[0]).charAt(0).toUpperCase()}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -194,7 +152,6 @@ export default function Admin() {
               </div>
             </div>
 
-            {/* Selected employee entries */}
             {selectedEmployee && (
               <div style={{ marginTop: 24, animation: "fadeUp 0.3s cubic-bezier(.22,1,.36,1) both" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
@@ -203,7 +160,6 @@ export default function Admin() {
                     Uren van {selectedEmployee.display_name || selectedEmployee.email.split("@")[0]}
                   </span>
                 </div>
-
                 {selectedEntries.length === 0 ? (
                   <div style={{ padding: "24px 20px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
                     <div style={{ fontSize: 14, color: "#6E6E72", fontWeight: 300 }}>Geen uren geregistreerd in deze periode</div>
@@ -211,10 +167,7 @@ export default function Admin() {
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                     {selectedEntries.map((item) => (
-                      <div key={item.id} style={{
-                        display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", borderRadius: 2,
-                        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
-                      }}>
+                      <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", borderRadius: 2, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
                         <div style={{ width: 36, height: 36, borderRadius: 2, background: `${item.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <span style={{ fontSize: 14, fontWeight: 500 }}>{item.task}</span>

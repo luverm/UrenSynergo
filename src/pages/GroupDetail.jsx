@@ -170,26 +170,21 @@ export default function GroupDetail() {
   };
 
   if (loading) return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE" }}>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: 40 }}>
       <Spinner />
     </div>
   );
 
   if (!group) return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 15, color: "#6E6E72" }}>Project niet gevonden</div>
-        <button onClick={() => navigate("/groups")} style={{ marginTop: 16, background: "none", border: "none", color: "#FF6B35", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 14 }}>Terug naar projecten</button>
-      </div>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "60px 24px", textAlign: "center" }}>
+      <div style={{ fontSize: 15, color: "#6E6E72" }}>Project niet gevonden</div>
+      <button onClick={() => navigate("/groups")} style={{ marginTop: 16, background: "none", border: "none", color: "#FF6B35", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 14 }}>Terug naar projecten</button>
     </div>
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0E0E10", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "40px 16px", boxSizing: "border-box" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
       <style>{`
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
         textarea:focus { border-color: rgba(255,107,53,0.5) !important; }
         input:focus { border-color: rgba(255,107,53,0.5) !important; }
         @media (max-width: 600px) {
@@ -198,20 +193,18 @@ export default function GroupDetail() {
         }
       `}</style>
 
-      <div style={{ maxWidth: 600, margin: "0 auto" }}>
-        {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
-          <button onClick={() => navigate("/groups")} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
-            background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
-          }}>
-            ← Projecten
-          </button>
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        {/* Breadcrumb + members */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#6E6E72", fontWeight: 300 }}>
+            <button onClick={() => navigate("/groups")} style={{ background: "none", border: "none", color: "#6E6E72", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 12, padding: 0 }}>Projecten</button>
+            <span>/</span>
+            <span style={{ color: "#F5F3EE", fontWeight: 500 }}>{group.name}</span>
+          </div>
           <button onClick={() => { setShowMembers(!showMembers); if (!showMembers) fetchAllProfiles(); }} style={{
-            padding: "8px 16px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
+            padding: "6px 14px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.2)",
             background: showMembers ? "rgba(255,107,53,0.06)" : "transparent", color: "#FF6B35", fontSize: 11, fontWeight: 500,
-            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
+            cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5,
           }}>
             {members.length} {members.length === 1 ? "lid" : "leden"}
           </button>
@@ -219,7 +212,7 @@ export default function GroupDetail() {
 
         {/* Group header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 400, color: "#F5F3EE", letterSpacing: "-0.01em" }}>{group.name}</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>{group.name}</div>
           {group.description && <div style={{ fontSize: 14, color: "#6E6E72", fontWeight: 300, marginTop: 6 }}>{group.description}</div>}
           <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "14px 0", opacity: 0.3 }} />
         </div>
