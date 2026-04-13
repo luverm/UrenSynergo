@@ -222,16 +222,22 @@
       border-radius: 10px;
       padding: 1rem 1.25rem;
       margin-bottom: 0.6rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, opacity 0.2s;
+      cursor: pointer;
+      user-select: none;
     }
     .stap:hover { border-color: rgba(45,107,79,0.2); }
+    .stap.stap-done { border-color: rgba(76,175,125,0.25); background: rgba(76,175,125,0.04); }
+    .stap.stap-done .stap-num { color: var(--green); }
+    .stap.stap-done .stap-body h4 { text-decoration: line-through; color: var(--muted); }
+    .stap.stap-done .stap-body p { opacity: 0.5; }
     .stap-num {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.3rem; font-weight: 300;
       color: var(--gold2); min-width: 28px; line-height: 1.2;
     }
-    .stap-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; }
-    .stap-body p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+    .stap-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; transition: all 0.15s; }
+    .stap-body p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; transition: opacity 0.15s; }
     .stap.warning { border-color: rgba(224,90,90,0.25); background: rgba(224,90,90,0.04); }
     .stap.warning .stap-num { color: var(--red); }
     .stap.tip { border-color: rgba(76,175,125,0.2); background: rgba(76,175,125,0.03); }
@@ -641,19 +647,19 @@
 
     <div class="stap-group">
       <div class="stap-group-title">📋 Stap 1 — Kwaliteit vastleggen</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.1</div>
         <div class="stap-body"><h4>Specificaties kaarten bepalen</h4><p>Leg alles vast: formaat, papiersoort (300gr+ gerecycled), afwerking (mat/glans laminaat), hoekafronding, kleurprofiel (CMYK). Dit is de basis van je premium uitstraling.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.2</div>
         <div class="stap-body"><h4>Papier kwaliteit selecteren</h4><p>Kies duurzaam, FSC-gecertificeerd papier. De kaart moet stevig aanvoelen, professioneel ogen en bestand zijn tegen dagelijks gebruik op de werkvloer.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.3</div>
         <div class="stap-body"><h4>Drukwerk proefdruk bestellen</h4><p>Bestel bij minimaal 2 drukkerijen een proefdruk. Beoordeel kleurechtheid, papiergevoel, leesgraad van tekst en algehele premium uitstraling.</p></div>
       </div>
-      <div class="stap warning">
+      <div class="stap warning" onclick="toggleStap(this)">
         <div class="stap-num">!</div>
         <div class="stap-body"><h4>Valkuil: alleen digitaal beoordelen</h4><p>Kleuren op scherm wijken altijd af van print. Beoordeel altijd een fysieke proefdruk voordat je een grotere oplage bestelt.</p></div>
       </div>
@@ -661,15 +667,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🏭 Stap 2 — Drukpartner kiezen</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">2.1</div>
         <div class="stap-body"><h4>Vergelijk 3 drukkerijen in Nederland</h4><p>Zoek drukkerijen met ervaring in premium kaartwerk. Vergelijk prijs per stuk, minimale oplage, levertijd en mogelijkheden voor speciale afwerkingen.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">2.2</div>
         <div class="stap-body"><h4>Let op schaalvoordeel</h4><p>Vraag prijzen op voor 250, 500 en 1000 sets. Het verschil per stuk kan significant zijn. Begin met een kleine oplage voor de pilot, maar weet wat opschalen kost.</p></div>
       </div>
-      <div class="stap tip">
+      <div class="stap tip" onclick="toggleStap(this)">
         <div class="stap-num">+</div>
         <div class="stap-body"><h4>Tip: vraag naar vaste klant korting</h4><p>Als je kwartaalabonnementen verkoopt, heb je terugkerende drukorders. Onderhandel een raamcontract met je drukker voor betere prijzen.</p></div>
       </div>
@@ -677,15 +683,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🤝 Stap 3 — Pilot klanten vinden</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">3.1</div>
         <div class="stap-body"><h4>Benader HR-directeuren uit je netwerk</h4><p>Start met 3-5 organisaties die je persoonlijk kent. Bied een gratis pilot van 3 maanden aan in ruil voor feedback en een testimonial.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">3.2</div>
         <div class="stap-body"><h4>Focus op zorg en onderwijs</h4><p>Deze sectoren hebben het hoogste verzuim (6.8% zorg, 6.2% onderwijs) en de grootste behoefte aan menselijke verzuimbegeleiding.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">3.3</div>
         <div class="stap-body"><h4>Verzamel resultaten en quotes</h4><p>Meet het effect: worden kaarten daadwerkelijk gebruikt? Hoe reageren medewerkers? Daalt het verzuim? Deze data is goud waard voor je sales pitch.</p></div>
       </div>
@@ -693,15 +699,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">📦 Stap 4 — Verpakking & Fulfillment</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.1</div>
         <div class="stap-body"><h4>Premium doos ontwerpen</h4><p>Een stevige, matte doos met het Tender Cards logo. De verpakking communiceert professionaliteit — HR-teams moeten het trots op hun bureau kunnen zetten.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.2</div>
         <div class="stap-body"><h4>Envelop en inlegkaart toevoegen</h4><p>Een inlegkaart met gebruiksinstructies: wanneer welke kaart inzetten, tips voor het gesprek, en een QR-code naar de online handleiding.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.3</div>
         <div class="stap-body"><h4>Fulfillment workflow opzetten</h4><p>Automatiseer zoveel mogelijk: bestelling binnenkomt, drukwerk wordt getriggerd, verpakking en verzending. Houd het simpel voor de eerste 50 klanten.</p></div>
       </div>
@@ -709,15 +715,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🌐 Stap 5 — Website & Betaling</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">5.1</div>
         <div class="stap-body"><h4>tendercards.nl lanceren</h4><p>Eenvoudige, professionele landingspagina met uitleg over de collecties, pricing, demo aanvraagformulier en testimonials van pilot klanten.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">5.2</div>
         <div class="stap-body"><h4>Stripe abonnementen instellen</h4><p>Essentials (€149/kw) en Pro (€349/kw) als terugkerende betalingen. Voeg een optie toe voor Maatwerk met een offerte-aanvraag.</p></div>
       </div>
-      <div class="stap warning">
+      <div class="stap warning" onclick="toggleStap(this)">
         <div class="stap-num">!</div>
         <div class="stap-body"><h4>Valkuil: te veel bouwen voor lancering</h4><p>Je hebt geen perfecte website nodig. Een simpele pagina met demo aanvraag en betaallink is genoeg om de eerste 10 klanten binnen te halen.</p></div>
       </div>
@@ -725,19 +731,19 @@
 
     <div class="stap-group">
       <div class="stap-group-title">💰 Stap 6 — Pricing strategie</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">6.1</div>
         <div class="stap-body"><h4>Essentials — €149 per kwartaal</h4><p>25 kaarten uit 1 collectie naar keuze. Ideaal voor kleinere organisaties of teams die willen starten met verzuimpreventie via steunkaarten.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">6.2</div>
         <div class="stap-body"><h4>Pro — €349 per kwartaal</h4><p>75 kaarten uit alle 3 collecties. Voor grotere organisaties die verzuimbegeleiding structureel willen verbeteren. Inclusief handleiding en support.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">6.3</div>
         <div class="stap-body"><h4>Maatwerk — custom pricing</h4><p>Op maat gemaakte kaarten met eigen logo, teksten of specifieke thema's. Offerte op aanvraag. Hogere marges, langere sales cycle.</p></div>
       </div>
-      <div class="stap tip">
+      <div class="stap tip" onclick="toggleStap(this)">
         <div class="stap-num">+</div>
         <div class="stap-body"><h4>Tip: jaarabonnement met korting</h4><p>Bied 10-15% korting bij jaarlijkse betaling. Dit verbetert je cashflow en verlaagt churn. €149/kw wordt ~€510/jaar, €349/kw wordt ~€1.190/jaar.</p></div>
       </div>
@@ -1156,6 +1162,51 @@
 
   // Load saved state on page load
   loadCheckedState();
+
+  // Stappenplan toggle with persistence
+  const STAP_KEY = 'tendercards_stappen';
+
+  function getStapState() {
+    try { return JSON.parse(localStorage.getItem(STAP_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveStapState() {
+    const state = {};
+    document.querySelectorAll('#page-stappenplan .stap').forEach((el, i) => {
+      if (el.classList.contains('stap-done')) state[i] = true;
+    });
+    localStorage.setItem(STAP_KEY, JSON.stringify(state));
+  }
+
+  function toggleStap(el) {
+    el.classList.toggle('stap-done');
+    const num = el.querySelector('.stap-num');
+    if (el.classList.contains('stap-done')) {
+      if (num && !el.classList.contains('warning') && !el.classList.contains('tip')) {
+        if (!num.dataset.orig) num.dataset.orig = num.textContent;
+        num.textContent = '✓';
+      }
+    } else {
+      if (num && num.dataset.orig) num.textContent = num.dataset.orig;
+    }
+    saveStapState();
+  }
+
+  // Store originals and load saved state
+  document.querySelectorAll('#page-stappenplan .stap .stap-num').forEach(num => {
+    num.dataset.orig = num.textContent;
+  });
+
+  (function loadStapState() {
+    const state = getStapState();
+    document.querySelectorAll('#page-stappenplan .stap').forEach((el, i) => {
+      if (state[i]) {
+        el.classList.add('stap-done');
+        const num = el.querySelector('.stap-num');
+        if (num && !el.classList.contains('warning') && !el.classList.contains('tip')) num.textContent = '✓';
+      }
+    });
+  })();
 </script>
 </body>
 </html>

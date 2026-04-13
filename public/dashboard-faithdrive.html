@@ -222,16 +222,22 @@
       border-radius: 10px;
       padding: 1rem 1.25rem;
       margin-bottom: 0.6rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, opacity 0.2s;
+      cursor: pointer;
+      user-select: none;
     }
     .stap:hover { border-color: rgba(196,150,61,0.2); }
+    .stap.stap-done { border-color: rgba(76,175,125,0.25); background: rgba(76,175,125,0.04); }
+    .stap.stap-done .stap-num { color: var(--green); }
+    .stap.stap-done .stap-body h4 { text-decoration: line-through; color: var(--muted); }
+    .stap.stap-done .stap-body p { opacity: 0.5; }
     .stap-num {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.3rem; font-weight: 300;
       color: var(--gold2); min-width: 28px; line-height: 1.2;
     }
-    .stap-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; }
-    .stap-body p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+    .stap-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; transition: all 0.15s; }
+    .stap-body p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; transition: opacity 0.15s; }
     .stap.warning { border-color: rgba(224,90,90,0.25); background: rgba(224,90,90,0.04); }
     .stap.warning .stap-num { color: var(--red); }
     .stap.tip { border-color: rgba(76,175,125,0.2); background: rgba(76,175,125,0.03); }
@@ -645,19 +651,19 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🏭 Stap 1 — Kwaliteit vastleggen</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.1</div>
         <div class="stap-body"><h4>Product Specification Sheet</h4><p>Leg alles schriftelijk vast: materiaalsoort, dikte fluweel, Pantone kleurcode, borduurdichtheid, afmetingen (lengte, breedte), stikselvolgorde en verpakkingsvereisten. Dit is het contract met je leverancier.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.2</div>
         <div class="stap-body"><h4>Arabische tekst 100% verifiëren</h4><p>Laat de tekst controleren door een native Arabic speaker of een vertrouwde islamitisch geleerde — niet door Google Translate. Fouten in Arabische tekst vallen direct op en kunnen je reputatie schaden.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">1.3</div>
         <div class="stap-body"><h4>3 fysieke samples bestellen</h4><p>Altijd meerdere samples aanvragen, ook bij dezelfde leverancier. Voel het materiaal, controleer de borduurdichtheid, trek aan de naden. Vergelijk ze naast elkaar.</p></div>
       </div>
-      <div class="stap warning">
+      <div class="stap warning" onclick="toggleStap(this)">
         <div class="stap-num">❌</div>
         <div class="stap-body"><h4>Valkuil: alleen foto's goedkeuren</h4><p>Foto's zeggen niets over hoe het materiaal aanvoelt of hoe stevig het borduurwerk zit. Nooit akkoord gaan zonder fysiek sample.</p></div>
       </div>
@@ -665,19 +671,19 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🔍 Stap 2 — De juiste leverancier</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">2.1</div>
         <div class="stap-body"><h4>Zoeken op Alibaba of 1688.com</h4><p>Zoekterm: "seat belt cover embroidery" of "car seat belt shoulder pad velvet". Filter op: Verified Supplier, Trade Assurance, min. 4.8 ster, actief 3+ jaar.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">2.2</div>
         <div class="stap-body"><h4>Minimaal 3 leveranciers vergelijken</h4><p>Vraag elk dezelfde specificaties aan. Vergelijk prijs, MOQ (minimale ordergrootte), levertijd, sampletijd en communicatiesnelheid.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">2.3</div>
         <div class="stap-body"><h4>Begin klein: 100–150 stuks</h4><p>Eerste order klein houden. Test de markt, verzamel reviews, optimaliseer je product — schaal daarna pas op naar 500 of 1000 stuks.</p></div>
       </div>
-      <div class="stap warning">
+      <div class="stap warning" onclick="toggleStap(this)">
         <div class="stap-num">❌</div>
         <div class="stap-body"><h4>Valkuil: de goedkoopste kiezen</h4><p>Dit is een geloofsproduct — mensen hebben er hoge verwachtingen van. Slechte kwaliteit = slechte reviews = dood voor je merk. Kies de beste prijs/kwaliteitsverhouding, niet de laagste prijs.</p></div>
       </div>
@@ -685,15 +691,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🔎 Stap 3 — Kwaliteitscontrole (QC)</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">3.1</div>
         <div class="stap-body"><h4>Third-party QC inspectie boeken</h4><p>Gebruik QIMA (qima.com) of Bureau Veritas voor een inspectie vóór verzending. Kost ~€200–300 maar bespaart duizenden bij een slechte batch.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">3.2</div>
         <div class="stap-body"><h4>AQL instellen op 2.5%</h4><p>AQL (Acceptable Quality Level) van 2.5% = max 2.5% defecten in de batch is acceptabel. Leg dit vast in je contract. Bij meer defecten: naleveringsverplichting of terugbetaling.</p></div>
       </div>
-      <div class="stap tip">
+      <div class="stap tip" onclick="toggleStap(this)">
         <div class="stap-num">✓</div>
         <div class="stap-body"><h4>Eerste paar dozen zelf openbreken</h4><p>Als de order aankomt, open je de eerste 10–15 dozen zelf. Steekproef. Kijk of het overeenkomt met het goedgekeurde sample.</p></div>
       </div>
@@ -701,15 +707,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">📦 Stap 4 — Verpakking (hier zit de luxe)</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.1</div>
         <div class="stap-body"><h4>Matte zwarte geschenkdoos met goudfolie</h4><p>Het product zit in een auto — mensen kopen het ook als cadeau voor Eid, geboorte, afstuderen. Een mooie doos rechtvaardigt een prijs van €29–35 in plaats van €10.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.2</div>
         <div class="stap-body"><h4>Inlegkaartje met betekenis</h4><p>Een kaartje met de betekenis van de Arabische tekst in het Nederlands én Arabisch. Dit maakt het persoonlijk en versterkt de emotionele waarde van het product.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">4.3</div>
         <div class="stap-body"><h4>Unboxing = je marketing</h4><p>Mensen filmen unboxings. Zorg dat het de moeite waard is: tissue paper, subtiele rozengeur of musk zakje, lint of magneetslot. Dit levert gratis TikTok/Instagram content op.</p></div>
       </div>
@@ -717,15 +723,15 @@
 
     <div class="stap-group">
       <div class="stap-group-title">🚢 Stap 5 — Shipping & Invoer</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">5.1</div>
         <div class="stap-body"><h4>Eerste orders via Air Freight</h4><p>Voor 100–500 stuks: luchtvrachtvervoer via een freight forwarder zoals Shypple.nl. Duurt 7–14 dagen, middelmatige kosten, regelt ook douane.</p></div>
       </div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">5.2</div>
         <div class="stap-body"><h4>Kies DDP (Delivered Duty Paid)</h4><p>DDP = leverancier of forwarder regelt alles inclusief douane en importbelasting. Geen verrassingen bij aankomst. Makkelijkst voor beginners.</p></div>
       </div>
-      <div class="stap warning">
+      <div class="stap warning" onclick="toggleStap(this)">
         <div class="stap-num">❌</div>
         <div class="stap-body"><h4>Valkuil: BTW en invoerrechten vergeten</h4><p>Reken altijd ~21% BTW + eventuele invoerrechten mee in je kostprijs. Dit vergeten is een van de meest gemaakte fouten bij eerste import.</p></div>
       </div>
@@ -733,11 +739,11 @@
 
     <div class="stap-group">
       <div class="stap-group-title">💰 Stap 6 — Prijsstrategie</div>
-      <div class="stap">
+      <div class="stap" onclick="toggleStap(this)">
         <div class="stap-num">6.1</div>
         <div class="stap-body"><h4>Kostprijsberekening per stuk</h4><p>Inkoop China: €3–5 · Verpakking: €1–2 · Shipping + douane: €1–2 · Totale kostprijs: ~€6–9. Verkoopprijs: €25–35 (3–5x marge). Marge is nodig voor retouren, marketing en opschalen.</p></div>
       </div>
-      <div class="stap tip">
+      <div class="stap tip" onclick="toggleStap(this)">
         <div class="stap-num">✓</div>
         <div class="stap-body"><h4>Cadeau-bundel als upsell</h4><p>2 stuks voor €49 (in een dubbele doos) of een giftset met rozengeur. Hogere orderwaarde, makkelijkere winstmarge.</p></div>
       </div>
@@ -1177,6 +1183,51 @@
 
   // Load saved state on page load
   loadCheckedState();
+
+  // Stappenplan toggle with persistence
+  const STAP_KEY = 'faithdrive_stappen';
+
+  function getStapState() {
+    try { return JSON.parse(localStorage.getItem(STAP_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveStapState() {
+    const state = {};
+    document.querySelectorAll('#page-stappenplan .stap').forEach((el, i) => {
+      if (el.classList.contains('stap-done')) state[i] = true;
+    });
+    localStorage.setItem(STAP_KEY, JSON.stringify(state));
+  }
+
+  function toggleStap(el) {
+    el.classList.toggle('stap-done');
+    const num = el.querySelector('.stap-num');
+    if (el.classList.contains('stap-done')) {
+      if (num && !el.classList.contains('warning') && !el.classList.contains('tip')) {
+        if (!num.dataset.orig) num.dataset.orig = num.textContent;
+        num.textContent = '✓';
+      }
+    } else {
+      if (num && num.dataset.orig) num.textContent = num.dataset.orig;
+    }
+    saveStapState();
+  }
+
+  // Store originals and load saved state
+  document.querySelectorAll('#page-stappenplan .stap .stap-num').forEach(num => {
+    num.dataset.orig = num.textContent;
+  });
+
+  (function loadStapState() {
+    const state = getStapState();
+    document.querySelectorAll('#page-stappenplan .stap').forEach((el, i) => {
+      if (state[i]) {
+        el.classList.add('stap-done');
+        const num = el.querySelector('.stap-num');
+        if (num && !el.classList.contains('warning') && !el.classList.contains('tip')) num.textContent = '✓';
+      }
+    });
+  })();
 </script>
 </body>
 </html>
