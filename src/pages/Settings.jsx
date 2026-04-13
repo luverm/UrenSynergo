@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { supabase } from "../supabaseClient";
 
 const BRANDS = [
   { id: "faithdrive", name: "FaithDrive", color: "#C4963D" },
@@ -49,19 +50,25 @@ export default function Settings() {
     }
 
     try {
-      const url = `https://${brand.storeDomain.replace(/^https?:\/\//, "").replace(/\/$/, "")}/admin/api/2024-01/orders/count.json`;
-      const res = await fetch(url, {
-        headers: { "X-Shopify-Access-Token": brand.accessToken },
+      const { data, error } = await supabase.functions.invoke("shopify-proxy", {
+        body: {
+          storeDomain: brand.storeDomain,
+          accessToken: brand.accessToken,
+          endpoint: "orders/count.json",
+        },
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      if (error) throw error;
+
+      if (data?.count !== undefined) {
         setTestResult((prev) => ({ ...prev, [brandId]: { ok: true, msg: `Verbonden! ${data.count} orders gevonden.` } }));
+      } else if (data?.errors) {
+        setTestResult((prev) => ({ ...prev, [brandId]: { ok: false, msg: `Shopify fout: ${data.errors}` } }));
       } else {
-        setTestResult((prev) => ({ ...prev, [brandId]: { ok: false, msg: `Fout ${res.status}: controleer je credentials` } }));
+        setTestResult((prev) => ({ ...prev, [brandId]: { ok: true, msg: "Verbonden met Shopify!" } }));
       }
     } catch (e) {
-      setTestResult((prev) => ({ ...prev, [brandId]: { ok: false, msg: "Kan niet verbinden — CORS blokkade of netwerk fout. Gebruik een proxy of Shopify App." } }));
+      setTestResult((prev) => ({ ...prev, [brandId]: { ok: false, msg: e.message || "Kan niet verbinden. Controleer je credentials." } }));
     }
     setTesting(null);
   };
