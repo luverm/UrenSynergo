@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tender Cards — Intern Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%23C4963D'%3E✦%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='18' text-anchor='middle' fill='%232D6B4F'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -95,7 +95,7 @@
     .nav-badge {
       margin-left: auto;
       background: var(--gold);
-      color: #000;
+      color: #fff;
       font-size: 0.58rem;
       font-weight: 700;
       padding: 0.15rem 0.45rem;
@@ -420,7 +420,7 @@
 <aside class="sidebar">
   <div class="sidebar-brand">
     <div class="sidebar-logo">Tender<span>Cards</span></div>
-    <div class="sidebar-tag">Intern Dashboard</div>
+    <div class="sidebar-tag">Verzuimpreventie met hart</div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section-label">Overzicht</div>
@@ -431,7 +431,7 @@
     <div class="nav-item" onclick="showPage('checklist', this)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
       Lanceer Checklist
-      <span class="nav-badge">12</span>
+      <span class="nav-badge">14</span>
     </div>
 
     <div class="nav-section-label">Product</div>
@@ -487,18 +487,18 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">Demo aanvragen</div>
-        <div class="stat-value">—</div>
-        <div class="stat-sub">47 HR professionals</div>
+        <div class="stat-value">47</div>
+        <div class="stat-sub">Via website & netwerk</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Starter pakket</div>
-        <div class="stat-value gold">€149/kwartaal</div>
-        <div class="stat-sub">25 kaarten per kwartaal</div>
+        <div class="stat-label">Essentials pakket</div>
+        <div class="stat-value gold">€149</div>
+        <div class="stat-sub">Per kwartaal · 25 kaarten</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Pro pakket</div>
-        <div class="stat-value gold">€349/kwartaal</div>
-        <div class="stat-sub">75 kaarten, alle collecties</div>
+        <div class="stat-value gold">€349</div>
+        <div class="stat-sub">Per kwartaal · 75 kaarten</div>
       </div>
     </div>
 
@@ -507,24 +507,24 @@
       <div class="card">
         <div class="section-title">Lanceer<em>voortgang</em></div>
         <div style="margin-bottom:1.25rem;">
-          <div class="progress-label"><span>Fase 1 — Productie & Sample</span><span id="prog-pct">0%</span></div>
+          <div class="progress-label"><span>Fase 1 — Product & Pilot</span><span id="prog-pct">0%</span></div>
           <div class="progress-bar"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:0.5rem;">
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
-            <span>Sample besteld</span><span id="s1" style="color:var(--muted);">○</span>
+            <span>Prototype kaarten</span><span id="s1" style="color:var(--muted);">○</span>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
-            <span>Sample goedgekeurd</span><span id="s2" style="color:var(--muted);">○</span>
+            <span>Eerste pilot</span><span id="s2" style="color:var(--muted);">○</span>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
-            <span>Verpakking ontworpen</span><span id="s3" style="color:var(--muted);">○</span>
+            <span>Website live</span><span id="s3" style="color:var(--muted);">○</span>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
-            <span>Productie order geplaatst</span><span id="s4" style="color:var(--muted);">○</span>
+            <span>Betaalsysteem</span><span id="s4" style="color:var(--muted);">○</span>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;">
-            <span>Website live</span><span id="s5" style="color:var(--muted);">○</span>
+            <span>Eerste 10 klanten</span><span id="s5" style="color:var(--muted);">○</span>
           </div>
         </div>
       </div>
@@ -533,18 +533,18 @@
       <div style="display:flex;flex-direction:column;gap:1.25rem;">
         <div class="card card-gold">
           <div class="stat-label">Volgende actie</div>
-          <div style="font-size:0.9rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.25rem;">Eerste pilot klant binnenhalen</div>
-          <div style="font-size:0.78rem;color:var(--muted);line-height:1.6;">Neem contact op met 3 HR-directeuren uit je netwerk en bied een gratis proefpakket aan.</div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.25rem;">Ontwerp de 3 kaartcollecties</div>
+          <div style="font-size:0.78rem;color:var(--muted);line-height:1.6;">Start met de Verbinding collectie (vroeg verzuim). Schrijf 25 kaarten met empathische, professionele teksten voor HR-medewerkers.</div>
         </div>
         <div class="card">
           <div class="stat-label">Eerste grote moment</div>
-          <div style="font-size:0.9rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.25rem;">🔥 Eid al-Adha — 26 mei 2026</div>
-          <div style="font-size:0.78rem;color:var(--muted);">Over ~6 weken. Start <strong style="color:var(--gold2);">vandaag</strong> met content en zorg dat stock voor 12 mei in huis is.</div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.25rem;">Week van de werkstress — Sept 2026</div>
+          <div style="font-size:0.78rem;color:var(--muted);">Start <strong style="color:var(--gold2);">nu</strong> met pilot klanten en zorg dat je productklaar bent voor dit moment.</div>
         </div>
         <div class="card">
-          <div class="stat-label">Prijs inschatting bij 100 stuks</div>
-          <div style="font-size:1.4rem;font-family:'Cormorant Garamond',serif;color:var(--gold2);margin:0.4rem 0 0.2rem;">€2.400 omzet</div>
-          <div style="font-size:0.75rem;color:var(--muted);">100 × €29 − €700 kosten = ~€1.700 winst</div>
+          <div class="stat-label">Prijs inschatting bij 80 klanten</div>
+          <div style="font-size:1.4rem;font-family:'Cormorant Garamond',serif;color:var(--gold2);margin:0.4rem 0 0.2rem;">€112K ARR</div>
+          <div style="font-size:0.75rem;color:var(--muted);">80 klanten x €1.400/jaar gemiddeld = ~€112.000 jaaromzet</div>
         </div>
       </div>
     </div>
@@ -559,76 +559,72 @@
     </div>
     <div class="grid-2">
       <div>
-        <div class="stap-group-title">🏭 Productie</div>
+        <div class="stap-group-title">📦 Product</div>
         <div class="card" style="padding:0.25rem 1rem;">
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Product Specification Sheet opstellen</div><div class="check-sub">Materiaal, kleuren (Pantone), afmetingen, borduurdichtheid</div></div>
+            <div><div class="check-text">3 kaartcollecties ontwerpen</div><div class="check-sub">Verbinding (vroeg verzuim), Herstel (langdurig), Terugkeer (re-integratie)</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Arabische tekst laten verifiëren</div><div class="check-sub">Door native speaker of islamitisch geleerde</div></div>
+            <div><div class="check-text">Teksten laten reviewen door HR-professional</div><div class="check-sub">Toon, empathie en juridische correctheid checken</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">3 leveranciers vergelijken op Alibaba</div><div class="check-sub">Min. verified, 4.8+ rating, ervaring met borduurwerk</div></div>
+            <div><div class="check-text">Drukproef bestellen</div><div class="check-sub">Papier kwaliteit, kleuren en afwerking beoordelen</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">3 fysieke samples bestellen</div><div class="check-sub">Nooit alleen op foto's goedkeuren</div></div>
+            <div><div class="check-text">Verpakking ontwerpen</div><div class="check-sub">Premium doos, envelop, inlegkaart met instructies</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Sample goedgekeurd en schriftelijk vastgelegd</div><div class="check-sub">Contract met leverancier met exacte specificaties</div></div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Eerste order geplaatst (100–150 stuks)</div><div class="check-sub">Klein starten, markt testen</div></div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">QC inspectie geboekt (QIMA/AsiaInspection)</div><div class="check-sub">Vóór verzending, max 2.5% defecten AQL</div></div>
+            <div><div class="check-text">Handleiding schrijven</div><div class="check-sub">Hoe HR-teams de kaarten effectief inzetten bij verzuim</div></div>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="stap-group-title">📦 Verpakking & Shipping</div>
+
+        <div class="stap-group-title" style="margin-top:1.5rem;">📊 Sales & Operations</div>
         <div class="card" style="padding:0.25rem 1rem;">
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Verpakking ontworpen (matte zwarte doos)</div><div class="check-sub">Met goudfolie logo, inlegkaart, tissue paper</div></div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Freight forwarder geregeld</div><div class="check-sub">Shypple, Flexport of vergelijkbaar — DDP optie</div></div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Importbelasting en BTW ingecalculeerd</div><div class="check-sub">~21% BTW + eventuele invoerrechten</div></div>
-          </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
             <div><div class="check-text">KvK inschrijving geregeld</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Webshop / betaallink ingericht</div><div class="check-sub">Shopify, WooCommerce of Stripe direct</div></div>
+            <div><div class="check-text">Stripe/Mollie betaalintegratie</div><div class="check-sub">Koppeling met abonnementssysteem</div></div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div><div class="check-text">Abonnementssysteem opzetten</div><div class="check-sub">Kwartaalabonnementen Essentials & Pro</div></div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div><div class="check-text">Fulfillment proces inrichten</div><div class="check-sub">Drukwerk, verpakking, verzending workflow</div></div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div><div class="check-text">Eerste 3 pilot klanten binnenhalen</div><div class="check-sub">HR-directeuren uit netwerk benaderen</div></div>
           </div>
         </div>
-
-        <div class="stap-group-title" style="margin-top:1.5rem;">📱 Marketing</div>
+      </div>
+      <div>
+        <div class="stap-group-title">📱 Marketing</div>
         <div class="card" style="padding:0.25rem 1rem;">
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Instagram account aangemaakt (@tendercards.nl)</div></div>
+            <div><div class="check-text">LinkedIn bedrijfspagina aanmaken</div><div class="check-sub">Tender Cards profiel met branding en beschrijving</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">TikTok account aangemaakt</div></div>
+            <div><div class="check-text">Case study schrijven van pilot klant</div><div class="check-sub">Resultaten, quotes en concrete impact op verzuim</div></div>
           </div>
           <div class="check-item" onclick="toggleCheck(this)">
             <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div><div class="check-text">Unboxing video opgenomen van sample</div><div class="check-sub">Dit is je eerste content stuk — doe het goed</div></div>
+            <div><div class="check-text">Website copy schrijven</div><div class="check-sub">tendercards.nl — landingspagina met demo aanvraag</div></div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div><div class="check-text">Demo aanvraagformulier opzetten</div><div class="check-sub">Leadgeneratie via website en LinkedIn</div></div>
           </div>
         </div>
       </div>
@@ -644,102 +640,106 @@
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">🏭 Stap 1 — Kwaliteit vastleggen</div>
+      <div class="stap-group-title">📋 Stap 1 — Kwaliteit vastleggen</div>
       <div class="stap">
         <div class="stap-num">1.1</div>
-        <div class="stap-body"><h4>Product Specification Sheet</h4><p>Leg alles schriftelijk vast: materiaalsoort, dikte fluweel, Pantone kleurcode, borduurdichtheid, afmetingen (lengte, breedte), stikselvolgorde en verpakkingsvereisten. Dit is het contract met je leverancier.</p></div>
+        <div class="stap-body"><h4>Specificaties kaarten bepalen</h4><p>Leg alles vast: formaat, papiersoort (300gr+ gerecycled), afwerking (mat/glans laminaat), hoekafronding, kleurprofiel (CMYK). Dit is de basis van je premium uitstraling.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">1.2</div>
-        <div class="stap-body"><h4>Arabische tekst 100% verifiëren</h4><p>Laat de tekst controleren door een native Arabic speaker of een vertrouwde islamitisch geleerde — niet door Google Translate. Fouten in Arabische tekst vallen direct op en kunnen je reputatie schaden.</p></div>
+        <div class="stap-body"><h4>Papier kwaliteit selecteren</h4><p>Kies duurzaam, FSC-gecertificeerd papier. De kaart moet stevig aanvoelen, professioneel ogen en bestand zijn tegen dagelijks gebruik op de werkvloer.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">1.3</div>
-        <div class="stap-body"><h4>3 fysieke samples bestellen</h4><p>Altijd meerdere samples aanvragen, ook bij dezelfde leverancier. Voel het materiaal, controleer de borduurdichtheid, trek aan de naden. Vergelijk ze naast elkaar.</p></div>
+        <div class="stap-body"><h4>Drukwerk proefdruk bestellen</h4><p>Bestel bij minimaal 2 drukkerijen een proefdruk. Beoordeel kleurechtheid, papiergevoel, leesgraad van tekst en algehele premium uitstraling.</p></div>
       </div>
       <div class="stap warning">
-        <div class="stap-num">❌</div>
-        <div class="stap-body"><h4>Valkuil: alleen foto's goedkeuren</h4><p>Foto's zeggen niets over hoe het materiaal aanvoelt of hoe stevig het borduurwerk zit. Nooit akkoord gaan zonder fysiek sample.</p></div>
+        <div class="stap-num">!</div>
+        <div class="stap-body"><h4>Valkuil: alleen digitaal beoordelen</h4><p>Kleuren op scherm wijken altijd af van print. Beoordeel altijd een fysieke proefdruk voordat je een grotere oplage bestelt.</p></div>
       </div>
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">🔍 Stap 2 — De juiste leverancier</div>
+      <div class="stap-group-title">🏭 Stap 2 — Drukpartner kiezen</div>
       <div class="stap">
         <div class="stap-num">2.1</div>
-        <div class="stap-body"><h4>Zoeken op Alibaba of 1688.com</h4><p>Zoekterm: "premium support cards HR" of "car seat belt shoulder pad velvet". Filter op: Verified Supplier, Trade Assurance, min. 4.8 ster, actief 3+ jaar.</p></div>
+        <div class="stap-body"><h4>Vergelijk 3 drukkerijen in Nederland</h4><p>Zoek drukkerijen met ervaring in premium kaartwerk. Vergelijk prijs per stuk, minimale oplage, levertijd en mogelijkheden voor speciale afwerkingen.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">2.2</div>
-        <div class="stap-body"><h4>Minimaal 3 leveranciers vergelijken</h4><p>Vraag elk dezelfde specificaties aan. Vergelijk prijs, MOQ (minimale ordergrootte), levertijd, sampletijd en communicatiesnelheid.</p></div>
+        <div class="stap-body"><h4>Let op schaalvoordeel</h4><p>Vraag prijzen op voor 250, 500 en 1000 sets. Het verschil per stuk kan significant zijn. Begin met een kleine oplage voor de pilot, maar weet wat opschalen kost.</p></div>
       </div>
-      <div class="stap">
-        <div class="stap-num">2.3</div>
-        <div class="stap-body"><h4>Begin klein: 100–150 stuks</h4><p>Eerste order klein houden. Test de markt, verzamel reviews, optimaliseer je product — schaal daarna pas op naar 500 of 1000 stuks.</p></div>
-      </div>
-      <div class="stap warning">
-        <div class="stap-num">❌</div>
-        <div class="stap-body"><h4>Valkuil: de goedkoopste kiezen</h4><p>Dit is een geloofsproduct — mensen hebben er hoge verwachtingen van. Slechte kwaliteit = slechte reviews = dood voor je merk. Kies de beste prijs/kwaliteitsverhouding, niet de laagste prijs.</p></div>
+      <div class="stap tip">
+        <div class="stap-num">+</div>
+        <div class="stap-body"><h4>Tip: vraag naar vaste klant korting</h4><p>Als je kwartaalabonnementen verkoopt, heb je terugkerende drukorders. Onderhandel een raamcontract met je drukker voor betere prijzen.</p></div>
       </div>
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">🔎 Stap 3 — Kwaliteitscontrole (QC)</div>
+      <div class="stap-group-title">🤝 Stap 3 — Pilot klanten vinden</div>
       <div class="stap">
         <div class="stap-num">3.1</div>
-        <div class="stap-body"><h4>Third-party QC inspectie boeken</h4><p>Gebruik QIMA (qima.com) of Bureau Veritas voor een inspectie vóór verzending. Kost ~€200–300 maar bespaart duizenden bij een slechte batch.</p></div>
+        <div class="stap-body"><h4>Benader HR-directeuren uit je netwerk</h4><p>Start met 3-5 organisaties die je persoonlijk kent. Bied een gratis pilot van 3 maanden aan in ruil voor feedback en een testimonial.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">3.2</div>
-        <div class="stap-body"><h4>AQL instellen op 2.5%</h4><p>AQL (Acceptable Quality Level) van 2.5% = max 2.5% defecten in de batch is acceptabel. Leg dit vast in je contract. Bij meer defecten: naleveringsverplichting of terugbetaling.</p></div>
+        <div class="stap-body"><h4>Focus op zorg en onderwijs</h4><p>Deze sectoren hebben het hoogste verzuim (6.8% zorg, 6.2% onderwijs) en de grootste behoefte aan menselijke verzuimbegeleiding.</p></div>
       </div>
-      <div class="stap tip">
-        <div class="stap-num">✓</div>
-        <div class="stap-body"><h4>Eerste paar dozen zelf openbreken</h4><p>Als de order aankomt, open je de eerste 10–15 dozen zelf. Steekproef. Kijk of het overeenkomt met het goedgekeurde sample.</p></div>
+      <div class="stap">
+        <div class="stap-num">3.3</div>
+        <div class="stap-body"><h4>Verzamel resultaten en quotes</h4><p>Meet het effect: worden kaarten daadwerkelijk gebruikt? Hoe reageren medewerkers? Daalt het verzuim? Deze data is goud waard voor je sales pitch.</p></div>
       </div>
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">📦 Stap 4 — Verpakking (hier zit de luxe)</div>
+      <div class="stap-group-title">📦 Stap 4 — Verpakking & Fulfillment</div>
       <div class="stap">
         <div class="stap-num">4.1</div>
-        <div class="stap-body"><h4>Matte zwarte geschenkdoos met goudfolie</h4><p>Het product zit in een auto — mensen kopen het ook als cadeau voor Eid, geboorte, afstuderen. Een mooie doos rechtvaardigt een prijs van €29–35 in plaats van €10.</p></div>
+        <div class="stap-body"><h4>Premium doos ontwerpen</h4><p>Een stevige, matte doos met het Tender Cards logo. De verpakking communiceert professionaliteit — HR-teams moeten het trots op hun bureau kunnen zetten.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">4.2</div>
-        <div class="stap-body"><h4>Inlegkaartje met betekenis</h4><p>Een kaartje met de betekenis van de Arabische tekst in het Nederlands én Arabisch. Dit maakt het persoonlijk en versterkt de emotionele waarde van het product.</p></div>
+        <div class="stap-body"><h4>Envelop en inlegkaart toevoegen</h4><p>Een inlegkaart met gebruiksinstructies: wanneer welke kaart inzetten, tips voor het gesprek, en een QR-code naar de online handleiding.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">4.3</div>
-        <div class="stap-body"><h4>Unboxing = je marketing</h4><p>Mensen filmen unboxings. Zorg dat het de moeite waard is: tissue paper, subtiele rozengeur of musk zakje, lint of magneetslot. Dit levert gratis TikTok/Instagram content op.</p></div>
+        <div class="stap-body"><h4>Fulfillment workflow opzetten</h4><p>Automatiseer zoveel mogelijk: bestelling binnenkomt, drukwerk wordt getriggerd, verpakking en verzending. Houd het simpel voor de eerste 50 klanten.</p></div>
       </div>
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">🚢 Stap 5 — Shipping & Invoer</div>
+      <div class="stap-group-title">🌐 Stap 5 — Website & Betaling</div>
       <div class="stap">
         <div class="stap-num">5.1</div>
-        <div class="stap-body"><h4>Eerste orders via Air Freight</h4><p>Voor 100–500 stuks: luchtvrachtvervoer via een freight forwarder zoals Shypple.nl. Duurt 7–14 dagen, middelmatige kosten, regelt ook douane.</p></div>
+        <div class="stap-body"><h4>tendercards.nl lanceren</h4><p>Eenvoudige, professionele landingspagina met uitleg over de collecties, pricing, demo aanvraagformulier en testimonials van pilot klanten.</p></div>
       </div>
       <div class="stap">
         <div class="stap-num">5.2</div>
-        <div class="stap-body"><h4>Kies DDP (Delivered Duty Paid)</h4><p>DDP = leverancier of forwarder regelt alles inclusief douane en importbelasting. Geen verrassingen bij aankomst. Makkelijkst voor beginners.</p></div>
+        <div class="stap-body"><h4>Stripe abonnementen instellen</h4><p>Essentials (€149/kw) en Pro (€349/kw) als terugkerende betalingen. Voeg een optie toe voor Maatwerk met een offerte-aanvraag.</p></div>
       </div>
       <div class="stap warning">
-        <div class="stap-num">❌</div>
-        <div class="stap-body"><h4>Valkuil: BTW en invoerrechten vergeten</h4><p>Reken altijd ~21% BTW + eventuele invoerrechten mee in je kostprijs. Dit vergeten is een van de meest gemaakte fouten bij eerste import.</p></div>
+        <div class="stap-num">!</div>
+        <div class="stap-body"><h4>Valkuil: te veel bouwen voor lancering</h4><p>Je hebt geen perfecte website nodig. Een simpele pagina met demo aanvraag en betaallink is genoeg om de eerste 10 klanten binnen te halen.</p></div>
       </div>
     </div>
 
     <div class="stap-group">
-      <div class="stap-group-title">💰 Stap 6 — Prijsstrategie</div>
+      <div class="stap-group-title">💰 Stap 6 — Pricing strategie</div>
       <div class="stap">
         <div class="stap-num">6.1</div>
-        <div class="stap-body"><h4>Kostprijsberekening per stuk</h4><p>Inkoop China: €3–5 · Verpakking: €1–2 · Shipping + douane: €1–2 · Totale kostprijs: ~€6–9. Verkoopprijs: €25–35 (3–5x marge). Marge is nodig voor retouren, marketing en opschalen.</p></div>
+        <div class="stap-body"><h4>Essentials — €149 per kwartaal</h4><p>25 kaarten uit 1 collectie naar keuze. Ideaal voor kleinere organisaties of teams die willen starten met verzuimpreventie via steunkaarten.</p></div>
+      </div>
+      <div class="stap">
+        <div class="stap-num">6.2</div>
+        <div class="stap-body"><h4>Pro — €349 per kwartaal</h4><p>75 kaarten uit alle 3 collecties. Voor grotere organisaties die verzuimbegeleiding structureel willen verbeteren. Inclusief handleiding en support.</p></div>
+      </div>
+      <div class="stap">
+        <div class="stap-num">6.3</div>
+        <div class="stap-body"><h4>Maatwerk — custom pricing</h4><p>Op maat gemaakte kaarten met eigen logo, teksten of specifieke thema's. Offerte op aanvraag. Hogere marges, langere sales cycle.</p></div>
       </div>
       <div class="stap tip">
-        <div class="stap-num">✓</div>
-        <div class="stap-body"><h4>Cadeau-bundel als upsell</h4><p>2 stuks voor €49 (in een dubbele doos) of een giftset met rozengeur. Hogere orderwaarde, makkelijkere winstmarge.</p></div>
+        <div class="stap-num">+</div>
+        <div class="stap-body"><h4>Tip: jaarabonnement met korting</h4><p>Bied 10-15% korting bij jaarlijkse betaling. Dit verbetert je cashflow en verlaagt churn. €149/kw wordt ~€510/jaar, €349/kw wordt ~€1.190/jaar.</p></div>
       </div>
     </div>
   </div>
@@ -748,101 +748,102 @@
   <div class="page" id="page-socials">
     <div class="page-header">
       <div class="page-label">Marketing</div>
-      <h1>Social <em>Media</em></h1>
-      <p>Platforms, content ideeën en strategie voor Tender Cards.</p>
+      <h1>Marketing <em>Kanalen</em></h1>
+      <p>Platforms, content strategie en outreach voor Tender Cards.</p>
     </div>
 
     <div class="grid-3" style="margin-bottom:2rem;">
-      <a href="https://instagram.com" target="_blank" class="social-card">
-        <div class="social-icon" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">📸</div>
-        <h3>Instagram</h3>
-        <p>Visueel platform — perfect voor productfoto's, lifestyle shots en Reels. Kern van je merk-uitstraling.</p>
+      <a href="https://linkedin.com" target="_blank" class="social-card">
+        <div class="social-icon" style="background:#0077B5;">💼</div>
+        <h3>LinkedIn</h3>
+        <p>B2B platform bij uitstek — bereik HR-directeuren, arbo-coordinatoren en verzuimspecialisten. Thought leadership en case studies delen.</p>
         <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.25rem;">
-          <span class="tag gold">Reels</span>
-          <span class="tag">Productfoto's</span>
-          <span class="tag">Stories</span>
+          <span class="tag gold">Artikelen</span>
+          <span class="tag">Case studies</span>
+          <span class="tag">Netwerk</span>
         </div>
-        <div class="social-link">Naar Instagram →</div>
+        <div class="social-link">Naar LinkedIn →</div>
       </a>
-      <a href="https://tiktok.com" target="_blank" class="social-card">
-        <div class="social-icon" style="background:#010101;">🎵</div>
-        <h3>TikTok</h3>
-        <p>Viraal platform — unboxings en "why I bought this" video's gaan hier enorm goed in de moslimcommunity.</p>
+      <div class="social-card">
+        <div class="social-icon" style="background:#EA4335;">📧</div>
+        <h3>Email Marketing</h3>
+        <p>Gerichte nieuwsbrieven naar HR-professionals met verzuimtips, nieuwe collecties en klantresultaten. Bouw een waardevolle mailinglijst op.</p>
         <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.25rem;">
-          <span class="tag gold">Unboxing</span>
-          <span class="tag">Trending audio</span>
-          <span class="tag">POV video's</span>
+          <span class="tag gold">Nieuwsbrief</span>
+          <span class="tag">Nurturing</span>
+          <span class="tag">Leads</span>
         </div>
-        <div class="social-link">Naar TikTok →</div>
-      </a>
-      <a href="https://wa.me" target="_blank" class="social-card">
-        <div class="social-icon" style="background:#25D366;">💬</div>
-        <h3>WhatsApp Broadcast</h3>
-        <p>Bouw een broadcast lijst op van geïnteresseerden. Directe, persoonlijke communicatie voor lanceringen en aanbiedingen.</p>
+        <div class="social-link">Email strategie →</div>
+      </div>
+      <div class="social-card">
+        <div class="social-icon" style="background:#2D6B4F;">🤝</div>
+        <h3>Netwerkevenementen</h3>
+        <p>HR-congressen, verzuimconferenties en branche-evenementen. Persoonlijk contact met beslissers is cruciaal in B2B sales.</p>
         <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.25rem;">
-          <span class="tag gold">Lancering alerts</span>
-          <span class="tag">Exclusief</span>
+          <span class="tag gold">Congressen</span>
+          <span class="tag">Demo's</span>
+          <span class="tag">Relatiebouw</span>
         </div>
-        <div class="social-link">WhatsApp openen →</div>
-      </a>
+        <div class="social-link">Evenementen plannen →</div>
+      </div>
     </div>
 
     <div class="section-title" style="margin-bottom:1rem;">Content<em>ideeën</em></div>
     <div style="margin-bottom:2rem;">
       <div class="idea-card">
+        <div class="idea-platform">📝</div>
+        <div class="idea-body">
+          <h4>LinkedIn artikel: De kosten van onpersoonlijk verzuimbeleid</h4>
+          <p>Schrijf over hoe standaard verzuimprotocollen de menselijke maat missen en wat dat kost aan langdurig verzuim. Positioneer Tender Cards als oplossing.</p>
+          <div style="margin-top:0.5rem;"><span class="tag gold">LinkedIn</span><span class="tag">Thought leadership</span><span class="tag">Hoge prioriteit</span></div>
+        </div>
+      </div>
+      <div class="idea-card">
+        <div class="idea-platform">📊</div>
+        <div class="idea-body">
+          <h4>Infographic: Verzuimcijfers per sector</h4>
+          <p>Visualiseer de verzuimpercentages in zorg (6.8%) en onderwijs (6.2%). Laat zien hoeveel organisaties baat hebben bij menselijke verzuimbegeleiding.</p>
+          <div style="margin-top:0.5rem;"><span class="tag gold">LinkedIn</span><span class="tag">Email</span></div>
+        </div>
+      </div>
+      <div class="idea-card">
+        <div class="idea-platform">🎤</div>
+        <div class="idea-body">
+          <h4>Case study: Resultaten eerste pilot klant</h4>
+          <p>Documenteer de ervaring van je eerste pilot. Hoeveel kaarten zijn er verstuurd? Hoe reageerden medewerkers? Wat zegt de HR-directeur? Concrete resultaten overtuigen.</p>
+          <div style="margin-top:0.5rem;"><span class="tag gold">Website</span><span class="tag">LinkedIn</span><span class="tag">Sales materiaal</span></div>
+        </div>
+      </div>
+      <div class="idea-card">
+        <div class="idea-platform">💡</div>
+        <div class="idea-body">
+          <h4>Tips serie: 5 manieren om verzuimgesprekken menselijker te maken</h4>
+          <p>Korte, praktische tips voor HR-professionals. Elke tip sluit aan bij een kaart uit de collectie. Deel als LinkedIn posts of emailserie.</p>
+          <div style="margin-top:0.5rem;"><span class="tag">LinkedIn</span><span class="tag">Email</span></div>
+        </div>
+      </div>
+      <div class="idea-card">
         <div class="idea-platform">📦</div>
         <div class="idea-body">
-          <h4>Unboxing video — eerste sample</h4>
-          <p>Filmde de moment dat je het sample uitpakt. Authentiek, rauw, geen perfecte belichting nodig. Dit soort video's gaan viraal op TikTok.</p>
-          <div style="margin-top:0.5rem;"><span class="tag gold">TikTok</span><span class="tag">Instagram Reels</span><span class="tag">Hoge prioriteit</span></div>
-        </div>
-      </div>
-      <div class="idea-card">
-        <div class="idea-platform">🚗</div>
-        <div class="idea-body">
-          <h4>POV: Je stapt in je auto — Bismillah</h4>
-          <p>"POV: je stapt elke dag in je auto met barakah" — sluit af met het product in beeld. Gebruik trending nasheed audio.</p>
-          <div style="margin-top:0.5rem;"><span class="tag gold">TikTok</span><span class="tag">Reels</span></div>
-        </div>
-      </div>
-      <div class="idea-card">
-        <div class="idea-platform">🎁</div>
-        <div class="idea-body">
-          <h4>Cadeautip voor Eid</h4>
-          <p>"Weet je nog niet wat je iemand cadeau moet geven voor Eid? Dit is het meest betekenisvolle cadeautje dat ik ooit heb gegeven." — persoonlijk verhaal + product.</p>
-          <div style="margin-top:0.5rem;"><span class="tag gold">Instagram</span><span class="tag">TikTok</span><span class="tag">Seizoensgebonden</span></div>
-        </div>
-      </div>
-      <div class="idea-card">
-        <div class="idea-platform">✍️</div>
-        <div class="idea-body">
-          <h4>De betekenis uitleggen</h4>
-          <p>Leg in een korte video uit wat de tekst op het hoesje betekent en waarom je dit product hebt gemaakt. Verhaal = verbinding = vertrouwen.</p>
-          <div style="margin-top:0.5rem;"><span class="tag">Instagram</span><span class="tag">Verhaal</span></div>
-        </div>
-      </div>
-      <div class="idea-card">
-        <div class="idea-platform">👥</div>
-        <div class="idea-body">
-          <h4>Stuur naar 5 micro-influencers</h4>
-          <p>Moslim lifestyle creators met 5.000–50.000 volgers. Stuur een gratis product. Geen betaling nodig — authentieke creators doen dit graag als het product mooi is.</p>
-          <div style="margin-top:0.5rem;"><span class="tag gold">Influencer</span><span class="tag">Gratis product</span><span class="tag">High impact</span></div>
+          <h4>Unboxing video van de premium set</h4>
+          <p>Film het uitpakken van de Tender Cards doos. Laat de kwaliteit van het papier, de verpakking en de inlegkaart zien. Deel op LinkedIn en website.</p>
+          <div style="margin-top:0.5rem;"><span class="tag gold">LinkedIn</span><span class="tag">Website</span><span class="tag">High impact</span></div>
         </div>
       </div>
     </div>
 
-    <div class="section-title" style="margin-bottom:1rem;">Hashtag <em>strategie</em></div>
+    <div class="section-title" style="margin-bottom:1rem;">Outreach <em>strategie</em></div>
     <div class="card">
-      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Gebruik een mix van grote en niche hashtags per post:</p>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Benader prospects via deze kanalen en met deze boodschap:</p>
       <div>
-        <div style="margin-bottom:0.75rem;"><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Groot (1M+)</span>
-          <span class="tag">#muslim</span><span class="tag">#islam</span><span class="tag">#muslimlifestyle</span><span class="tag">#Alhamdulillah</span>
+        <div style="margin-bottom:0.75rem;"><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Primair kanaal</span>
+          <span class="tag gold">#LinkedIn</span><span class="tag gold">#HR-directeuren</span><span class="tag gold">#Arbo-coordinatoren</span>
         </div>
-        <div style="margin-bottom:0.75rem;"><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Middel (100K–1M)</span>
-          <span class="tag gold">#muslimshop</span><span class="tag gold">#islamicgifts</span><span class="tag gold">#muslimcar</span><span class="tag gold">#eidgift</span>
+        <div style="margin-bottom:0.75rem;"><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Secundair kanaal</span>
+          <span class="tag">#Email</span><span class="tag">#Netwerkevenementen</span><span class="tag">#Brancheverenigingen</span>
         </div>
-        <div><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Niche (eigen)</span>
-          <span class="tag">#faithdrive</span><span class="tag">#rijmetbarakah</span><span class="tag">#steunkaart</span>
+        <div><span style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.4rem;">Kernboodschap</span>
+          <span class="tag gold">#VerzuimMetHart</span><span class="tag gold">#TenderCards</span><span class="tag">#Steunkaarten</span>
         </div>
       </div>
     </div>
@@ -860,73 +861,73 @@
       <div class="persona">
         <div class="persona-header">
           <div class="persona-avatar">👩</div>
-          <div><div class="persona-name">Fatima, 24</div><div class="persona-desc">Student / jonge professional, Rotterdam</div></div>
+          <div><div class="persona-name">Lisa, 42</div><div class="persona-desc">HR-directeur, Ziekenhuis Noord-Holland</div></div>
         </div>
         <div class="persona-tags">
-          <span class="tag gold">TikTok actief</span><span class="tag">Cadeauzoeker</span><span class="tag">Lifestyle bewust</span>
+          <span class="tag gold">LinkedIn actief</span><span class="tag">Beslisser</span><span class="tag">Budget eigenaar</span>
         </div>
-        <div class="persona-row"><span>Platform</span><span>TikTok, Instagram</span></div>
-        <div class="persona-row"><span>Koopt voor</span><span>Zichzelf + als cadeau voor vriendin</span></div>
-        <div class="persona-row"><span>Koopdrempel</span><span>€25–35 prima als het mooi is</span></div>
-        <div class="persona-row"><span>Trigger</span><span>Visueel product, betekenisvolle tekst</span></div>
-        <div class="persona-row"><span>Bereik via</span><span>TikTok Reels + Eid content</span></div>
+        <div class="persona-row"><span>Platform</span><span>LinkedIn</span></div>
+        <div class="persona-row"><span>Koopt voor</span><span>HR-team ziekenhuis (200+ medewerkers)</span></div>
+        <div class="persona-row"><span>Pakket</span><span>Pro €349/kw</span></div>
+        <div class="persona-row"><span>Trigger</span><span>Hoog verzuim, menselijke maat mist</span></div>
+        <div class="persona-row"><span>Bereik via</span><span>LinkedIn + HR-congressen</span></div>
       </div>
       <div class="persona">
         <div class="persona-header">
           <div class="persona-avatar">👨</div>
-          <div><div class="persona-name">Ahmed, 35</div><div class="persona-desc">Ondernemer / vader, Amsterdam</div></div>
+          <div><div class="persona-name">Mark, 38</div><div class="persona-desc">Arbo-coordinator, Scholengroep Gelderland</div></div>
         </div>
         <div class="persona-tags">
-          <span class="tag gold">Cadeau gever</span><span class="tag">Meerdere auto's</span><span class="tag">Kwaliteitsgericht</span>
+          <span class="tag gold">Email/LinkedIn</span><span class="tag">Praktisch</span><span class="tag">Budgetbewust</span>
         </div>
-        <div class="persona-row"><span>Platform</span><span>Instagram, WhatsApp</span></div>
-        <div class="persona-row"><span>Koopt voor</span><span>Vrouw, ouders, collega's (Eid)</span></div>
-        <div class="persona-row"><span>Koopdrempel</span><span>€30–40 als het echt premium is</span></div>
-        <div class="persona-row"><span>Trigger</span><span>Kwaliteit, verpakking, cadeauwaarde</span></div>
-        <div class="persona-row"><span>Bereik via</span><span>Instagram + WhatsApp broadcast</span></div>
+        <div class="persona-row"><span>Platform</span><span>Email, LinkedIn</span></div>
+        <div class="persona-row"><span>Koopt voor</span><span>Scholengroep (50+ docenten)</span></div>
+        <div class="persona-row"><span>Pakket</span><span>Essentials €149/kw</span></div>
+        <div class="persona-row"><span>Trigger</span><span>Docenten uitval, werkdruk stress</span></div>
+        <div class="persona-row"><span>Bereik via</span><span>Email nurturing + branchevereniging</span></div>
       </div>
     </div>
 
     <div class="section-title" style="margin-bottom:1rem;">Aankoop<em>motivaties</em></div>
     <div class="grid-3" style="margin-bottom:1.5rem;">
       <div class="card">
-        <div style="font-size:1.5rem;margin-bottom:0.75rem;">🤲</div>
-        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Geloof & intentie</h3>
-        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Elke rit beginnen met Bismillah of een beschermende dua. Het product geeft een dagelijkse spirituele herinnering.</p>
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">💚</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Menselijke maat in verzuim</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">HR-teams willen meer doen dan protocollen afvinken. Steunkaarten bieden een tastbaar, warm gebaar dat laat zien dat de organisatie echt om medewerkers geeft.</p>
       </div>
       <div class="card">
-        <div style="font-size:1.5rem;margin-bottom:0.75rem;">🎁</div>
-        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Cadeau met betekenis</h3>
-        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Perfect cadeau voor Eid, rijbewijs gehaald, nieuwe auto, geboorte of Ramadan. Uniek en persoonlijk.</p>
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">📉</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Verzuimkosten verlagen</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Vroege aandacht en empathie verkorten de verzuimduur. Een kaart van €6 kan duizenden euro's aan verzuimkosten besparen per medewerker.</p>
       </div>
       <div class="card">
-        <div style="font-size:1.5rem;margin-bottom:0.75rem;">✨</div>
-        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Esthetiek & trots</h3>
-        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Het product ziet er premium uit. Mensen zijn trots het te laten zien aan vrienden en familie in de auto.</p>
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">⭐</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Werkgeversimago versterken</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Organisaties die aantoonbaar om hun mensen geven, trekken beter talent aan en behouden medewerkers langer. Steunkaarten zijn zichtbaar bewijs.</p>
       </div>
     </div>
 
     <div class="section-title" style="margin-bottom:1rem;">Markt<em>grootte</em></div>
     <div class="card grid-4">
       <div>
-        <div class="stat-label">Moslims NL</div>
-        <div class="stat-value gold" style="font-size:1.6rem;">1.1M</div>
-        <div class="stat-sub">Totale doelgroep</div>
+        <div class="stat-label">Verzuim zorg</div>
+        <div class="stat-value gold" style="font-size:1.6rem;">6.8%</div>
+        <div class="stat-sub">Hoogste sector NL</div>
       </div>
       <div>
-        <div class="stat-label">Auto-eigenaren (~60%)</div>
-        <div class="stat-value gold" style="font-size:1.6rem;">660K</div>
-        <div class="stat-sub">Directe markt</div>
+        <div class="stat-label">Ziekenhuizen + zorg</div>
+        <div class="stat-value gold" style="font-size:1.6rem;">850</div>
+        <div class="stat-sub">Instellingen</div>
       </div>
       <div>
-        <div class="stat-label">Realistisch bereik 1%</div>
-        <div class="stat-value gold" style="font-size:1.6rem;">6.600</div>
-        <div class="stat-sub">Potentiële klanten</div>
+        <div class="stat-label">Scholen NL</div>
+        <div class="stat-value gold" style="font-size:1.6rem;">7.000+</div>
+        <div class="stat-sub">Verzuim 6.2%</div>
       </div>
       <div>
-        <div class="stat-label">Bij 6.600 × €29</div>
-        <div class="stat-value gold" style="font-size:1.6rem;">€191K</div>
-        <div class="stat-sub">Omzetpotentieel NL</div>
+        <div class="stat-label">Bij 1% penetratie</div>
+        <div class="stat-value gold" style="font-size:1.6rem;">€112K</div>
+        <div class="stat-sub">~80 klanten ARR</div>
       </div>
     </div>
   </div>
@@ -940,88 +941,66 @@
     </div>
 
     <div class="card card-gold" style="margin-bottom:1.5rem;padding:1.25rem 1.5rem;">
-      <div style="font-size:0.8rem;color:var(--gold2);font-weight:600;margin-bottom:0.4rem;">⚡ Gouden regel</div>
-      <div style="font-size:0.82rem;color:rgba(245,242,238,0.65);line-height:1.6;">Start je marketing minimaal <strong style="color:var(--white);">6–8 weken vóór</strong> elk groot islamitisch moment. Orders uit China hebben 3–6 weken levertijd — zorg dat je stock hebt.</div>
+      <div style="font-size:0.8rem;color:var(--gold2);font-weight:600;margin-bottom:0.4rem;">Gouden regel</div>
+      <div style="font-size:0.82rem;color:rgba(245,242,238,0.65);line-height:1.6;">Start je outreach minimaal <strong style="color:var(--white);">8-10 weken voor</strong> elk groot moment. HR-afdelingen hebben tijd nodig om budget vrij te maken en intern akkoord te krijgen.</div>
     </div>
 
-    <div class="card card-gold" style="margin-bottom:1.5rem;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
-      <div style="font-size:1.5rem;">⚡</div>
-      <div>
-        <div style="font-size:0.78rem;font-weight:600;color:var(--gold2);margin-bottom:0.2rem;">Nu actie vereist — Eid al-Adha is over ~6 weken!</div>
-        <div style="font-size:0.78rem;color:rgba(245,242,238,0.55);">Start vandaag met je marketing. Zorg dat je stock op 26 mei in huis is. Dit is je eerste grote kans.</div>
-      </div>
-    </div>
-
-    <div class="section-title" style="margin-bottom:1rem;">April – December <em>2026</em></div>
+    <div class="section-title" style="margin-bottom:1rem;">September 2026 – Januari <em>2027</em></div>
     <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
 
       <div class="moment-card" style="border-color:rgba(45,107,79,0.35);background:rgba(45,107,79,0.05);">
-        <div class="moment-date" style="background:rgba(45,107,79,0.15);border-color:rgba(45,107,79,0.3);"><div class="moment-month">Mei</div><div class="moment-day">26</div></div>
+        <div class="moment-date" style="background:rgba(45,107,79,0.15);border-color:rgba(45,107,79,0.3);"><div class="moment-month">Sep</div><div class="moment-day">2026</div></div>
         <div class="moment-body">
-          <h4>🔥 Eid al-Adha 2026 — NU VOORBEREIDEN</h4>
-          <p>Offerfeest — over ~6 weken. Start <strong>vandaag</strong> met content maken. Zorg dat stock er is vóór 12 mei. Families zijn samen en rijden veel — perfect moment.</p>
+          <h4>Week van de werkstress</h4>
+          <p>Het ideale moment om Tender Cards te positioneren als tool voor werkstresspreventie. Content over vroege signalen en de rol van empathie in verzuimbegeleiding.</p>
         </div>
-        <div class="moment-badge badge-high">🔥 Urgent</div>
+        <div class="moment-badge badge-high">Belangrijk</div>
       </div>
 
       <div class="moment-card">
-        <div class="moment-date"><div class="moment-month">Jun</div><div class="moment-day">26</div></div>
+        <div class="moment-date"><div class="moment-month">Okt</div><div class="moment-day">2026</div></div>
         <div class="moment-body">
-          <h4>Islamitisch Nieuwjaar 1448</h4>
-          <p>Nieuw jaar, nieuwe intenties — goede content kans rondom bewust rijden, intentie zetten, bescherming vragen.</p>
-        </div>
-        <div class="moment-badge badge-med">Middel</div>
-      </div>
-
-      <div class="moment-card">
-        <div class="moment-date"><div class="moment-month">Sep</div><div class="moment-day">4</div></div>
-        <div class="moment-body">
-          <h4>Mawlid al-Nabi 2026</h4>
-          <p>Geboortedag van de Profeet ﷺ — spiritueel en emotioneel moment. Deel de betekenis van de tekst op het hoesje.</p>
+          <h4>Dag van de duurzaamheid</h4>
+          <p>Duurzaam werkgeverschap als thema — steunkaarten als onderdeel van een duurzaam HR-beleid. Link naar FSC-papier en maatschappelijke impact.</p>
         </div>
         <div class="moment-badge badge-med">Middel</div>
       </div>
 
       <div class="moment-card" style="border-color:rgba(45,107,79,0.2);">
+        <div class="moment-date" style="background:rgba(45,107,79,0.08);border-color:rgba(45,107,79,0.2);"><div class="moment-month">Nov</div><div class="moment-day">2026</div></div>
+        <div class="moment-body">
+          <h4>Week van het verzuim</h4>
+          <p>Het belangrijkste vakmoment voor HR-professionals rondom verzuim. Maximale zichtbaarheid voor Tender Cards — content, LinkedIn posts, demo aanbiedingen.</p>
+        </div>
+        <div class="moment-badge badge-high">Belangrijk</div>
+      </div>
+
+      <div class="moment-card" style="border-color:rgba(45,107,79,0.2);">
         <div class="moment-date" style="background:rgba(45,107,79,0.08);border-color:rgba(45,107,79,0.2);"><div class="moment-month">Jan</div><div class="moment-day">2027</div></div>
         <div class="moment-body">
-          <h4>🌙 Ramadan 2027 — Begin nu te plannen</h4>
-          <p>Ramadan 2027 start rond <strong>8 januari</strong>. Start marketing in november 2026, stock klaar in december. Dit is het grootste verkoopmoment van het jaar — niet missen.</p>
+          <h4>Nieuwe budgetrondes HR</h4>
+          <p>Januari = nieuw budget. HR-afdelingen alloceren hun jaarbudget. Zorg dat je in Q4 2026 al in gesprek bent zodat Tender Cards in het 2027-budget komt.</p>
         </div>
         <div class="moment-badge badge-high">Plannen</div>
       </div>
     </div>
 
-    <div class="section-title" style="margin-bottom:1rem;">Voorbij — <em>Geleerd</em></div>
-    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
-      <div class="moment-card" style="opacity:0.45;">
-        <div class="moment-date"><div class="moment-month">Feb</div><div class="moment-day">17</div></div>
-        <div class="moment-body"><h4>Ramadan 2026</h4><p>Gemist als lanceermoment — zorg dat Ramadan 2027 (jan) wél gepland staat.</p></div>
-        <div class="moment-badge" style="background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid rgba(255,255,255,0.08);">Voorbij</div>
-      </div>
-      <div class="moment-card" style="opacity:0.45;">
-        <div class="moment-date"><div class="moment-month">Mrt</div><div class="moment-day">19</div></div>
-        <div class="moment-body"><h4>Eid al-Fitr 2026</h4><p>Suikerfeest — voorbij. Volgende kans: Eid al-Adha op 26 mei.</p></div>
-        <div class="moment-badge" style="background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid rgba(255,255,255,0.08);">Voorbij</div>
-      </div>
-    </div>
-
-    <div class="section-title" style="margin-bottom:1rem;">Algemene <em>momenten</em></div>
+    <div class="section-title" style="margin-bottom:1rem;">Evergreen <em>momenten</em></div>
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
       <div class="moment-card">
         <div class="moment-date"><div class="moment-month">Heel</div><div class="moment-day">Jr</div></div>
-        <div class="moment-body"><h4>Rijbewijs gehaald</h4><p>Evergreen cadeauidee — "Rijbewijs gehaald? Gun jezelf of je kind een mooie start." Werkt het hele jaar door.</p></div>
+        <div class="moment-body"><h4>Onboarding nieuwe managers</h4><p>Nieuwe leidinggevenden krijgen Tender Cards als onderdeel van hun onboarding-pakket. Leer ze direct om verzuim met empathie te benaderen.</p></div>
         <div class="moment-badge badge-med">Evergreen</div>
       </div>
       <div class="moment-card">
         <div class="moment-date"><div class="moment-month">Heel</div><div class="moment-day">Jr</div></div>
-        <div class="moment-body"><h4>Nieuwe auto</h4><p>"Nieuwe auto? Maak je eerste rit compleet." — Dealers en Facebook Marketplace autoadvertenties zijn potentieel voor samenwerkingen.</p></div>
+        <div class="moment-body"><h4>Audit verzuimbeleid</h4><p>Wanneer organisaties hun verzuimbeleid evalueren, is dat het perfecte moment om Tender Cards voor te stellen als aanvulling op het bestaande beleid.</p></div>
         <div class="moment-badge badge-med">Evergreen</div>
       </div>
       <div class="moment-card">
         <div class="moment-date"><div class="moment-month">Heel</div><div class="moment-day">Jr</div></div>
-        <div class="moment-body"><h4>Geboorte cadeau</h4><p>Ouders die een baby verwachten rijden ook auto — een mooie beschermende dua in de auto bij de geboorte van een kind.</p></div>
-        <div class="moment-badge badge-med">Cadeau</div>
+        <div class="moment-body"><h4>Reorganisaties</h4><p>Tijdens reorganisaties stijgt het verzuim vaak. Organisaties die door veranderingen gaan, hebben extra behoefte aan empathische communicatie richting hun medewerkers.</p></div>
+        <div class="moment-badge badge-med">Evergreen</div>
       </div>
     </div>
   </div>
@@ -1047,7 +1026,7 @@
       <div class="stat-card">
         <div class="stat-label">Gem. orderwaarde</div>
         <div class="stat-value">—</div>
-        <div class="stat-sub">Doel: €29+</div>
+        <div class="stat-sub">Doel: €149+</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Winst</div>
@@ -1071,22 +1050,22 @@
         <div class="card">
           <div style="display:flex;flex-direction:column;gap:0.75rem;">
             <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
-              <span style="color:var(--muted);">Inkoop per stuk (China)</span><span>€4,00</span>
+              <span style="color:var(--muted);">Drukwerk per kaart</span><span>€1,50</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
-              <span style="color:var(--muted);">Verpakking per stuk</span><span>€1,50</span>
+              <span style="color:var(--muted);">Verpakking per zending</span><span>€0,80</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
-              <span style="color:var(--muted);">Shipping + douane per stuk</span><span>€1,50</span>
+              <span style="color:var(--muted);">Verzending per order</span><span>€4,25</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
-              <span style="color:var(--muted);">Verzending NL per order</span><span>€4,25</span>
+              <span style="color:var(--muted);">Platform kosten per order</span><span>€2,00</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.88rem;font-weight:600;padding-top:0.25rem;">
-              <span style="color:var(--muted);">Totale kostprijs</span><span style="color:var(--white);">~€11,25</span>
+              <span style="color:var(--muted);">Totale kostprijs per zending</span><span style="color:var(--white);">~€8,55</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.88rem;font-weight:600;background:rgba(45,107,79,0.08);border:1px solid rgba(45,107,79,0.15);border-radius:8px;padding:0.75rem;">
-              <span style="color:var(--gold2);">Verkoopprijs €29 → winst</span><span style="color:var(--gold2);">~€17,75</span>
+              <span style="color:var(--gold2);">Verkoopprijs €149/kw → winst</span><span style="color:var(--gold2);">~€140</span>
             </div>
           </div>
         </div>
@@ -1097,11 +1076,6 @@
 </main>
 
 <script>
-  // Password guard
-  if (sessionStorage.getItem('tc_auth') !== 'ok') {
-    window.location.replace('login.html');
-  }
-
   // Navigation
   function showPage(id, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1113,7 +1087,7 @@
       dashboard: 'Goede<em>morgen</em>',
       checklist: 'Lanceer<em>checklist</em>',
       stappenplan: 'Stappen<em>plan</em>',
-      socials: 'Social <em>media</em>',
+      socials: 'Marketing <em>kanalen</em>',
       doelgroep: 'Doel<em>groep</em>',
       kalender: 'Bijzondere <em>Momenten</em>',
       verkoop: 'Ver<em>koop</em>'
@@ -1146,10 +1120,10 @@
     const steps = ['s1','s2','s3','s4','s5'];
     const checks = document.querySelectorAll('#page-checklist .check-item');
     const doneMap = [
-      checks[3]?.classList.contains('done'),
-      checks[4]?.classList.contains('done'),
-      checks[7]?.classList.contains('done'),
-      checks[5]?.classList.contains('done'),
+      checks[2]?.classList.contains('done'),
+      checks[9]?.classList.contains('done'),
+      checks[12]?.classList.contains('done'),
+      checks[6]?.classList.contains('done'),
       checks[9]?.classList.contains('done'),
     ];
     steps.forEach((id, i) => {

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEV8 — Parent Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230E0E10'/%3E%3Ctext x='16' y='22' font-size='14' font-weight='800' text-anchor='middle' fill='%23FF6B35'%3E8%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0E0E10;
+      --dark:  #141414;
+      --card:  #1A1A1A;
+      --card2: #1F1F1F;
+      --border: rgba(255,255,255,0.06);
+      --gold:  #FF6B35;
+      --gold2: #FF9B73;
+      --white: #F5F2EE;
+      --muted: rgba(245,242,238,0.38);
+      --green: #4CAF7D;
+      --red:   #E05A5A;
+      --blue:  #5A9BE0;
+    }
+    html { height: 100%; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      height: 100%;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: var(--dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+    .sidebar-brand {
+      padding: 1.5rem 1.5rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--white); letter-spacing: 0.04em;
+    }
+    .sidebar-logo span { color: var(--gold); font-weight: 400; }
+    .sidebar-tag {
+      font-size: 0.6rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted);
+      margin-top: 3px;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow-y: auto;
+    }
+    .nav-section-label {
+      font-size: 0.58rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(245,242,238,0.2);
+      padding: 0.75rem 0.75rem 0.4rem;
+      margin-top: 0.5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      font-size: 0.83rem;
+      color: var(--muted);
+      user-select: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--white); }
+    .nav-item.active {
+      background: rgba(255,107,53,0.1);
+      color: var(--gold2);
+      border: 1px solid rgba(255,107,53,0.15);
+    }
+    .nav-item svg { flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 100px;
+    }
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: rgba(245,242,238,0.18);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    .topbar {
+      position: sticky; top: 0;
+      background: rgba(14,14,16,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 10;
+    }
+    .topbar-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+    }
+    .topbar-title em { font-style: normal; color: var(--gold2); }
+    .topbar-right {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      display: inline-block; margin-right: 0.3rem;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+
+    /* ─── PAGES ─── */
+    .page { display: none; padding: 2rem; animation: fadeIn 0.25s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .card-gold {
+      border-color: rgba(255,107,53,0.2);
+      background: rgba(255,107,53,0.04);
+    }
+
+    /* ─── GRID HELPERS ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header { margin-bottom: 2rem; }
+    .page-label {
+      font-size: 0.62rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold2);
+      display: flex; align-items: center; gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .page-label::before { content: ''; width: 20px; height: 1px; background: var(--gold2); opacity: 0.4; }
+    .page-header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800;
+    }
+    .page-header h1 em { font-style: normal; color: var(--gold2); }
+    .page-header p { font-size: 0.82rem; color: var(--muted); margin-top: 0.4rem; }
+
+    /* ─── STAT CARDS ─── */
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800; color: var(--white); line-height: 1;
+    }
+    .stat-value.gold { color: var(--gold2); }
+    .stat-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; }
+    .stat-change { font-size: 0.72rem; margin-top: 0.3rem; }
+    .stat-change.up { color: var(--green); }
+    .stat-change.down { color: var(--red); }
+
+    /* ─── SECTION TITLE ─── */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+      color: var(--white); margin-bottom: 1rem;
+    }
+    .section-title em { font-style: normal; color: var(--gold2); }
+
+    /* ─── STAP ITEMS ─── */
+    .stap-group { margin-bottom: 2rem; }
+    .stap-group-title {
+      font-size: 0.65rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold2);
+      margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,107,53,0.15);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .stap {
+      display: flex; gap: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.6rem;
+      transition: border-color 0.2s;
+    }
+    .stap:hover { border-color: rgba(255,107,53,0.2); }
+    .stap-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--gold2); min-width: 28px; line-height: 1.2;
+    }
+    .stap-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.3rem; }
+    .stap-body p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+    .stap.warning { border-color: rgba(224,90,90,0.25); background: rgba(224,90,90,0.04); }
+    .stap.warning .stap-num { color: var(--red); }
+    .stap.tip { border-color: rgba(76,175,125,0.2); background: rgba(76,175,125,0.03); }
+    .stap.tip .stap-num { color: var(--green); }
+
+    /* ─── BRAND CARD ─── */
+    .brand-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex; flex-direction: column;
+      gap: 0.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .brand-card:hover { transform: translateY(-3px); }
+    .brand-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .brand-card h3 { font-size: 0.9rem; font-weight: 600; color: var(--white); }
+    .brand-card p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+    /* Content tags */
+    .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin: 0.2rem;
+    }
+    .tag.gold { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.2); color: var(--gold2); }
+
+    /* ─── MOMENT CALENDAR ─── */
+    .moment-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      display: flex; gap: 1.25rem; align-items: center;
+    }
+    .moment-date {
+      text-align: center; min-width: 52px;
+      background: rgba(255,107,53,0.08);
+      border: 1px solid rgba(255,107,53,0.15);
+      border-radius: 8px;
+      padding: 0.5rem 0.4rem;
+    }
+    .moment-month { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold2); }
+    .moment-day { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--white); line-height: 1; }
+    .moment-body h4 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.2rem; }
+    .moment-body p { font-size: 0.75rem; color: var(--muted); }
+    .moment-badge {
+      margin-left: auto; flex-shrink: 0;
+      font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.55rem;
+      border-radius: 100px;
+    }
+    .badge-high { background: rgba(255,107,53,0.15); color: var(--gold2); border: 1px solid rgba(255,107,53,0.2); }
+    .badge-med  { background: rgba(90,155,224,0.12); color: var(--blue); border: 1px solid rgba(90,155,224,0.2); }
+
+    /* ─── PERSONA ─── */
+    .persona {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .persona-header {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .persona-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .persona-name { font-size: 0.9rem; font-weight: 600; color: var(--white); }
+    .persona-desc { font-size: 0.72rem; color: var(--muted); }
+    .persona-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1rem; }
+    .persona-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .persona-row:last-child { border-bottom: none; }
+    .persona-row span:first-child { font-size: 0.72rem; color: var(--muted); }
+    .persona-row span:last-child { font-size: 0.78rem; color: var(--white); font-weight: 500; }
+    .bar-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    .bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--gold); border-radius: 100px; }
+
+    /* ─── VERKOOP ─── */
+    .order-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .order-row:last-child { border-bottom: none; }
+    .order-status {
+      font-size: 0.65rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+    }
+    .status-paid { background: rgba(76,175,125,0.12); color: var(--green); border: 1px solid rgba(76,175,125,0.2); }
+    .status-pending { background: rgba(255,107,53,0.1); color: var(--gold2); border: 1px solid rgba(255,107,53,0.2); }
+    .status-shipped { background: rgba(90,155,224,0.1); color: var(--blue); border: 1px solid rgba(90,155,224,0.2); }
+    .order-amount { margin-left: auto; font-weight: 600; color: var(--white); }
+
+    /* ─── CHECKLIST ─── */
+    .check-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-box {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 4px; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .check-item.done .check-box {
+      background: var(--gold); border-color: var(--gold);
+    }
+    .check-item.done .check-text { color: var(--muted); text-decoration: line-through; }
+    .check-text { font-size: 0.82rem; color: var(--white); line-height: 1.4; }
+    .check-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ─── PROGRESS ─── */
+    .progress-wrap { margin-top: 0.5rem; }
+    .progress-bar {
+      height: 6px; background: rgba(255,255,255,0.06);
+      border-radius: 100px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2));
+      border-radius: 100px;
+      transition: width 0.6s ease;
+    }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.68rem; color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">ELEV<span>8</span></div>
+    <div class="sidebar-tag">Only up from here</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overzicht</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('merken', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Merken
+      <span class="nav-badge">2</span>
+    </div>
+
+    <div class="nav-section-label">Organisatie</div>
+    <div class="nav-item" onclick="showPage('team', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Team
+    </div>
+    <div class="nav-item" onclick="showPage('financieel', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Financieel
+    </div>
+
+    <div class="nav-section-label">Strategie</div>
+    <div class="nav-item" onclick="showPage('strategie', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Strategie
+    </div>
+    <div class="nav-item" onclick="showPage('planning', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Planning
+    </div>
+  </nav>
+  <div class="sidebar-footer">ELEV8 · Intern gebruik</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Goede<em>morgen</em></div>
+    <div class="topbar-right">
+      <span><span class="status-dot"></span>Live</span>
+      <span id="current-date"></span>
+    </div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div class="page-label">Overzicht</div>
+      <h1>ELEV<em>8</em> Dashboard</h1>
+      <p>Centraal overzicht van alle merken en activiteiten.</p>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:1.5rem;">
+      <div class="stat-card">
+        <div class="stat-label">Totale omzet</div>
+        <div class="stat-value gold">€0</div>
+        <div class="stat-sub">Pre-launch fase</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Actieve merken</div>
+        <div class="stat-value gold">2</div>
+        <div class="stat-sub">FaithDrive + Tender Cards</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Team</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sub">Personen</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Target Q1</div>
+        <div class="stat-value gold">€8.360</div>
+        <div class="stat-sub">Gecombineerd</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Sub-<em>brands</em></div>
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="brand-card" style="border-color:rgba(196,150,61,0.25);">
+        <div class="brand-icon" style="background:rgba(196,150,61,0.15);color:#C4963D;font-weight:800;font-family:'Syne',sans-serif;font-size:0.85rem;">FD</div>
+        <h3>FaithDrive <span style="font-size:0.72rem;color:var(--muted);font-weight:400;">(AmaanCover)</span></h3>
+        <p>Premium gordelhoezen met islamitische teksten. Geloof ontmoet design in de auto.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span class="tag" style="background:rgba(196,150,61,0.1);border-color:rgba(196,150,61,0.2);color:#E8B458;">Pre-launch</span>
+          <span class="tag">Target: €2.400</span>
+        </div>
+        <div class="progress-label" style="margin-top:0.5rem;"><span>Voortgang</span><span>0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%;background:linear-gradient(90deg,#C4963D,#E8B458);"></div></div>
+      </div>
+      <div class="brand-card" style="border-color:rgba(45,107,79,0.25);">
+        <div class="brand-icon" style="background:rgba(45,107,79,0.15);color:#2D6B4F;font-weight:800;font-family:'Syne',sans-serif;font-size:0.85rem;">TC</div>
+        <h3>Tender Cards</h3>
+        <p>HR steunkaarten voor werknemers. Mentale gezondheid bespreekbaar maken op de werkvloer.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span class="tag" style="background:rgba(45,107,79,0.1);border-color:rgba(45,107,79,0.2);color:#4CAF7D;">Pre-launch</span>
+          <span class="tag">Target: €5.960</span>
+        </div>
+        <div class="progress-label" style="margin-top:0.5rem;"><span>Voortgang</span><span>0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%;background:linear-gradient(90deg,#2D6B4F,#4CAF7D);"></div></div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <!-- Combined launch progress -->
+      <div class="card">
+        <div class="section-title">Totale lanceer<em>voortgang</em></div>
+        <div style="margin-bottom:1.25rem;">
+          <div class="progress-label"><span>Beide merken gecombineerd</span><span>0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span>FaithDrive — Sample besteld</span><span style="color:var(--muted);">○</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span>FaithDrive — Website live</span><span style="color:var(--muted);">○</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span>Tender Cards — Eerste pilot</span><span style="color:var(--muted);">○</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);padding:0.4rem 0;">
+            <span>Tender Cards — Platform live</span><span style="color:var(--muted);">○</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next action + vision -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        <div class="card card-gold">
+          <div class="stat-label">Volgende actie</div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.25rem;">Lanceer eerste sub-brand</div>
+          <div style="font-size:0.78rem;color:var(--muted);line-height:1.6;">FaithDrive is het dichtst bij lancering. Focus op het bestellen van het eerste sample en het opzetten van de webshop.</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,107,53,0.15);background:rgba(255,107,53,0.03);">
+          <div class="stat-label">Visie</div>
+          <div style="font-size:1.1rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--gold2);margin:0.4rem 0 0.2rem;">Elk bedrijf een verhaal dat gezien wordt</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;">ELEV8 bouwt merken die mensen raken. Elk merk vertelt een verhaal, lost een probleem op en creëert waarde.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MERKEN ═══ -->
+  <div class="page" id="page-merken">
+    <div class="page-header">
+      <div class="page-label">Portfolio</div>
+      <h1>Onze <em>Merken</em></h1>
+      <p>Gedetailleerd overzicht van alle ELEV8 sub-brands.</p>
+    </div>
+
+    <!-- FaithDrive -->
+    <div class="card" style="margin-bottom:1.5rem;border-color:rgba(196,150,61,0.2);">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div class="brand-icon" style="background:rgba(196,150,61,0.15);color:#C4963D;font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;">FD</div>
+        <div>
+          <h3 style="font-size:1.1rem;font-weight:700;color:var(--white);font-family:'Syne',sans-serif;">FaithDrive</h3>
+          <div style="font-size:0.72rem;color:var(--muted);">Voorheen AmaanCover</div>
+        </div>
+        <span class="tag" style="margin-left:auto;background:rgba(196,150,61,0.1);border-color:rgba(196,150,61,0.2);color:#E8B458;">Pre-launch</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;">Premium gordelhoezen met islamitische teksten en borduurwerk. Een geloofsproduct dat esthetiek en spiritualiteit combineert in de auto. Gericht op de moslimcommunity in Nederland.</p>
+      <div class="grid-4" style="margin-bottom:1rem;">
+        <div>
+          <div class="stat-label">Verkoopprijs</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:#E8B458;">€29/stuk</div>
+        </div>
+        <div>
+          <div class="stat-label">Marge per stuk</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--green);">~€24</div>
+        </div>
+        <div>
+          <div class="stat-label">Omzet</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--white);">€0</div>
+        </div>
+        <div>
+          <div class="stat-label">Target</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:#E8B458;">€2.400</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+        <span class="tag" style="background:rgba(196,150,61,0.1);border-color:rgba(196,150,61,0.2);color:#E8B458;">B2C</span>
+        <span class="tag">Islamitische markt</span>
+        <span class="tag">E-commerce</span>
+        <span class="tag">Fysiek product</span>
+        <span class="tag">Import China</span>
+      </div>
+    </div>
+
+    <!-- Tender Cards -->
+    <div class="card" style="margin-bottom:1.5rem;border-color:rgba(45,107,79,0.2);">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div class="brand-icon" style="background:rgba(45,107,79,0.15);color:#2D6B4F;font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;">TC</div>
+        <div>
+          <h3 style="font-size:1.1rem;font-weight:700;color:var(--white);font-family:'Syne',sans-serif;">Tender Cards</h3>
+          <div style="font-size:0.72rem;color:var(--muted);">HR steunkaarten</div>
+        </div>
+        <span class="tag" style="margin-left:auto;background:rgba(45,107,79,0.1);border-color:rgba(45,107,79,0.2);color:#4CAF7D;">Pre-launch</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;">Kaarten en toolkits waarmee HR-afdelingen mentale gezondheid, waardering en steun bespreekbaar maken op de werkvloer. Abonnementsmodel per kwartaal, gericht op MKB en corporates.</p>
+      <div class="grid-4" style="margin-bottom:1rem;">
+        <div>
+          <div class="stat-label">Prijs per kwartaal</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:#4CAF7D;">€149–349</div>
+        </div>
+        <div>
+          <div class="stat-label">Marge</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--green);">~70%</div>
+        </div>
+        <div>
+          <div class="stat-label">Omzet</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--white);">€0</div>
+        </div>
+        <div>
+          <div class="stat-label">Target</div>
+          <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:#4CAF7D;">€5.960</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+        <span class="tag" style="background:rgba(45,107,79,0.1);border-color:rgba(45,107,79,0.2);color:#4CAF7D;">B2B</span>
+        <span class="tag">HR & Welzijn</span>
+        <span class="tag">Abonnement</span>
+        <span class="tag">MKB + Corporate</span>
+        <span class="tag">Mentale gezondheid</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TEAM ═══ -->
+  <div class="page" id="page-team">
+    <div class="page-header">
+      <div class="page-label">Organisatie</div>
+      <h1>Ons <em>Team</em></h1>
+      <p>De mensen achter ELEV8 en hun verantwoordelijkheden.</p>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:1.5rem;">
+      <div class="persona">
+        <div class="persona-header">
+          <div class="persona-avatar">L</div>
+          <div>
+            <div class="persona-name">Lucas Vermaire</div>
+            <div class="persona-desc">Co-founder</div>
+          </div>
+        </div>
+        <div class="persona-tags">
+          <span class="tag gold">Development</span>
+          <span class="tag gold">Design</span>
+          <span class="tag">Tech</span>
+        </div>
+        <div class="persona-row"><span>Rol</span><span>Co-founder</span></div>
+        <div class="persona-row"><span>Focus</span><span>Development & Design</span></div>
+        <div class="persona-row"><span>Verantwoordelijk</span><span>Websites, dashboards, branding</span></div>
+        <div class="persona-row"><span>Merken</span><span>Alle merken</span></div>
+      </div>
+      <div class="persona">
+        <div class="persona-header">
+          <div class="persona-avatar">R</div>
+          <div>
+            <div class="persona-name">Raymond</div>
+            <div class="persona-desc">Co-founder</div>
+          </div>
+        </div>
+        <div class="persona-tags">
+          <span class="tag gold">Sales</span>
+          <span class="tag gold">Strategy</span>
+          <span class="tag">Business</span>
+        </div>
+        <div class="persona-row"><span>Rol</span><span>Co-founder</span></div>
+        <div class="persona-row"><span>Focus</span><span>Sales & Strategy</span></div>
+        <div class="persona-row"><span>Verantwoordelijk</span><span>Klantrelaties, partnerships</span></div>
+        <div class="persona-row"><span>Merken</span><span>Tender Cards (lead)</span></div>
+      </div>
+      <div class="persona">
+        <div class="persona-header">
+          <div class="persona-avatar">S</div>
+          <div>
+            <div class="persona-name">Shihab</div>
+            <div class="persona-desc">Co-founder</div>
+          </div>
+        </div>
+        <div class="persona-tags">
+          <span class="tag gold">Marketing</span>
+          <span class="tag gold">Brand</span>
+          <span class="tag">Creative</span>
+        </div>
+        <div class="persona-row"><span>Rol</span><span>Co-founder</span></div>
+        <div class="persona-row"><span>Focus</span><span>Marketing & Brand</span></div>
+        <div class="persona-row"><span>Verantwoordelijk</span><span>Socials, content, campagnes</span></div>
+        <div class="persona-row"><span>Merken</span><span>FaithDrive (lead)</span></div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Werk<em>verdeling</em></div>
+    <div class="card">
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Strategie & richting</span><span>Gezamenlijk</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Webontwikkeling & tooling</span><span>Lucas</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Sales & klantcontact</span><span>Raymond</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Marketing & social media</span><span>Shihab</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Visuele identiteit & branding</span><span>Lucas + Shihab</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--muted);">Financieel overzicht</span><span>Raymond + Lucas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FINANCIEEL ═══ -->
+  <div class="page" id="page-financieel">
+    <div class="page-header">
+      <div class="page-label">Financieel</div>
+      <h1>Financieel <em>Overzicht</em></h1>
+      <p>Gecombineerde omzet, targets en kostenstructuur van alle merken.</p>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:1.5rem;">
+      <div class="stat-card">
+        <div class="stat-label">Gecombineerde omzet</div>
+        <div class="stat-value gold">€0</div>
+        <div class="stat-sub">Pre-launch</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gecombineerd target</div>
+        <div class="stat-value gold">€8.360</div>
+        <div class="stat-sub">Q1 doel</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Totale kosten</div>
+        <div class="stat-value">€0</div>
+        <div class="stat-sub">Nog geen uitgaven</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Winst</div>
+        <div class="stat-value gold">€0</div>
+        <div class="stat-sub">—</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div>
+        <div class="section-title" style="margin-bottom:1rem;">Omzet per <em>merk</em></div>
+        <div class="card">
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:10px;height:10px;border-radius:3px;background:#C4963D;"></div>
+                <span>FaithDrive</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="color:var(--white);font-weight:600;">€0</span>
+                <span style="color:var(--muted);font-size:0.72rem;margin-left:0.5rem;">/ €2.400</span>
+              </div>
+            </div>
+            <div style="margin-bottom:0.5rem;">
+              <div class="progress-bar"><div class="progress-fill" style="width:0%;background:linear-gradient(90deg,#C4963D,#E8B458);"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:10px;height:10px;border-radius:3px;background:#2D6B4F;"></div>
+                <span>Tender Cards</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="color:var(--white);font-weight:600;">€0</span>
+                <span style="color:var(--muted);font-size:0.72rem;margin-left:0.5rem;">/ €5.960</span>
+              </div>
+            </div>
+            <div>
+              <div class="progress-bar"><div class="progress-fill" style="width:0%;background:linear-gradient(90deg,#2D6B4F,#4CAF7D);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" style="margin-bottom:1rem;">Kosten<em>structuur</em></div>
+        <div class="card">
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">FaithDrive — Inkoop (100 stuks)</span><span>~€500</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">FaithDrive — Verpakking</span><span>~€150</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">FaithDrive — Shipping + douane</span><span>~€150</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">Tender Cards — Design & drukwerk</span><span>~€300</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">Tender Cards — Platform & tooling</span><span>~€200</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+              <span style="color:var(--muted);">Marketing (gecombineerd)</span><span>~€200</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem;font-weight:600;padding-top:0.25rem;">
+              <span style="color:var(--muted);">Geschatte totale kosten</span><span style="color:var(--white);">~€1.500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Runway / <em>Burn rate</em></div>
+    <div class="card card-gold">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div style="font-size:1.5rem;">📊</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--white);margin-bottom:0.2rem;">Wordt bijgewerkt na lancering</div>
+          <div style="font-size:0.78rem;color:var(--muted);line-height:1.6;">Zodra de eerste omzet en kosten binnenkomen, wordt hier de burn rate en runway automatisch berekend. Focus nu op lancering.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STRATEGIE ═══ -->
+  <div class="page" id="page-strategie">
+    <div class="page-header">
+      <div class="page-label">Visie</div>
+      <h1>Strategie <em>& Doelen</em></h1>
+      <p>Waar ELEV8 naartoe werkt en hoe we daar komen.</p>
+    </div>
+
+    <div class="card card-gold" style="margin-bottom:1.5rem;">
+      <div class="stat-label">Company Vision</div>
+      <div style="font-size:1.2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--gold2);margin:0.5rem 0 0.4rem;">Elk bedrijf een verhaal dat gezien wordt</div>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">ELEV8 bouwt merken die mensen raken. We geloven dat elk product een verhaal vertelt en elk merk een missie heeft. Wij helpen die verhalen tot leven te brengen door design, technologie en strategie samen te brengen.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="stat-label">Company Mission</div>
+      <div style="font-size:0.95rem;font-weight:600;color:var(--white);margin:0.5rem 0 0.4rem;">Bouwen aan merken die impact maken</div>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">Door meerdere nichemarken onder een dak te ontwikkelen, creëren we een portfolio van bedrijven die elk hun eigen doelgroep aanspreken. Lean, data-driven en met oog voor design.</div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">2026 <em>Doelen</em></div>
+    <div class="grid-3" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">🚀</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Launch beide sub-brands</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">FaithDrive en Tender Cards allebei live krijgen met een werkend verkoopkanaal en eerste klanten.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">💰</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Reach €10K omzet</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Gecombineerde omzet van €10.000 over beide merken voor eind 2026. Bewijs dat het model werkt.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">👥</div>
+        <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Build team</h3>
+        <p style="font-size:0.76rem;color:var(--muted);line-height:1.6;">Het team van 3 effectief laten samenwerken met duidelijke rolverdeling en wekelijkse sync.</p>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Q2 <em>Prioriteiten</em> (apr–jun 2026)</div>
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="stap" style="border-color:rgba(196,150,61,0.2);">
+        <div class="stap-num" style="color:#E8B458;">FD</div>
+        <div class="stap-body">
+          <h4>FaithDrive: Eerste sample bestellen</h4>
+          <p>Zoek leveranciers op Alibaba, bestel 3 samples, laat Arabische tekst verifiëren. Eerste fysieke product in handen krijgen.</p>
+        </div>
+      </div>
+      <div class="stap" style="border-color:rgba(45,107,79,0.2);">
+        <div class="stap-num" style="color:#4CAF7D;">TC</div>
+        <div class="stap-body">
+          <h4>Tender Cards: Eerste pilot starten</h4>
+          <p>Benader 3–5 MKB-bedrijven voor een gratis pilotprogramma. Verzamel feedback en optimaliseer het product.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Q3 <em>Prioriteiten</em> (jul–sep 2026)</div>
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="stap">
+        <div class="stap-num">📈</div>
+        <div class="stap-body">
+          <h4>Scale marketing</h4>
+          <p>Beide merken actief promoten via social media, influencer partnerships en gerichte advertenties. Content strategie per merk uitrollen.</p>
+        </div>
+      </div>
+      <div class="stap">
+        <div class="stap-num">⚙️</div>
+        <div class="stap-body">
+          <h4>Optimize operations</h4>
+          <p>Supply chain optimaliseren voor FaithDrive, abonnementsmodel fine-tunen voor Tender Cards. Processen documenteren en automatiseren.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PLANNING ═══ -->
+  <div class="page" id="page-planning">
+    <div class="page-header">
+      <div class="page-label">Timeline</div>
+      <h1>Planning <em>& Milestones</em></h1>
+      <p>Belangrijke momenten en deadlines voor alle merken.</p>
+    </div>
+
+    <div class="card card-gold" style="margin-bottom:1.5rem;padding:1.25rem 1.5rem;">
+      <div style="font-size:0.8rem;color:var(--gold2);font-weight:600;margin-bottom:0.4rem;">Timeline overzicht</div>
+      <div style="font-size:0.82rem;color:rgba(245,242,238,0.65);line-height:1.6;">Plan marketing en productie <strong style="color:var(--white);">minimaal 6–8 weken vooruit</strong>. Beide merken hebben seizoensgebonden pieken — stem je planning hierop af.</div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">FaithDrive <em>Milestones</em></div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
+      <div class="moment-card" style="border-color:rgba(196,150,61,0.35);background:rgba(196,150,61,0.05);">
+        <div class="moment-date" style="background:rgba(196,150,61,0.15);border-color:rgba(196,150,61,0.3);"><div class="moment-month">Mei</div><div class="moment-day">26</div></div>
+        <div class="moment-body">
+          <h4 style="color:#E8B458;">Eid al-Adha 2026</h4>
+          <p>Eerste grote verkoopmoment voor FaithDrive. Families zijn samen en rijden veel. Zorg dat stock er is voor 12 mei.</p>
+        </div>
+        <div class="moment-badge badge-high">Urgent</div>
+      </div>
+      <div class="moment-card">
+        <div class="moment-date" style="background:rgba(196,150,61,0.08);border-color:rgba(196,150,61,0.15);"><div class="moment-month">Jan</div><div class="moment-day">27</div></div>
+        <div class="moment-body">
+          <h4 style="color:#E8B458;">Ramadan 2027</h4>
+          <p>Het grootste verkoopmoment van het jaar voor FaithDrive. Start marketing in november 2026, stock klaar in december.</p>
+        </div>
+        <div class="moment-badge badge-high">Plannen</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">Tender Cards <em>Milestones</em></div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
+      <div class="moment-card" style="border-color:rgba(45,107,79,0.35);background:rgba(45,107,79,0.05);">
+        <div class="moment-date" style="background:rgba(45,107,79,0.15);border-color:rgba(45,107,79,0.3);"><div class="moment-month">Sep</div><div class="moment-day">26</div></div>
+        <div class="moment-body">
+          <h4 style="color:#4CAF7D;">Week van de Werkstress 2026</h4>
+          <p>Nationaal aandachtsmoment voor werkstress en mentale gezondheid. Perfect moment om Tender Cards te pitchen bij HR-afdelingen.</p>
+        </div>
+        <div class="moment-badge" style="background:rgba(45,107,79,0.15);color:#4CAF7D;border:1px solid rgba(45,107,79,0.2);">Key moment</div>
+      </div>
+      <div class="moment-card">
+        <div class="moment-date" style="background:rgba(45,107,79,0.08);border-color:rgba(45,107,79,0.15);"><div class="moment-month">Jan</div><div class="moment-day">27</div></div>
+        <div class="moment-body">
+          <h4 style="color:#4CAF7D;">Budget rondes Q1 2027</h4>
+          <p>Bedrijven plannen hun HR-budgetten voor het nieuwe jaar. Ideaal moment om jaarcontracten te sluiten voor Tender Cards.</p>
+        </div>
+        <div class="moment-badge badge-med">Plannen</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem;">ELEV8 <em>Company milestones</em></div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem;">
+      <div class="moment-card">
+        <div class="moment-date"><div class="moment-month">Q2</div><div class="moment-day">26</div></div>
+        <div class="moment-body">
+          <h4>Eerste omzet</h4>
+          <p>Minimaal 1 van de 2 merken genereert zijn eerste omzet. Valideer het businessmodel en verzamel klantfeedback.</p>
+        </div>
+        <div class="moment-badge badge-high">Doel</div>
+      </div>
+      <div class="moment-card">
+        <div class="moment-date"><div class="moment-month">Q3</div><div class="moment-day">26</div></div>
+        <div class="moment-body">
+          <h4>Beide merken live</h4>
+          <p>Zowel FaithDrive als Tender Cards hebben een werkend verkoopkanaal en actieve klanten.</p>
+        </div>
+        <div class="moment-badge badge-med">Doel</div>
+      </div>
+      <div class="moment-card">
+        <div class="moment-date"><div class="moment-month">Q4</div><div class="moment-day">26</div></div>
+        <div class="moment-body">
+          <h4>€10K gecombineerde omzet</h4>
+          <p>Het eerste grote financiële doel van ELEV8. Bewijs dat het multi-brand model werkt en schaalbaar is.</p>
+        </div>
+        <div class="moment-badge badge-high">Stretch</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Navigation
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    el.classList.add('active');
+
+    const titles = {
+      dashboard: 'ELEV<em>8</em> Dashboard',
+      merken: 'Onze <em>Merken</em>',
+      team: 'Ons <em>Team</em>',
+      financieel: 'Financieel <em>Overzicht</em>',
+      strategie: 'Strategie <em>& Doelen</em>',
+      planning: 'Planning <em>& Milestones</em>'
+    };
+    document.getElementById('topbar-title').innerHTML = titles[id] || id;
+  }
+
+  // Greeting based on time
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Goede<em>morgen</em>' : h < 18 ? 'Goede<em>middag</em>' : 'Goede<em>avond</em>';
+  document.getElementById('topbar-title').innerHTML = greet;
+
+  // Date
+  document.getElementById('current-date').textContent = new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'});
+</script>
+</body>
+</html>
