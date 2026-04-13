@@ -1103,9 +1103,32 @@
   // Date
   document.getElementById('current-date').textContent = new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'});
 
-  // Checklist toggle
+  // Checklist with localStorage persistence
+  const STORAGE_KEY = 'tendercards_checklist';
+
+  function getCheckedState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveCheckedState() {
+    const state = {};
+    document.querySelectorAll('#page-checklist .check-item').forEach((el, i) => {
+      if (el.classList.contains('done')) state[i] = true;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function loadCheckedState() {
+    const state = getCheckedState();
+    document.querySelectorAll('#page-checklist .check-item').forEach((el, i) => {
+      if (state[i]) el.classList.add('done');
+    });
+    updateProgress();
+  }
+
   function toggleCheck(el) {
     el.classList.toggle('done');
+    saveCheckedState();
     updateProgress();
   }
 
@@ -1116,7 +1139,6 @@
     document.getElementById('prog-pct').textContent = pct + '%';
     document.getElementById('prog-bar').style.width = pct + '%';
 
-    // Update dashboard steps
     const steps = ['s1','s2','s3','s4','s5'];
     const checks = document.querySelectorAll('#page-checklist .check-item');
     const doneMap = [
@@ -1131,6 +1153,9 @@
       if (el) el.innerHTML = doneMap[i] ? '<span style="color:var(--green);">✓</span>' : '○';
     });
   }
+
+  // Load saved state on page load
+  loadCheckedState();
 </script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import Groups from "./pages/Groups";
 import GroupDetail from "./pages/GroupDetail";
 import Chat from "./pages/Chat";
 import Sales from "./pages/Sales";
+import Settings from "./pages/Settings";
 
 function Spinner() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/sales" element={<Sales />} />
         <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
+        <Route path="/settings" element={<AdminGuard><Settings /></AdminGuard>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
