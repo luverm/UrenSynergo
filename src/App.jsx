@@ -10,6 +10,7 @@ import GroupDetail from "./pages/GroupDetail";
 import Chat from "./pages/Chat";
 import Sales from "./pages/Sales";
 import Settings from "./pages/Settings";
+import Family from "./pages/Family";
 
 function Spinner() {
   return (
@@ -37,6 +38,12 @@ function AdminGuard({ children }) {
   return children;
 }
 
+// Viewers see the Family page instead of the Dashboard
+function DashboardOrFamily() {
+  const { isViewer } = useAuth();
+  return isViewer ? <Family /> : <Dashboard />;
+}
+
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <Spinner />;
@@ -49,12 +56,13 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<DashboardOrFamily />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/groups/:id" element={<GroupDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/sales" element={<Sales />} />
+        <Route path="/family" element={<Family />} />
         <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
         <Route path="/settings" element={<AdminGuard><Settings /></AdminGuard>} />
       </Route>

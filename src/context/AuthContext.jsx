@@ -3,6 +3,12 @@ import { supabase } from "../supabaseClient";
 
 const ADMIN_EMAILS = ["admin@gmail.com", "lucasvermair@gmail.com"];
 
+// Viewers can see a specific person's hours (read-only, no admin access)
+// Map: viewer email → email of the user whose hours they can see
+const VIEWER_CONFIG = {
+  "l.vermaire@synergo.com": "lucasvermair@gmail.com",
+};
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -51,9 +57,11 @@ export function AuthProvider({ children }) {
   };
 
   const isAdmin = profile?.is_admin || ADMIN_EMAILS.includes(user?.email);
+  const viewerTargetEmail = user?.email ? VIEWER_CONFIG[user.email] : null;
+  const isViewer = !!viewerTargetEmail;
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut, isAdmin, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut, isAdmin, isViewer, viewerTargetEmail, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

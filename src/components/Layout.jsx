@@ -82,14 +82,27 @@ function Avatar({ url, name, size = 32 }) {
   );
 }
 
+const VIEWER_ITEMS = [
+  {
+    path: "/",
+    label: "Uren overzicht",
+    match: (p) => p === "/" || p === "/family",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+  },
+];
+
 export default function Layout() {
-  const { user, profile, signOut, isAdmin } = useAuth();
+  const { user, profile, signOut, isAdmin, isViewer } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "Gebruiker";
-  const items = isAdmin ? [...NAV_ITEMS, ...ADMIN_ITEMS] : NAV_ITEMS;
+  const items = isViewer ? VIEWER_ITEMS : (isAdmin ? [...NAV_ITEMS, ...ADMIN_ITEMS] : NAV_ITEMS);
 
   if (isMobile) {
     return (
