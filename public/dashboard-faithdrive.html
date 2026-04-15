@@ -1143,6 +1143,19 @@
 
 </main>
 
+<!-- Idea detail modal -->
+<div id="idea-modal" onclick="if(event.target===this)closeIdeaModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:9999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;">
+  <div style="background:#14161A;border:1px solid rgba(255,255,255,0.08);border-radius:12px;max-width:720px;width:100%;padding:1.75rem;margin-top:3rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;">
+    <button onclick="closeIdeaModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:1.2rem;padding:0.5rem;">✕</button>
+    <div id="idea-modal-body"></div>
+  </div>
+</div>
+
+<style>
+  .idea-card:hover { background: rgba(255,255,255,0.02) !important; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
   // Navigation
@@ -1290,6 +1303,20 @@
 
   let ideas = [];
 
+  function getUserName() {
+    let name = localStorage.getItem('synergo_user_name');
+    if (!name) {
+      name = prompt('Wat is je naam? (wordt bij jouw ideeën getoond)');
+      if (name && name.trim()) {
+        name = name.trim();
+        localStorage.setItem('synergo_user_name', name);
+      } else {
+        name = 'Anoniem';
+      }
+    }
+    return name;
+  }
+
   async function fetchIdeas() {
     const { data, error } = await supa.from('ideas')
       .select('*')
@@ -1305,8 +1332,9 @@
     const category = document.getElementById('idea-category').value;
     const text = input.value.trim();
     if (!text) return;
+    const author = getUserName();
     const { data, error } = await supa.from('ideas')
-      .insert({ brand: BRAND, text, category })
+      .insert({ brand: BRAND, text, category, author })
       .select()
       .single();
     if (error) { alert('Kon idee niet opslaan: ' + error.message); return; }
@@ -1316,7 +1344,9 @@
     channel.send({ type: 'broadcast', event: 'ideas_changed', payload: {} });
   }
 
-  async function deleteIdea(id) {
+  async function deleteIdea(id, e) {
+    if (e) e.stopPropagation();
+    if (!confirm('Idee verwijderen?')) return;
     const { error } = await supa.from('ideas').delete().eq('id', id);
     if (error) { alert('Kon idee niet verwijderen: ' + error.message); return; }
     ideas = ideas.filter(i => i.id !== id);
@@ -1335,6 +1365,10 @@
     return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
   }
 
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function renderIdeas() {
     const list = document.getElementById('ideas-list');
     const empty = document.getElementById('ideas-empty');
@@ -1348,9 +1382,10 @@
     empty.style.display = 'none';
     list.innerHTML = ideas.map(idea => {
       const meta = CATEGORY_META[idea.category] || CATEGORY_META.overig;
-      const safeText = idea.text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const safeText = escapeHtml(idea.text).replace(/\n/g, '<br>');
+      const author = idea.author ? escapeHtml(idea.author) : 'Anoniem';
       return `
-        <div class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;">
+        <div class="card idea-card" onclick="openIdea('${idea.id}')" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;">
           <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${meta.emoji}</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.5rem;">
@@ -1358,11 +1393,95 @@
               <span style="font-size:0.68rem;color:var(--muted);">${formatIdeaDate(idea.created_at)}</span>
             </div>
             <div style="font-size:0.82rem;color:var(--white);line-height:1.5;">${safeText}</div>
+            <div style="margin-top:0.5rem;font-size:0.68rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem;">
+              <span style="width:16px;height:16px;border-radius:50%;background:${meta.color};color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:700;">${author.charAt(0).toUpperCase()}</span>
+              <span>${author}</span>
+            </div>
           </div>
-          <button onclick="deleteIdea('${idea.id}')" style="background:none;border:none;color:rgba(255,255,255,0.2);cursor:pointer;font-size:0.9rem;padding:0.25rem;flex-shrink:0;" title="Verwijderen">✕</button>
+          <button onclick="deleteIdea('${idea.id}', event)" style="background:none;border:none;color:rgba(255,255,255,0.2);cursor:pointer;font-size:0.9rem;padding:0.25rem;flex-shrink:0;" title="Verwijderen">✕</button>
         </div>
       `;
     }).join('');
+  }
+
+  // Expanded idea modal + Claude elaboration
+  function openIdea(id) {
+    const idea = ideas.find(i => i.id === id);
+    if (!idea) return;
+    const meta = CATEGORY_META[idea.category] || CATEGORY_META.overig;
+    const author = idea.author ? escapeHtml(idea.author) : 'Anoniem';
+    const safeText = escapeHtml(idea.text).replace(/\n/g, '<br>');
+    const modal = document.getElementById('idea-modal');
+    const body = document.getElementById('idea-modal-body');
+    body.innerHTML = `
+      <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:1rem;">
+        <span style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">${meta.emoji}</span>
+        <div>
+          <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:${meta.color};font-weight:600;">${meta.label}</div>
+          <div style="font-size:0.75rem;color:var(--muted);">${author} · ${formatIdeaDate(idea.created_at)}</div>
+        </div>
+      </div>
+      <div style="font-size:1rem;color:var(--white);line-height:1.6;margin-bottom:1.5rem;padding:1rem 1.25rem;background:rgba(255,255,255,0.02);border-left:3px solid ${meta.color};border-radius:4px;">${safeText}</div>
+      <button onclick="openInClaude('${idea.id}')" style="background:var(--gold);color:#000;border:none;border-radius:6px;padding:0.7rem 1.25rem;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:0.5rem;">
+        <span style="font-size:1rem;">✨</span> Werk uit met Claude
+      </button>
+      <div style="margin-top:0.75rem;font-size:0.7rem;color:var(--muted);">Opent een nieuwe chat op claude.ai met een uitgebreide prompt voor dit idee.</div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function closeIdeaModal() {
+    document.getElementById('idea-modal').style.display = 'none';
+  }
+
+  function buildClaudePrompt(idea) {
+    const author = idea.author || 'een teamlid';
+    const brandContext = 'FaithDrive is een christelijk lifestyle/automotive merk dat auto-accessoires en lifestyle producten verkoopt met een faith-based insteek. Doelgroep: gelovige automobilisten die hun geloof willen uitdragen via lifestyle producten.';
+    const catMeta = CATEGORY_META[idea.category] || CATEGORY_META.overig;
+    return `Je bent een ervaren strategie- en businessconsultant voor creatieve merken met scherpe blik voor commerciële haalbaarheid én merkidentiteit.
+
+**Merk context:**
+${brandContext}
+
+**Idee ingediend door ${author}** (categorie: ${catMeta.label}):
+
+"${idea.text}"
+
+Werk dit idee uit tot een heldere, concrete en direct uitvoerbare blueprint. Wees praktisch en specifiek — geen marketing fluff. Gebruik de volgende structuur met markdown:
+
+## Kern van het idee
+Beschrijf in 2-3 zinnen wat het idee écht inhoudt en waarom het waardevol kan zijn voor FaithDrive.
+
+## Waarom dit werkt
+4-5 bullets met onderbouwing — denk aan: markt, doelgroep fit, timing, brand fit, concurrentievoordeel.
+
+## Concrete uitwerking
+Een stappenplan met 5-7 duidelijke, actionable stappen om dit idee te realiseren. Per stap: wie, wat, hoe lang.
+
+## Quick wins
+3 acties die deze week al ondernomen kunnen worden om momentum te creëren.
+
+## Mogelijke varianten / uitbreidingen
+2-3 alternatieve invalshoeken of manieren om het idee groter/kleiner te maken.
+
+## Risico's & aandachtspunten
+3 concrete risico's of valkuilen, met daarbij mitigatie-strategie.
+
+## Benodigdheden
+Korte lijst: mensen (rollen), indicatief budget, tools/partners.
+
+## Succes-metriek
+Hoe meet je over 30/60/90 dagen of dit idee werkt? Geef 2-3 KPI's.
+
+Sluit af met een kort eerlijk advies: ga doen, eerst testen, of in ijskast. Schrijf alles in het Nederlands, direct en ondernemend.`;
+  }
+
+  function openInClaude(id) {
+    const idea = ideas.find(i => i.id === id);
+    if (!idea) return;
+    const prompt = buildClaudePrompt(idea);
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+    window.open(url, '_blank');
   }
 
   // Listen for changes from other clients (live sync)
