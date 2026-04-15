@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 
 export default function Login() {
   const [emailPrefix, setEmailPrefix] = useState("");
+  const [domain, setDomain] = useState("@gmail.com");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState(null);
@@ -15,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     if (!emailPrefix.trim() || !password) return;
 
-    const email = `${emailPrefix.trim().toLowerCase()}@gmail.com`;
+    const email = `${emailPrefix.trim().toLowerCase()}${domain}`;
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -87,14 +88,20 @@ export default function Login() {
                 style={{ ...inp, borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRight: "none", flex: 1 }}
                 autoFocus
               />
-              <div style={{
-                padding: "14px 16px", borderRadius: "0 2px 2px 0",
-                border: "1px solid rgba(255,107,53,0.2)", borderLeft: "none",
-                background: "rgba(255,107,53,0.06)", color: "#6E6E72",
-                fontSize: 15, fontFamily: "'DM Sans', sans-serif", fontWeight: 300, whiteSpace: "nowrap",
-              }}>
-                @gmail.com
-              </div>
+              <select
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                style={{
+                  padding: "14px 16px", borderRadius: "0 2px 2px 0",
+                  border: "1px solid rgba(255,107,53,0.2)", borderLeft: "none",
+                  background: "rgba(255,107,53,0.06)", color: "#F5F3EE",
+                  fontSize: 15, fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                  whiteSpace: "nowrap", cursor: "pointer", outline: "none",
+                }}
+              >
+                <option value="@gmail.com" style={{ background: "#1A1A1D" }}>@gmail.com</option>
+                <option value="@synergo.com" style={{ background: "#1A1A1D" }}>@synergo.com</option>
+              </select>
             </div>
           </div>
 
