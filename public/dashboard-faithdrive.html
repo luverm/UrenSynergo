@@ -463,6 +463,10 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Bijzondere Momenten
     </div>
+    <div class="nav-item" onclick="showPage('ideeen', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26A7 7 0 0012 2z"/></svg>
+      Ideeën
+    </div>
   </nav>
   <div class="sidebar-footer">AmaanCover · Intern gebruik</div>
 </aside>
@@ -1100,6 +1104,43 @@
     </div>
   </div>
 
+  <!-- ═══ IDEEEN ═══ -->
+  <div class="page" id="page-ideeen">
+    <div class="page-header">
+      <div class="page-label">Brainstorm</div>
+      <h1>Ide<em>eën</em> dump</h1>
+      <p>Snel je ideeën noteren — voor producten, marketing, verpakking, campagnes, alles.</p>
+    </div>
+
+    <!-- Add idea form -->
+    <div class="card" style="margin-bottom:1.5rem;padding:1.25rem;">
+      <textarea id="idea-input" placeholder="Wat voor idee heb je?" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--white);padding:0.75rem 1rem;font-size:0.85rem;font-family:inherit;resize:vertical;min-height:72px;outline:none;"></textarea>
+      <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+        <select id="idea-category" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;color:var(--white);padding:0.5rem 0.75rem;font-size:0.78rem;font-family:inherit;outline:none;cursor:pointer;">
+          <option value="product">💡 Product</option>
+          <option value="marketing">📱 Marketing</option>
+          <option value="verpakking">📦 Verpakking</option>
+          <option value="content">🎬 Content</option>
+          <option value="samenwerking">🤝 Samenwerking</option>
+          <option value="overig">✨ Overig</option>
+        </select>
+        <button onclick="addIdea()" style="margin-left:auto;background:var(--gold);color:#000;border:none;border-radius:6px;padding:0.5rem 1.25rem;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">+ Idee toevoegen</button>
+      </div>
+    </div>
+
+    <!-- Ideas list -->
+    <div class="section-title" style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;">
+      <span>Opgeslagen <em>ideeën</em></span>
+      <span id="idea-count" style="font-size:0.72rem;color:var(--muted);font-family:inherit;font-style:normal;"></span>
+    </div>
+    <div id="ideas-list" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+    <div id="ideas-empty" style="text-align:center;padding:3rem 1rem;color:var(--muted);display:none;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;opacity:0.5;">💭</div>
+      <div style="font-size:0.88rem;">Nog geen ideeën opgeslagen</div>
+      <div style="font-size:0.72rem;margin-top:0.25rem;opacity:0.7;">Begin hierboven met typen</div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -1117,7 +1158,8 @@
       socials: 'Social <em>media</em>',
       doelgroep: 'Doel<em>groep</em>',
       kalender: 'Bijzondere <em>Momenten</em>',
-      verkoop: 'Ver<em>koop</em>'
+      verkoop: 'Ver<em>koop</em>',
+      ideeen: 'Ide<em>eën</em>'
     };
     document.getElementById('topbar-title').innerHTML = titles[id] || id;
   }
@@ -1228,6 +1270,95 @@
       }
     });
   })();
+
+  // Ideas dump with persistence
+  const IDEAS_KEY = 'faithdrive_ideas';
+  const CATEGORY_META = {
+    product: { label: 'Product', emoji: '💡', color: 'var(--gold2)' },
+    marketing: { label: 'Marketing', emoji: '📱', color: 'var(--blue)' },
+    verpakking: { label: 'Verpakking', emoji: '📦', color: 'var(--green)' },
+    content: { label: 'Content', emoji: '🎬', color: 'var(--red)' },
+    samenwerking: { label: 'Samenwerking', emoji: '🤝', color: '#C44FFF' },
+    overig: { label: 'Overig', emoji: '✨', color: 'var(--muted)' }
+  };
+
+  function getIdeas() {
+    try { return JSON.parse(localStorage.getItem(IDEAS_KEY)) || []; } catch { return []; }
+  }
+
+  function saveIdeas(ideas) {
+    localStorage.setItem(IDEAS_KEY, JSON.stringify(ideas));
+  }
+
+  function addIdea() {
+    const input = document.getElementById('idea-input');
+    const category = document.getElementById('idea-category').value;
+    const text = input.value.trim();
+    if (!text) return;
+    const ideas = getIdeas();
+    ideas.unshift({ id: Date.now(), text, category, createdAt: new Date().toISOString() });
+    saveIdeas(ideas);
+    input.value = '';
+    renderIdeas();
+  }
+
+  function deleteIdea(id) {
+    const ideas = getIdeas().filter(i => i.id !== id);
+    saveIdeas(ideas);
+    renderIdeas();
+  }
+
+  function formatIdeaDate(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = (now - d) / 1000;
+    if (diff < 60) return 'zojuist';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm geleden';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'u geleden';
+    if (diff < 604800) return Math.floor(diff / 86400) + 'd geleden';
+    return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+  }
+
+  function renderIdeas() {
+    const list = document.getElementById('ideas-list');
+    const empty = document.getElementById('ideas-empty');
+    const count = document.getElementById('idea-count');
+    const ideas = getIdeas();
+    count.textContent = ideas.length + ' ' + (ideas.length === 1 ? 'idee' : 'ideeën');
+    if (ideas.length === 0) {
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    list.innerHTML = ideas.map(idea => {
+      const meta = CATEGORY_META[idea.category] || CATEGORY_META.overig;
+      const safeText = idea.text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      return `
+        <div class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${meta.emoji}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.5rem;">
+              <span style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:${meta.color};font-weight:600;">${meta.label}</span>
+              <span style="font-size:0.68rem;color:var(--muted);">${formatIdeaDate(idea.createdAt)}</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--white);line-height:1.5;">${safeText}</div>
+          </div>
+          <button onclick="deleteIdea(${idea.id})" style="background:none;border:none;color:rgba(255,255,255,0.2);cursor:pointer;font-size:0.9rem;padding:0.25rem;flex-shrink:0;" title="Verwijderen">✕</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderIdeas();
+
+  // Enter to submit (Shift+Enter for newline)
+  document.getElementById('idea-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addIdea();
+    }
+  });
 </script>
 </body>
 </html>
