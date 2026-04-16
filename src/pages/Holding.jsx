@@ -78,7 +78,7 @@ export default function Holding() {
   const load = async () => {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const [tasksRes, requestsRes, ideasRes, entriesRes, profilesRes] = await Promise.all([
-      supabase.from("tasks").select("brand, source, status, assigned_to, completed_at"),
+      supabase.from("tasks").select("brand, source, status, assigned_to, completed_at, due_date, priority"),
       supabase.from("requests").select("brand, stage, status, received_at"),
       supabase.from("ideas").select("brand, created_at"),
       supabase.from("entries").select("user_id, hours, created_at").gte("created_at", weekAgo),
@@ -181,12 +181,14 @@ export default function Holding() {
 
   const teamAllocation = useMemo(() => {
     const out = {};
-    TEAM.forEach((m) => { out[m.short] = { total: 0, byBrand: {} }; BRANDS.forEach((b) => out[m.short].byBrand[b.key] = 0); });
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    TEAM.forEach((m) => { out[m.short] = { total: 0, overdue: 0, byBrand: {} }; BRANDS.forEach((b) => out[m.short].byBrand[b.key] = 0); });
     data.tasks.filter((t) => t.status === "open").forEach((t) => {
       TEAM.forEach((m) => {
         if ((t.assigned_to || "").includes(m.short)) {
           out[m.short].total++;
           if (out[m.short].byBrand[t.brand] != null) out[m.short].byBrand[t.brand]++;
+          if (t.due_date && new Date(t.due_date + "T00:00:00") < today) out[m.short].overdue++;
         }
       });
     });
@@ -328,9 +330,16 @@ export default function Holding() {
                         {m.short.charAt(0)}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 12 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 12, alignItems: "center" }}>
                           <span style={{ color: "#F5F3EE", fontWeight: 500 }}>{m.short}</span>
-                          <span style={{ color: "#6E6E72" }}>{alloc.total} open taken</span>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                            {alloc.overdue > 0 && (
+                              <span style={{ padding: "2px 8px", borderRadius: 999, background: "rgba(204,82,40,0.12)", color: "#CC5228", fontSize: 10, fontWeight: 700, letterSpacing: 0.3 }}>
+                                🔥 {alloc.overdue} te laat
+                              </span>
+                            )}
+                            <span style={{ color: "#6E6E72" }}>{alloc.total} open taken</span>
+                          </span>
                         </div>
                         {/* Stacked bar per brand */}
                         <div style={{ display: "flex", height: 8, borderRadius: 4, overflow: "hidden", background: "rgba(255,255,255,0.04)" }}>

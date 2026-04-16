@@ -47,7 +47,7 @@ function Widget({ icon, label, value, sub, color, onClick, loading }) {
 export default function DashboardWidgets() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState({ openTasks: 0, newRequests: 0, newIdeas: 0, checklistPct: 0, checklistDone: 0, checklistTotal: 0 });
+  const [data, setData] = useState({ openTasks: 0, overdueTasks: 0, newRequests: 0, newIdeas: 0, checklistPct: 0, checklistDone: 0, checklistTotal: 0 });
   const [loading, setLoading] = useState(true);
   const channelsRef = useRef([]);
 
@@ -56,9 +56,16 @@ export default function DashboardWidgets() {
   const load = async () => {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-    const [tasksRes, requestsRes, ideasRes, checklistRes] = await Promise.all([
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+    const [myTasksRes, overdueRes, requestsRes, ideasRes, checklistRes] = await Promise.all([
       userFirst
         ? supabase.from("tasks").select("id", { count: "exact", head: true }).ilike("assigned_to", `%${userFirst}%`).eq("status", "open")
+        : Promise.resolve({ count: 0 }),
+      userFirst
+        ? supabase.from("tasks").select("id", { count: "exact", head: true }).ilike("assigned_to", `%${userFirst}%`).eq("status", "open").lt("due_date", todayISO)
         : Promise.resolve({ count: 0 }),
       supabase.from("requests").select("id", { count: "exact", head: true }).eq("status", "new"),
       supabase.from("ideas").select("id", { count: "exact", head: true }).gte("created_at", yesterday),
@@ -71,7 +78,8 @@ export default function DashboardWidgets() {
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
     setData({
-      openTasks: tasksRes.count ?? 0,
+      openTasks: myTasksRes.count ?? 0,
+      overdueTasks: overdueRes.count ?? 0,
       newRequests: requestsRes.count ?? 0,
       newIdeas: ideasRes.count ?? 0,
       checklistDone: done,
@@ -116,11 +124,11 @@ export default function DashboardWidgets() {
       )}
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <Widget
-          icon="✓"
-          label="Open taken"
+          icon={data.overdueTasks > 0 ? "🔥" : "✓"}
+          label={data.overdueTasks > 0 ? `Open · ${data.overdueTasks} te laat` : "Open taken"}
           value={data.openTasks}
-          sub={data.openTasks === 0 ? "Niks open 🎉" : data.openTasks === 1 ? "Aan jou toegewezen" : "Aan jou toegewezen"}
-          color="#FF6B35"
+          sub={data.openTasks === 0 ? "Niks open 🎉" : data.overdueTasks > 0 ? `${data.overdueTasks} over deadline` : "Aan jou toegewezen"}
+          color={data.overdueTasks > 0 ? "#CC5228" : "#FF6B35"}
           loading={loading}
           onClick={() => navigate("/mijn-taken")}
         />
