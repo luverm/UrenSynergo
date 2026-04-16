@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import DashboardWidgets from "../components/DashboardWidgets";
 
 function getCurrentPeriod() {
   const now = new Date();
@@ -193,6 +194,8 @@ export default function Dashboard() {
           </div>
         </div>
         <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0 28px", opacity: 0.3 }} />
+
+        <DashboardWidgets />
 
         {error && (
           <div style={{ margin: "0 0 16px", padding: "14px 18px", borderRadius: 2, background: "rgba(204,82,40,0.08)", border: "1px solid rgba(204,82,40,0.15)", color: "#CC5228", fontSize: 14, fontWeight: 400, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
