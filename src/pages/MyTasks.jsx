@@ -13,9 +13,20 @@ const SOURCE_META = {
   checklist: { label: "Lanceerchecklist", icon: "✅" },
 };
 
-function firstName(s) {
-  if (!s) return "";
-  return s.trim().split(/[\s.@]+/)[0];
+const TEAM_NAMES = ["Lucas", "Raymond", "Shihab"];
+
+function detectTeamName(profile, user) {
+  const sources = [
+    profile?.display_name,
+    user?.email,
+    user?.user_metadata?.full_name,
+    user?.user_metadata?.name,
+  ].filter(Boolean).map((s) => s.toLowerCase());
+  for (const name of TEAM_NAMES) {
+    if (sources.some((s) => s.includes(name.toLowerCase()))) return name;
+  }
+  // Fallback: first token of display_name
+  return (profile?.display_name || user?.email || "").trim().split(/[\s.@]+/)[0] || "";
 }
 
 function Spinner() {
@@ -34,9 +45,7 @@ export default function MyTasks() {
   const [brandFilter, setBrandFilter] = useState("all");
   const channelRef = useRef(null);
 
-  const userFirst = useMemo(() => {
-    return firstName(profile?.display_name || user?.email?.split("@")[0] || "");
-  }, [profile, user]);
+  const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
 
   const fetchTasks = async () => {
     if (!userFirst) { setTasks([]); setLoading(false); return; }
