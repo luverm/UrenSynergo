@@ -219,9 +219,9 @@ export default function MyTasks() {
 
   const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async ({ showLoading = false } = {}) => {
     if (!userFirst) { setTasks([]); setLoading(false); return; }
-    setLoading(true);
+    if (showLoading) setLoading(true);
     const { data } = await supabase.from("tasks").select("*")
       .ilike("assigned_to", `%${userFirst}%`)
       .order("status", { ascending: true });
@@ -230,7 +230,7 @@ export default function MyTasks() {
   };
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks({ showLoading: true });
 
     // postgres_changes — direct listener on table
     const dbChannel = supabase
@@ -261,32 +261,37 @@ export default function MyTasks() {
 
   const toggleTask = async (task) => {
     const newStatus = task.status === "done" ? "open" : "done";
-    await supabase.from("tasks").update({
-      status: newStatus,
-      completed_at: newStatus === "done" ? new Date().toISOString() : null,
-      completed_by: newStatus === "done" ? userFirst : null,
-    }).eq("id", task.id);
-    await fetchTasks();
+    const completed_at = newStatus === "done" ? new Date().toISOString() : null;
+    const completed_by = newStatus === "done" ? userFirst : null;
+    // Optimistic
+    setTasks((prev) => prev.map((t) => t.id === task.id ? { ...t, status: newStatus, completed_at, completed_by } : t));
+    const { error } = await supabase.from("tasks").update({ status: newStatus, completed_at, completed_by }).eq("id", task.id);
+    if (error) { fetchTasks(); return; }
     supabase.channel("tasks_" + task.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
   };
 
   const updateDue = async (taskId, due_date) => {
-    await supabase.from("tasks").update({ due_date }).eq("id", taskId);
-    await fetchTasks();
     const t = tasks.find((x) => x.id === taskId);
+    // Optimistic update — UI updatet DIRECT
+    setTasks((prev) => prev.map((x) => x.id === taskId ? { ...x, due_date } : x));
+    const { error } = await supabase.from("tasks").update({ due_date }).eq("id", taskId);
+    if (error) { fetchTasks(); return; }
     if (t) supabase.channel("tasks_" + t.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
   };
+
   const updatePriority = async (taskId, priority) => {
-    await supabase.from("tasks").update({ priority }).eq("id", taskId);
-    await fetchTasks();
     const t = tasks.find((x) => x.id === taskId);
+    setTasks((prev) => prev.map((x) => x.id === taskId ? { ...x, priority } : x));
+    const { error } = await supabase.from("tasks").update({ priority }).eq("id", taskId);
+    if (error) { fetchTasks(); return; }
     if (t) supabase.channel("tasks_" + t.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
   };
 
   const deleteTask = async (task) => {
     if (!confirm(`Taak "${task.title}" verwijderen?`)) return;
-    await supabase.from("tasks").delete().eq("id", task.id);
-    await fetchTasks();
+    setTasks((prev) => prev.filter((x) => x.id !== task.id));
+    const { error } = await supabase.from("tasks").delete().eq("id", task.id);
+    if (error) { fetchTasks(); return; }
     supabase.channel("tasks_" + task.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
   };
 
