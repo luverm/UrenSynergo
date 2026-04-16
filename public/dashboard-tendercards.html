@@ -440,6 +440,13 @@
       <span class="nav-badge">14</span>
     </div>
 
+    <div class="nav-section-label">Inbox</div>
+    <div class="nav-item" onclick="showPage('aanvragen', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Aanvragen
+      <span class="nav-badge" id="nav-req-badge" style="display:none;"></span>
+    </div>
+
     <div class="nav-section-label">Product</div>
     <div class="nav-item" onclick="showPage('stappenplan', this)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -557,6 +564,47 @@
           <div style="font-size:0.75rem;color:var(--muted);">80 klanten x €1.400/jaar gemiddeld = ~€112.000 jaaromzet</div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══ AANVRAGEN ═══ -->
+  <div class="page" id="page-aanvragen">
+    <div class="page-header">
+      <div class="page-label">Inbox</div>
+      <h1>Aan<em>vragen</em></h1>
+      <p>Inkomende demo aanvragen en klantberichten vanuit de mail.</p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+      <div style="display:flex;gap:0.4rem;">
+        <button class="req-filter-btn active" data-filter="new" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--white);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Nieuw <span id="cnt-new" style="opacity:0.6;"></span></button>
+        <button class="req-filter-btn" data-filter="read" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Gelezen <span id="cnt-read" style="opacity:0.6;"></span></button>
+        <button class="req-filter-btn" data-filter="archived" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Gearchiveerd <span id="cnt-archived" style="opacity:0.6;"></span></button>
+        <button class="req-filter-btn" data-filter="all" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Alles</button>
+      </div>
+      <button onclick="toggleSetupGuide()" style="margin-left:auto;padding:0.5rem 0.9rem;border-radius:6px;border:1px solid rgba(196,150,61,0.3);background:transparent;color:var(--gold2);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">⚙ Setup</button>
+    </div>
+
+    <div id="req-setup" style="display:none;padding:1.25rem 1.5rem;background:rgba(196,150,61,0.06);border:1px solid rgba(196,150,61,0.2);border-radius:8px;margin-bottom:1.25rem;">
+      <div style="font-size:0.82rem;font-weight:600;color:var(--gold2);margin-bottom:0.75rem;">Email webhook setup</div>
+      <div style="font-size:0.76rem;color:var(--white);line-height:1.6;margin-bottom:0.75rem;">
+        Configureer in Zapier, Make of Mailgun een trigger op inkomende mail naar <code style="background:rgba(0,0,0,0.3);padding:0.1rem 0.4rem;border-radius:3px;color:var(--gold2);">aanvragen@tendercards.nl</code> die een POST doet naar:
+      </div>
+      <div style="background:rgba(0,0,0,0.3);padding:0.85rem 1rem;border-radius:6px;font-family:monospace;font-size:0.72rem;color:var(--gold2);margin-bottom:0.75rem;word-break:break-all;">
+        POST https://uyxfyywjhblnivihnsxq.supabase.co/functions/v1/inbound-email<br>
+        Header: <span style="color:var(--white);">x-api-key: &lt;jouw-api-key&gt;</span><br>
+        Body: <span style="color:var(--white);">{"from": "...", "subject": "...", "text": "..."}</span>
+      </div>
+      <div style="font-size:0.72rem;color:var(--muted);line-height:1.5;">
+        De API key staat als secret <code style="color:var(--gold2);">INBOUND_EMAIL_KEY</code> in Supabase. Je kunt ook <code style="color:var(--gold2);">?brand=faithdrive</code> aan de URL toevoegen om aanvragen aan een ander merk te koppelen.
+      </div>
+    </div>
+
+    <div id="req-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+    <div id="req-empty" style="display:none;text-align:center;padding:3rem 1rem;color:var(--muted);">
+      <div style="font-size:2rem;opacity:0.4;margin-bottom:0.75rem;">📭</div>
+      <div style="font-size:0.88rem;color:var(--white);">Nog geen aanvragen</div>
+      <div style="font-size:0.74rem;color:var(--muted);margin-top:0.4rem;">Zodra iemand een mail stuurt via de configured webhook verschijnen ze hier live.</div>
     </div>
   </div>
 
@@ -1120,6 +1168,13 @@
 
 </main>
 
+<div id="req-modal" onclick="if(event.target===this)closeRequestModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:9999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;">
+  <div style="background:#14161A;border:1px solid rgba(255,255,255,0.08);border-radius:12px;max-width:760px;width:100%;padding:1.75rem;margin-top:3rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;">
+    <button onclick="closeRequestModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:1.2rem;padding:0.5rem;z-index:1;">✕</button>
+    <div id="req-modal-body"></div>
+  </div>
+</div>
+
 <div id="idea-modal" onclick="if(event.target===this)closeIdeaModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:9999;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;">
   <div style="background:#14161A;border:1px solid rgba(255,255,255,0.08);border-radius:12px;max-width:720px;width:100%;padding:1.75rem;margin-top:3rem;box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;">
     <button onclick="closeIdeaModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:1.2rem;padding:0.5rem;">✕</button>
@@ -1150,7 +1205,8 @@
       doelgroep: 'Doel<em>groep</em>',
       kalender: 'Bijzondere <em>Momenten</em>',
       verkoop: 'Ver<em>koop</em>',
-      ideeen: 'Ide<em>eën</em>'
+      ideeen: 'Ide<em>eën</em>',
+      aanvragen: 'Aan<em>vragen</em>'
     };
     document.getElementById('topbar-title').innerHTML = titles[id] || id;
   }
@@ -1261,6 +1317,172 @@
       }
     });
   })();
+
+  // ═══ AANVRAGEN (Inbox) — Supabase realtime sync ═══
+  const REQ_SUPA_URL = 'https://uyxfyywjhblnivihnsxq.supabase.co';
+  const REQ_SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5eGZ5eXdqaGJsbml2aWhuc3hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5OTkyMzAsImV4cCI6MjA5MTU3NTIzMH0.1qVymlD2iqJCx5JX8HnN5G2tj2naDlptv7cMNIwxtIk';
+  const REQ_BRAND = 'tendercards';
+  const reqSupa = window.supabase.createClient(REQ_SUPA_URL, REQ_SUPA_KEY);
+  const reqChannel = reqSupa.channel('requests_' + REQ_BRAND);
+  let requests = [];
+  let reqFilter = 'new';
+
+  async function fetchRequests() {
+    const { data, error } = await reqSupa.from('requests')
+      .select('*').eq('brand', REQ_BRAND)
+      .order('received_at', { ascending: false });
+    if (error) { console.error('fetchRequests', error); return; }
+    requests = data || [];
+    renderRequests();
+  }
+
+  function renderRequests() {
+    const list = document.getElementById('req-list');
+    const empty = document.getElementById('req-empty');
+    const badge = document.getElementById('nav-req-badge');
+    const counts = { new: 0, read: 0, archived: 0, all: requests.length };
+    requests.forEach(r => { if (counts[r.status] != null) counts[r.status]++; });
+
+    document.getElementById('cnt-new').textContent = counts.new ? `· ${counts.new}` : '';
+    document.getElementById('cnt-read').textContent = counts.read ? `· ${counts.read}` : '';
+    document.getElementById('cnt-archived').textContent = counts.archived ? `· ${counts.archived}` : '';
+
+    if (counts.new > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = counts.new;
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const filtered = reqFilter === 'all' ? requests : requests.filter(r => r.status === reqFilter);
+    if (!list) return;
+
+    if (filtered.length === 0) {
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    list.innerHTML = filtered.map(r => {
+      const isNew = r.status === 'new';
+      const date = new Date(r.received_at || r.created_at);
+      const dateStr = date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      const from = r.from_name || (r.from_email ? r.from_email.split('@')[0] : 'Onbekend');
+      const fromEsc = escapeHtml(from);
+      const emailEsc = escapeHtml(r.from_email || '');
+      const subjectEsc = escapeHtml(r.subject || '(geen onderwerp)');
+      const preview = escapeHtml((r.body_text || '').slice(0, 140)).replace(/\n/g, ' ');
+      const initial = (from || '?').charAt(0).toUpperCase();
+      return `
+        <div onclick="openRequest('${r.id}')" class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;border-left:3px solid ${isNew ? 'var(--gold2)' : 'transparent'};">
+          <div style="width:36px;height:36px;border-radius:8px;background:${isNew ? 'rgba(196,150,61,0.15)' : 'rgba(255,255,255,0.04)'};color:${isNew ? 'var(--gold2)' : 'var(--muted)'};display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;flex-shrink:0;">${initial}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.5rem;">
+              <span style="font-size:0.82rem;font-weight:${isNew ? '600' : '500'};color:${isNew ? 'var(--white)' : 'rgba(255,255,255,0.7)'};">${fromEsc}</span>
+              <span style="font-size:0.68rem;color:var(--muted);white-space:nowrap;">${dateStr}</span>
+            </div>
+            <div style="font-size:0.78rem;color:${isNew ? 'var(--white)' : 'var(--muted)'};font-weight:${isNew ? '500' : '400'};margin-bottom:0.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${subjectEsc}</div>
+            <div style="font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${preview || emailEsc}</div>
+          </div>
+          ${isNew ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--gold2);flex-shrink:0;margin-top:0.5rem;"></span>' : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openRequest(id) {
+    const r = requests.find(x => x.id === id);
+    if (!r) return;
+    if (r.status === 'new') updateRequestStatus(id, 'read');
+    const modal = document.getElementById('req-modal');
+    const body = document.getElementById('req-modal-body');
+    const date = new Date(r.received_at || r.created_at).toLocaleString('nl-NL');
+    const fromLine = r.from_name ? `${escapeHtml(r.from_name)} <${escapeHtml(r.from_email || '')}>` : escapeHtml(r.from_email || 'Onbekend');
+    const bodyContent = r.body_html
+      ? `<iframe srcdoc="${escapeHtml(r.body_html)}" style="width:100%;min-height:300px;border:0;background:#fff;border-radius:6px;"></iframe>`
+      : `<div style="white-space:pre-wrap;font-size:0.88rem;color:var(--white);line-height:1.6;">${escapeHtml(r.body_text || '(geen inhoud)')}</div>`;
+    body.innerHTML = `
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Van</div>
+        <div style="font-size:0.9rem;color:var(--white);">${fromLine}</div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Onderwerp</div>
+        <div style="font-size:1.05rem;font-weight:600;color:var(--white);">${escapeHtml(r.subject || '(geen onderwerp)')}</div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Ontvangen</div>
+        <div style="font-size:0.82rem;color:var(--muted);">${date}</div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--border);margin:1.25rem 0;">
+      ${bodyContent}
+      <hr style="border:0;border-top:1px solid var(--border);margin:1.25rem 0;">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button onclick="replyInClaude('${r.id}')" style="background:var(--gold2);color:#000;border:none;border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;">✨ Opstellen reply met Claude</button>
+        ${r.from_email ? `<a href="mailto:${encodeURIComponent(r.from_email)}?subject=${encodeURIComponent('Re: ' + (r.subject || ''))}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;">✉ Beantwoord in je mail</a>` : ''}
+        ${r.status !== 'archived' ? `<button onclick="updateRequestStatus('${r.id}', 'archived'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">📁 Archiveer</button>` : `<button onclick="updateRequestStatus('${r.id}', 'read'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">↩ Terug naar inbox</button>`}
+      </div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function closeRequestModal() {
+    document.getElementById('req-modal').style.display = 'none';
+  }
+
+  async function updateRequestStatus(id, status) {
+    const { error } = await reqSupa.from('requests').update({ status }).eq('id', id);
+    if (error) { alert('Kon status niet updaten: ' + error.message); return; }
+    const idx = requests.findIndex(r => r.id === id);
+    if (idx >= 0) requests[idx].status = status;
+    renderRequests();
+    reqChannel.send({ type: 'broadcast', event: 'requests_changed', payload: {} });
+  }
+
+  function replyInClaude(id) {
+    const r = requests.find(x => x.id === id);
+    if (!r) return;
+    const prompt = `Je bent assistent voor Tender Cards — we maken kaart-gebaseerde producten voor HR-teams om empathische verzuimbegeleiding te ondersteunen (Essentials €149/kw, Pro €349/kw, Maatwerk).
+
+**Inkomende aanvraag:**
+Van: ${r.from_name || r.from_email || 'Onbekend'}
+Onderwerp: ${r.subject || ''}
+
+${r.body_text || '(geen tekst)'}
+
+**Opdracht:**
+Stel een professionele, empathische reply op in het Nederlands. Wees concreet: beantwoord vragen specifiek, stel een demo of vervolggesprek voor, en sluit af met duidelijke next steps. Gebruik een warme, zakelijke toon die past bij Tender Cards.`;
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
+
+  function toggleSetupGuide() {
+    const el = document.getElementById('req-setup');
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // Filter chips
+  document.querySelectorAll('.req-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.req-filter-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'transparent';
+        b.style.color = 'var(--muted)';
+      });
+      btn.classList.add('active');
+      btn.style.background = 'rgba(255,255,255,0.02)';
+      btn.style.color = 'var(--white)';
+      reqFilter = btn.dataset.filter;
+      renderRequests();
+    });
+  });
+
+  reqChannel
+    .on('broadcast', { event: 'requests_changed' }, () => fetchRequests())
+    .subscribe();
+
+  fetchRequests();
+  setInterval(fetchRequests, 60000); // poll fallback every minute
 
   // Ideas dump — Supabase realtime sync
   const SUPA_URL = 'https://uyxfyywjhblnivihnsxq.supabase.co';
