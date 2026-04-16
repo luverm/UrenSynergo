@@ -694,7 +694,7 @@
     </div>
 
     <div class="section-title" style="margin-bottom:1rem;">Werk<em>verdeling</em></div>
-    <div class="card">
+    <div class="card" style="margin-bottom:2rem;">
       <div style="display:flex;flex-direction:column;gap:0.75rem;">
         <div style="display:flex;justify-content:space-between;font-size:0.82rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
           <span style="color:var(--muted);">Strategie & richting</span><span>Gezamenlijk</span>
@@ -718,6 +718,28 @@
           <span style="color:var(--muted);">Financieel overzicht</span><span>Gezamenlijk</span>
         </div>
       </div>
+    </div>
+
+    <!-- ═══ TAAK VERDELER ═══ -->
+    <div class="section-title" style="margin-bottom:1rem;">Taak<em>verdeler</em></div>
+    <div class="card" style="padding:1.5rem;">
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+        <span style="width:28px;height:28px;border-radius:6px;background:rgba(255,107,53,0.1);display:flex;align-items:center;justify-content:center;font-size:0.9rem;">🎯</span>
+        <div style="font-size:0.88rem;font-weight:600;">Wie kan deze taak het beste oppakken?</div>
+      </div>
+      <p style="font-size:0.76rem;color:var(--muted);line-height:1.5;margin-bottom:1rem;">
+        Beschrijf een taak en we analyseren wie het beste past op basis van skills en rollen.
+      </p>
+      <textarea id="task-input" placeholder="Bijv: Nieuwe landingspagina ontwerpen voor FaithDrive met Shopify integratie en een contactformulier voor leads..." rows="3" style="width:100%;padding:0.85rem 1rem;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--white);font-size:0.85rem;font-family:inherit;resize:vertical;min-height:70px;outline:none;box-sizing:border-box;margin-bottom:0.75rem;"></textarea>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button onclick="analyzeTask()" style="background:#FF6B35;color:#0E0E10;border:none;border-radius:6px;padding:0.7rem 1.25rem;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:0.5rem;">
+          <span>⚡</span> Analyseer
+        </button>
+        <button onclick="clearTaskAnalysis()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1rem;font-size:0.82rem;font-weight:500;cursor:pointer;font-family:inherit;">
+          Wissen
+        </button>
+      </div>
+      <div id="task-result" style="margin-top:1.5rem;"></div>
     </div>
   </div>
 
@@ -1064,6 +1086,201 @@
 
   // Date
   document.getElementById('current-date').textContent = new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'});
+
+  // ═══ TAAKVERDELER ═══
+  const TEAM_MEMBERS = [
+    {
+      name: 'Lucas Vermaire',
+      short: 'Lucas',
+      avatar: 'L',
+      role: 'Design & Development',
+      color: '#FF6B35',
+      // Weighted keywords — higher = stronger match
+      skills: {
+        // Dev / tech / tooling
+        'website': 10, 'webapp': 10, 'app': 7, 'dashboard': 10, 'code': 10, 'coding': 10,
+        'development': 10, 'developer': 10, 'ontwikkelen': 9, 'ontwikkeling': 9,
+        'frontend': 10, 'backend': 9, 'fullstack': 10, 'api': 9, 'database': 8,
+        'supabase': 10, 'react': 10, 'javascript': 10, 'typescript': 10, 'html': 9, 'css': 9,
+        'shopify': 9, 'integratie': 8, 'automation': 9, 'automatisering': 9,
+        'tooling': 10, 'tool': 8, 'systeem': 7, 'technisch': 9, 'bug': 10, 'fix': 8,
+        'landingspagina': 9, 'formulier': 7, 'checkout': 7, 'e-commerce': 7,
+        // UI/UX
+        'ui': 9, 'ux': 9, 'interface': 9, 'gebruikerservaring': 9,
+        'design': 6, 'ontwerp': 6, 'mockup': 7, 'prototype': 8, 'figma': 9,
+        // Branding (shared)
+        'branding': 4, 'brand': 3, 'logo': 4, 'huisstijl': 4,
+      },
+    },
+    {
+      name: 'Raymond Huissen',
+      short: 'Raymond',
+      avatar: 'R',
+      role: 'Design & Strategie',
+      color: '#FFB86B',
+      skills: {
+        // Strategy
+        'strategie': 10, 'strategisch': 10, 'merkstrategie': 10, 'positionering': 10,
+        'richting': 8, 'visie': 9, 'merk': 9, 'brand': 7, 'branding': 9,
+        'concept': 9, 'conceptueel': 9, 'creatief': 9, 'creative': 9, 'creatieve': 9,
+        'campagne': 9, 'campaign': 9, 'storytelling': 9, 'narratief': 9,
+        // Visual identity
+        'identiteit': 10, 'huisstijl': 9, 'logo': 8, 'visueel': 9, 'visuele': 9,
+        'moodboard': 9, 'artdirection': 10, 'art direction': 10,
+        'kleur': 7, 'typografie': 8, 'illustratie': 7, 'photography': 6, 'fotografie': 6,
+        // Design (shared with Lucas)
+        'design': 9, 'ontwerp': 9, 'grafisch': 9,
+        // Tender Cards
+        'tender': 8, 'tendercards': 8, 'tender cards': 8, 'cards': 5, 'kaart': 5,
+      },
+    },
+    {
+      name: 'Shihab Belhajji',
+      short: 'Shihab',
+      avatar: 'S',
+      role: 'Sales & Productie',
+      color: '#8BC34A',
+      skills: {
+        // Sales
+        'sales': 10, 'verkoop': 10, 'klant': 10, 'klanten': 10, 'klantcontact': 10,
+        'lead': 9, 'leads': 9, 'conversie': 8, 'deal': 9, 'offerte': 9, 'quote': 8,
+        'relatie': 9, 'relaties': 9, 'b2b': 9, 'outreach': 9, 'cold call': 10,
+        'acquisitie': 10, 'pitch': 8, 'presentatie': 7, 'meeting': 7, 'afspraak': 7,
+        // Production
+        'productie': 10, 'produceren': 10, 'fulfillment': 10, 'verzending': 10,
+        'logistiek': 10, 'voorraad': 10, 'inventory': 10, 'leverancier': 10,
+        'supplier': 10, 'inkoop': 9, 'bestelling': 9, 'order': 8, 'orders': 8,
+        'verpakking': 9, 'packaging': 9, 'shipping': 10,
+        // Ops
+        'operations': 10, 'operationeel': 10, 'proces': 8, 'workflow': 7,
+        // FaithDrive
+        'faithdrive': 8, 'faith drive': 8, 'christelijk': 5, 'auto': 6, 'accessoire': 7,
+      },
+    },
+  ];
+
+  function analyzeTask() {
+    const input = document.getElementById('task-input');
+    const result = document.getElementById('task-result');
+    const task = input.value.trim();
+    if (!task) {
+      result.innerHTML = '<div style="padding:0.8rem 1rem;background:rgba(204,82,40,0.08);border:1px solid rgba(204,82,40,0.2);border-radius:6px;color:#CC5228;font-size:0.8rem;">Voer eerst een taakomschrijving in.</div>';
+      return;
+    }
+
+    const lower = task.toLowerCase();
+    const scores = TEAM_MEMBERS.map((member) => {
+      let score = 0;
+      const matched = [];
+      Object.entries(member.skills).forEach(([keyword, weight]) => {
+        // Match as whole word or substring (more forgiving)
+        const regex = new RegExp('\\b' + keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+        if (regex.test(lower)) {
+          score += weight;
+          matched.push(keyword);
+        }
+      });
+      return { ...member, score, matched };
+    }).sort((a, b) => b.score - a.score);
+
+    const total = scores.reduce((s, m) => s + m.score, 0);
+    const top = scores[0];
+    const hasMatch = total > 0;
+
+    let recommendation;
+    if (!hasMatch) {
+      recommendation = `Geen duidelijke match gevonden op basis van skills. Dit lijkt een <strong>gezamenlijke</strong> of overkoepelende taak. Bespreek in de volgende team-sync.`;
+    } else {
+      // Check for collaborative tasks (2+ people with significant score)
+      const secondShare = scores[1].score / total;
+      const topShare = top.score / total;
+      if (topShare < 0.55 && scores[1].score >= 5) {
+        recommendation = `Beste fit: <strong>${top.short} + ${scores[1].short}</strong>. Dit is een samenwerking — ${top.short} neemt de lead op ${top.matched.slice(0, 2).join(' & ')}, ${scores[1].short} op ${scores[1].matched.slice(0, 2).join(' & ')}.`;
+      } else {
+        recommendation = `Beste fit: <strong>${top.name}</strong>. Sterkste match op <em>${top.matched.slice(0, 3).join(', ')}</em>.`;
+      }
+    }
+
+    const maxScore = Math.max(...scores.map((s) => s.score), 1);
+    const rows = scores.map((m, idx) => {
+      const pct = Math.round((m.score / maxScore) * 100);
+      const isTop = idx === 0 && hasMatch;
+      return `
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 0;${idx < scores.length - 1 ? 'border-bottom:1px solid var(--border);' : ''}">
+          <div style="width:36px;height:36px;border-radius:8px;background:${m.color}22;color:${m.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;flex-shrink:0;">${m.avatar}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;">
+              <span style="font-size:0.85rem;font-weight:600;color:var(--white);">${m.name}</span>
+              ${isTop ? '<span style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;background:#FF6B35;color:#0E0E10;padding:0.12rem 0.4rem;border-radius:3px;font-weight:700;">BEST MATCH</span>' : ''}
+              <span style="margin-left:auto;font-size:0.72rem;color:var(--muted);">${m.score} pts</span>
+            </div>
+            <div style="height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;margin-bottom:0.4rem;">
+              <div style="height:100%;width:${pct}%;background:${m.color};border-radius:2px;transition:width 0.6s cubic-bezier(.22,1,.36,1);"></div>
+            </div>
+            <div style="font-size:0.68rem;color:var(--muted);">
+              ${m.matched.length > 0 ? `<strong style="color:${m.color};">Match:</strong> ${m.matched.slice(0, 5).join(', ')}${m.matched.length > 5 ? ` +${m.matched.length - 5}` : ''}` : '<em>geen keyword matches</em>'}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    result.innerHTML = `
+      <div style="padding:1rem 1.25rem;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);border-radius:8px;margin-bottom:1rem;">
+        <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:#FF6B35;font-weight:600;margin-bottom:0.4rem;">Advies</div>
+        <div style="font-size:0.88rem;color:var(--white);line-height:1.5;">${recommendation}</div>
+      </div>
+      <div style="padding:0.5rem 1.25rem;background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:8px;">
+        ${rows}
+      </div>
+      <button onclick="askClaudeAboutTask()" style="margin-top:1rem;background:transparent;color:#FF6B35;border:1px solid rgba(255,107,53,0.25);border-radius:6px;padding:0.65rem 1.1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:0.4rem;">
+        <span>✨</span> Dieper laten analyseren door Claude
+      </button>
+    `;
+  }
+
+  function clearTaskAnalysis() {
+    document.getElementById('task-input').value = '';
+    document.getElementById('task-result').innerHTML = '';
+  }
+
+  function askClaudeAboutTask() {
+    const task = document.getElementById('task-input').value.trim();
+    if (!task) return;
+    const teamDesc = TEAM_MEMBERS.map((m) => `- **${m.name}** (${m.role}): ${Object.keys(m.skills).slice(0, 12).join(', ')}...`).join('\n');
+    const prompt = `Je bent een operations-strateeg die helpt om taken slim te verdelen binnen kleine teams.
+
+**Team ELEV8:**
+${teamDesc}
+
+**Taak:**
+"${task}"
+
+Analyseer wie deze taak het beste kan oppakken. Geef:
+
+## Aanbevolen verdeling
+Wie neemt de lead, wie ondersteunt, en waarom. Wees concreet.
+
+## Subtaken
+Splits de taak op in 3-5 concrete subtaken met per stuk: eigenaar, geschatte tijd, eerste actie.
+
+## Aandachtspunten
+2-3 dingen waar het team op moet letten om dit succesvol te laten verlopen.
+
+## Geschatte totale inzet
+Ruwe inschatting in uren of dagen per persoon.
+
+Schrijf in het Nederlands, direct en praktisch.`;
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
+
+  // Submit on Cmd/Ctrl+Enter
+  document.getElementById('task-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      analyzeTask();
+    }
+  });
 
   // Ideas dump — Supabase realtime sync
   const SUPA_URL = 'https://uyxfyywjhblnivihnsxq.supabase.co';
