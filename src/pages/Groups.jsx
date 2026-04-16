@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -14,27 +14,81 @@ function Spinner() {
 export default function Groups() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [groups, setGroups] = useState([]);
+  const [myGroups, setMyGroups] = useState([]);
+  const [otherGroups, setOtherGroups] = useState([]);
+  const [memberCounts, setMemberCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [joiningId, setJoiningId] = useState(null);
+  const channelRef = useRef(null);
 
   const fetchGroups = async () => {
     setLoading(true);
-    const { data: memberships } = await supabase
-      .from("group_members")
-      .select("group_id, role, groups(id, name, description, owner_id, created_at)")
-      .eq("user_id", user.id);
 
-    const groupList = (memberships || []).map((m) => ({ ...m.groups, role: m.role }));
-    setGroups(groupList);
+    const [allGroupsRes, membershipsRes, allMembersRes] = await Promise.all([
+      supabase.from("groups").select("id, name, description, owner_id, created_at").order("created_at", { ascending: false }),
+      supabase.from("group_members").select("group_id, role").eq("user_id", user.id),
+      supabase.from("group_members").select("group_id, user_id"),
+    ]);
+
+    const memberships = membershipsRes.data || [];
+    const myRoleMap = {};
+    memberships.forEach((m) => { myRoleMap[m.group_id] = m.role; });
+
+    const counts = {};
+    (allMembersRes.data || []).forEach((m) => {
+      counts[m.group_id] = (counts[m.group_id] || 0) + 1;
+    });
+    setMemberCounts(counts);
+
+    const all = allGroupsRes.data || [];
+    const mine = [];
+    const others = [];
+    all.forEach((g) => {
+      const role = myRoleMap[g.id];
+      if (role) {
+        mine.push({ ...g, role });
+      } else {
+        others.push(g);
+      }
+    });
+    setMyGroups(mine);
+    setOtherGroups(others);
     setLoading(false);
   };
 
-  useEffect(() => { fetchGroups(); }, []);
+  const handleJoin = async (groupId, e) => {
+    e.stopPropagation();
+    setJoiningId(groupId);
+    setError(null);
+    const { error: joinError } = await supabase
+      .from("group_members")
+      .insert([{ group_id: groupId, user_id: user.id, role: "member" }]);
+    if (joinError) {
+      setError(joinError.message);
+    } else {
+      await fetchGroups();
+      broadcastChange();
+    }
+    setJoiningId(null);
+  };
+
+  useEffect(() => {
+    fetchGroups();
+    const channel = supabase.channel("groups_live")
+      .on("broadcast", { event: "groups_changed" }, () => fetchGroups())
+      .subscribe();
+    channelRef.current = channel;
+    return () => { supabase.removeChannel(channel); channelRef.current = null; };
+  }, []);
+
+  const broadcastChange = () => {
+    channelRef.current?.send({ type: "broadcast", event: "groups_changed", payload: {} });
+  };
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -55,6 +109,7 @@ export default function Groups() {
 
       setName(""); setDescription(""); setShowForm(false);
       await fetchGroups();
+      broadcastChange();
     } catch (e) {
       setError(e.message || "Kon groep niet aanmaken.");
     } finally {
@@ -119,14 +174,14 @@ export default function Groups() {
 
         {loading && <Spinner />}
 
-        {!loading && groups.length > 0 && (
-          <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
+        {!loading && myGroups.length > 0 && (
+          <div style={{ animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
               <div style={{ width: 12, height: 1, background: "#FF6B35" }} />
               <span style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", textTransform: "uppercase", letterSpacing: 1.5 }}>Jouw projecten</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {groups.map((group) => (
+              {myGroups.map((group) => (
                 <button key={group.id} onClick={() => navigate(`/groups/${group.id}`)} style={{
                   display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderRadius: 2,
                   background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
@@ -149,7 +204,49 @@ export default function Groups() {
           </div>
         )}
 
-        {!loading && groups.length === 0 && !showForm && (
+        {!loading && otherGroups.length > 0 && (
+          <div style={{ animation: "fadeUp 0.6s 0.2s cubic-bezier(.22,1,.36,1) both" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+              <div style={{ width: 12, height: 1, background: "rgba(255,255,255,0.15)" }} />
+              <span style={{ fontSize: 11, fontWeight: 500, color: "#6E6E72", textTransform: "uppercase", letterSpacing: 1.5 }}>Andere projecten</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {otherGroups.map((group) => (
+                <div key={group.id} onClick={() => navigate(`/groups/${group.id}`)} style={{
+                  display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderRadius: 2,
+                  background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.03)",
+                  cursor: "pointer", transition: "all 0.25s ease", width: "100%",
+                  fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE",
+                }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 2, background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "rgba(245,243,238,0.5)", fontFamily: "'Syne', sans-serif", flexShrink: 0 }}>
+                    {group.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 2, color: "rgba(245,243,238,0.85)" }}>{group.name}</div>
+                    <div style={{ fontSize: 12, color: "#6E6E72", fontWeight: 300 }}>
+                      {group.description ? group.description : (memberCounts[group.id] || 0) + ' leden'}
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => handleJoin(group.id, e)}
+                    disabled={joiningId === group.id}
+                    style={{
+                      padding: "8px 14px", borderRadius: 2, border: "1px solid rgba(255,107,53,0.25)",
+                      background: "transparent", color: "#FF6B35", fontSize: 11, fontWeight: 600,
+                      cursor: joiningId === group.id ? "default" : "pointer", fontFamily: "'DM Sans', sans-serif",
+                      letterSpacing: 0.8, textTransform: "uppercase", transition: "all 0.2s",
+                      flexShrink: 0, opacity: joiningId === group.id ? 0.5 : 1,
+                    }}
+                  >
+                    {joiningId === group.id ? "..." : "+ Doe mee"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!loading && myGroups.length === 0 && otherGroups.length === 0 && !showForm && (
           <div style={{ padding: "48px 20px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.04)", textAlign: "center", animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
             <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.5 }}>📁</div>
             <div style={{ fontSize: 15, color: "#6E6E72", fontWeight: 400 }}>Nog geen projecten</div>
