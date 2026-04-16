@@ -11,6 +11,7 @@ import Chat from "./pages/Chat";
 import Sales from "./pages/Sales";
 import Settings from "./pages/Settings";
 import Family from "./pages/Family";
+import MyTasks from "./pages/MyTasks";
 
 function Spinner() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
         <Route path="/groups/:id" element={<GroupDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/sales" element={<Sales />} />
+        <Route path="/mijn-taken" element={<MyTasks />} />
         <Route path="/family" element={<Family />} />
         <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
         <Route path="/settings" element={<AdminGuard><Settings /></AdminGuard>} />

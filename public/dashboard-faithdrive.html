@@ -1157,6 +1157,7 @@
 </style>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="/tasks-sync.js"></script>
 <script>
   // Navigation
   function showPage(id, el) {
@@ -1498,6 +1499,15 @@ Sluit af met een kort eerlijk advies: ga doen, eerst testen, of in ijskast. Schr
       addIdea();
     }
   });
+
+  // Auto-assign tasks and sync with Supabase
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.TasksSync) window.TasksSync.init({ brand: 'faithdrive' });
+  });
+  // Also trigger immediately in case DOMContentLoaded already fired
+  if (document.readyState !== 'loading' && window.TasksSync) {
+    window.TasksSync.init({ brand: 'faithdrive' });
+  }
 </script>
 </body>
 </html>
