@@ -575,7 +575,19 @@
       <p>Inkomende demo aanvragen en klantberichten vanuit de mail.</p>
     </div>
 
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+    <!-- Sales Funnel visualization -->
+    <div id="funnel-container" style="margin-bottom:1.5rem;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold2);font-weight:600;">📊 Sales Funnel</span>
+        </div>
+        <div id="funnel-conversion" style="font-size:0.72rem;color:var(--muted);"></div>
+      </div>
+      <div id="funnel-bars" style="display:flex;gap:4px;align-items:flex-end;height:48px;margin-bottom:0.5rem;"></div>
+      <div id="funnel-labels" style="display:flex;gap:4px;margin-bottom:0.25rem;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
       <div style="display:flex;gap:0.4rem;">
         <button class="req-filter-btn active" data-filter="new" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--white);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Nieuw <span id="cnt-new" style="opacity:0.6;"></span></button>
         <button class="req-filter-btn" data-filter="read" style="padding:0.5rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">Gelezen <span id="cnt-read" style="opacity:0.6;"></span></button>
@@ -584,6 +596,9 @@
       </div>
       <button onclick="toggleSetupGuide()" style="margin-left:auto;padding:0.5rem 0.9rem;border-radius:6px;border:1px solid rgba(196,150,61,0.3);background:transparent;color:var(--gold2);font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;">⚙ Setup</button>
     </div>
+
+    <!-- Stage filter pills -->
+    <div id="stage-filter" style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:1.25rem;"></div>
 
     <div id="req-setup" style="display:none;padding:1.25rem 1.5rem;background:rgba(196,150,61,0.06);border:1px solid rgba(196,150,61,0.2);border-radius:8px;margin-bottom:1.25rem;">
       <div style="font-size:0.82rem;font-weight:600;color:var(--gold2);margin-bottom:0.75rem;">Email webhook setup</div>
@@ -1326,6 +1341,21 @@
   const reqChannel = reqSupa.channel('requests_' + REQ_BRAND);
   let requests = [];
   let reqFilter = 'new';
+  let reqStageFilter = 'all';
+
+  // Sales funnel stages (ordered)
+  const STAGES = [
+    { key: 'lead',           label: 'Lead',          emoji: '🟡', color: '#E8B458', short: 'Lead' },
+    { key: 'contacted',      label: 'Gecontacteerd', emoji: '🔵', color: '#5AA9E6', short: 'Contact' },
+    { key: 'demo_scheduled', label: 'Demo gepland',  emoji: '🟣', color: '#C44FFF', short: 'Demo gepland' },
+    { key: 'demo_done',      label: 'Demo gedaan',   emoji: '🟠', color: '#FF8A3D', short: 'Demo gedaan' },
+    { key: 'offer_sent',     label: 'Offerte uit',   emoji: '🟢', color: '#4CAF7D', short: 'Offerte' },
+    { key: 'customer',       label: 'Klant',         emoji: '✅', color: '#2DDB70', short: 'Klant' },
+    { key: 'lost',           label: 'Verloren',      emoji: '⚫', color: '#6E6E72', short: 'Verloren' },
+  ];
+  function stageMeta(key) {
+    return STAGES.find(s => s.key === (key || 'lead')) || STAGES[0];
+  }
 
   async function fetchRequests() {
     const { data, error } = await reqSupa.from('requests')
@@ -1424,7 +1454,66 @@
     return parsed.fields.telefoon || parsed.fields.phone || parsed.fields.tel || parsed.fields.mobiel || '';
   }
 
+  function renderFunnel() {
+    // Count requests per stage (excluding 'lost' from conversion calc)
+    const counts = {};
+    STAGES.forEach(s => counts[s.key] = 0);
+    requests.forEach(r => { const k = r.stage || 'lead'; if (counts[k] != null) counts[k]++; });
+
+    const activeStages = STAGES.filter(s => s.key !== 'lost');
+    const maxCount = Math.max(...activeStages.map(s => counts[s.key]), 1);
+
+    // Conversion from lead to customer
+    const leadCount = counts.lead + counts.contacted + counts.demo_scheduled + counts.demo_done + counts.offer_sent + counts.customer;
+    const customerCount = counts.customer;
+    const conversionPct = leadCount > 0 ? Math.round((customerCount / leadCount) * 100) : 0;
+
+    const barsEl = document.getElementById('funnel-bars');
+    const labelsEl = document.getElementById('funnel-labels');
+    const convEl = document.getElementById('funnel-conversion');
+
+    barsEl.innerHTML = activeStages.map(s => {
+      const c = counts[s.key];
+      const pct = (c / maxCount) * 100;
+      const h = Math.max(pct, c > 0 ? 8 : 2);
+      return `<div onclick="setStageFilter('${s.key}')" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;cursor:pointer;position:relative;" title="${s.label}: ${c}">
+        <div style="width:100%;height:${h}%;background:${s.color};border-radius:3px 3px 0 0;transition:all 0.3s;position:relative;opacity:${c > 0 ? 1 : 0.25};">
+          <span style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:0.75rem;font-weight:700;color:${c > 0 ? 'var(--white)' : 'var(--muted)'};">${c}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    labelsEl.innerHTML = activeStages.map(s => `
+      <div onclick="setStageFilter('${s.key}')" style="flex:1;text-align:center;font-size:0.6rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;padding-top:0.2rem;font-weight:500;">${s.short}</div>
+    `).join('');
+
+    convEl.innerHTML = counts.lost > 0
+      ? `${customerCount}/${leadCount} → <strong style="color:#4CAF7D;">${conversionPct}%</strong> conversie · <span style="color:#6E6E72;">${counts.lost} verloren</span>`
+      : leadCount > 0 ? `${customerCount}/${leadCount} → <strong style="color:#4CAF7D;">${conversionPct}%</strong> conversie` : 'Nog geen data';
+
+    // Stage filter pills
+    const stageFilterEl = document.getElementById('stage-filter');
+    if (stageFilterEl) {
+      const allCount = requests.length;
+      stageFilterEl.innerHTML = `
+        <button onclick="setStageFilter('all')" style="padding:0.35rem 0.7rem;border-radius:999px;border:1px solid ${reqStageFilter === 'all' ? 'rgba(196,150,61,0.4)' : 'var(--border)'};background:${reqStageFilter === 'all' ? 'rgba(196,150,61,0.08)' : 'transparent'};color:${reqStageFilter === 'all' ? 'var(--gold2)' : 'var(--muted)'};font-size:0.68rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;">Alle fases · ${allCount}</button>
+        ${STAGES.map(s => {
+          const c = counts[s.key];
+          const active = reqStageFilter === s.key;
+          return `<button onclick="setStageFilter('${s.key}')" style="padding:0.35rem 0.7rem;border-radius:999px;border:1px solid ${active ? s.color + '66' : 'var(--border)'};background:${active ? s.color + '1A' : 'transparent'};color:${active ? s.color : (c > 0 ? 'var(--white)' : 'var(--muted)')};font-size:0.68rem;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:0.04em;">${s.emoji} ${s.short}${c > 0 ? ' · ' + c : ''}</button>`;
+        }).join('')}
+      `;
+    }
+  }
+
+  window.setStageFilter = function(stage) {
+    reqStageFilter = stage;
+    renderRequests();
+  };
+
   function renderRequests() {
+    renderFunnel();
+
     const list = document.getElementById('req-list');
     const empty = document.getElementById('req-empty');
     const badge = document.getElementById('nav-req-badge');
@@ -1442,7 +1531,8 @@
       badge.style.display = 'none';
     }
 
-    const filtered = reqFilter === 'all' ? requests : requests.filter(r => r.status === reqFilter);
+    let filtered = reqFilter === 'all' ? requests : requests.filter(r => r.status === reqFilter);
+    if (reqStageFilter !== 'all') filtered = filtered.filter(r => (r.stage || 'lead') === reqStageFilter);
     if (!list) return;
 
     if (filtered.length === 0) {
@@ -1475,14 +1565,18 @@
       if (functie) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">👤 ${escapeHtml(functie)}</span>`);
       if (medewerkers) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">👥 ${escapeHtml(medewerkers)}</span>`);
 
+      const stage = stageMeta(r.stage);
+      const stageBadgeHtml = `<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.62rem;color:${stage.color};background:${stage.color}1A;border:1px solid ${stage.color}40;padding:0.12rem 0.45rem;border-radius:999px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;">${stage.emoji} ${stage.short}</span>`;
+
       return `
-        <div onclick="openRequest('${r.id}')" class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;border-left:3px solid ${isNew ? 'var(--gold2)' : 'transparent'};">
+        <div onclick="openRequest('${r.id}')" class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;border-left:3px solid ${stage.color};">
           <div style="width:42px;height:42px;border-radius:10px;background:${isNew ? 'rgba(196,150,61,0.15)' : 'rgba(255,255,255,0.04)'};color:${isNew ? 'var(--gold2)' : 'var(--muted)'};display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0;">${initial}</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.5rem;">
-              <div style="display:flex;align-items:baseline;gap:0.5rem;min-width:0;">
+              <div style="display:flex;align-items:baseline;gap:0.5rem;min-width:0;flex-wrap:wrap;">
                 <span style="font-size:0.92rem;font-weight:${isNew ? '700' : '600'};color:${isNew ? 'var(--white)' : 'rgba(255,255,255,0.8)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(name)}</span>
                 ${company ? `<span style="font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">· ${escapeHtml(company)}</span>` : ''}
+                ${stageBadgeHtml}
               </div>
               <span style="font-size:0.68rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">${dateStr}</span>
             </div>
@@ -1494,6 +1588,37 @@
         </div>
       `;
     }).join('');
+  }
+
+  async function updateStage(id, newStage) {
+    const patch = { stage: newStage };
+    // Track last_contacted_at when entering 'contacted' stage
+    if (newStage === 'contacted' || newStage === 'demo_scheduled' || newStage === 'offer_sent') {
+      patch.last_contacted_at = new Date().toISOString();
+    }
+    const { error } = await reqSupa.from('requests').update(patch).eq('id', id);
+    if (error) { alert('Kon fase niet updaten: ' + error.message); return; }
+    const r = requests.find(x => x.id === id);
+    if (r) { r.stage = newStage; if (patch.last_contacted_at) r.last_contacted_at = patch.last_contacted_at; }
+    renderRequests();
+    reqChannel.send({ type: 'broadcast', event: 'requests_changed', payload: {} });
+    // Re-open modal with updated state
+    if (document.getElementById('req-modal').style.display === 'flex') openRequest(id);
+  }
+
+  async function updateNotes(id) {
+    const textarea = document.getElementById('req-notes');
+    if (!textarea) return;
+    const newNotes = textarea.value;
+    const { error } = await reqSupa.from('requests').update({ notes: newNotes }).eq('id', id);
+    if (error) { alert('Kon notities niet opslaan: ' + error.message); return; }
+    const r = requests.find(x => x.id === id);
+    if (r) r.notes = newNotes;
+    const indicator = document.getElementById('notes-saved');
+    if (indicator) {
+      indicator.style.opacity = '1';
+      setTimeout(() => { indicator.style.opacity = '0'; }, 1500);
+    }
   }
 
   function openRequest(id) {
@@ -1577,6 +1702,32 @@
       </div>
     ` : '';
 
+    const curStage = stageMeta(r.stage);
+    const stageSelectorHtml = `
+      <div style="margin-bottom:1.5rem;padding:1.1rem 1.25rem;background:${curStage.color}0F;border:1px solid ${curStage.color}33;border-radius:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;gap:0.5rem;flex-wrap:wrap;">
+          <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:${curStage.color};font-weight:600;">📊 Sales fase</div>
+          ${r.last_contacted_at ? `<div style="font-size:0.68rem;color:var(--muted);">Laatst contact: ${new Date(r.last_contacted_at).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+          ${STAGES.map(s => {
+            const isActive = s.key === (r.stage || 'lead');
+            return `<button onclick="updateStage('${r.id}', '${s.key}')" style="padding:0.4rem 0.75rem;border-radius:999px;border:1px solid ${isActive ? s.color : 'var(--border)'};background:${isActive ? s.color + '26' : 'transparent'};color:${isActive ? s.color : 'var(--muted)'};font-size:0.7rem;font-weight:${isActive ? '700' : '500'};cursor:pointer;font-family:inherit;transition:all 0.15s;">${s.emoji} ${s.label}</button>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+
+    const notesHtml = `
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+          <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:500;">📝 Interne notities</div>
+          <span id="notes-saved" style="font-size:0.65rem;color:#4CAF7D;opacity:0;transition:opacity 0.3s;">✓ Opgeslagen</span>
+        </div>
+        <textarea id="req-notes" onblur="updateNotes('${r.id}')" placeholder="Vrije notities voor je team — wat is besproken, next steps, follow-up datum..." rows="3" style="width:100%;padding:0.75rem 0.9rem;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--white);font-size:0.82rem;font-family:inherit;resize:vertical;min-height:70px;outline:none;box-sizing:border-box;">${escapeHtml(r.notes || '')}</textarea>
+      </div>
+    `;
+
     body.innerHTML = `
       <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.25rem;padding-right:2rem;">
         <div style="width:56px;height:56px;border-radius:12px;background:rgba(196,150,61,0.15);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;flex-shrink:0;">${initial}</div>
@@ -1587,10 +1738,13 @@
         </div>
       </div>
 
+      ${stageSelectorHtml}
+
       <div style="font-size:0.78rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">Onderwerp</div>
       <div style="font-size:0.98rem;color:var(--white);margin-bottom:1.5rem;font-weight:500;">${escapeHtml(r.subject || '(geen onderwerp)')}</div>
 
       ${contactGridHtml}
+      ${notesHtml}
       ${messageHtml}
       ${otherFieldsHtml}
       ${fallbackRaw}
