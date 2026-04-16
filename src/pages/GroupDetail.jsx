@@ -153,6 +153,57 @@ export default function GroupDetail() {
     await fetchData();
   };
 
+  const handleDeleteGroup = async () => {
+    if (!isOwner) return;
+    const confirm1 = window.confirm(`Weet je zeker dat je het project "${group.name}" wilt verwijderen? Dit verwijdert alle berichten, bestanden en leden. Deze actie kan niet ongedaan worden gemaakt.`);
+    if (!confirm1) return;
+    const typed = window.prompt(`Typ de projectnaam "${group.name}" om de verwijdering te bevestigen:`);
+    if (typed !== group.name) {
+      if (typed !== null) setError("Projectnaam komt niet overeen. Verwijdering geannuleerd.");
+      return;
+    }
+
+    setError(null);
+    try {
+      // 1. Delete all storage files in the post-files bucket under this group
+      const { data: storageList } = await supabase.storage.from("post-files").list(id, { limit: 1000 });
+      if (storageList && storageList.length > 0) {
+        // Files are organized as {group_id}/{post_id}/{filename} — list each post folder
+        const postFolders = storageList.map((f) => f.name);
+        for (const postFolder of postFolders) {
+          const { data: inner } = await supabase.storage.from("post-files").list(`${id}/${postFolder}`, { limit: 1000 });
+          if (inner && inner.length > 0) {
+            const paths = inner.map((f) => `${id}/${postFolder}/${f.name}`);
+            await supabase.storage.from("post-files").remove(paths);
+          }
+        }
+      }
+
+      // 2. Delete post_files rows
+      const postIds = posts.map((p) => p.id);
+      if (postIds.length > 0) {
+        await supabase.from("post_files").delete().in("post_id", postIds);
+      }
+
+      // 3. Delete posts
+      await supabase.from("posts").delete().eq("group_id", id);
+
+      // 4. Delete members
+      await supabase.from("group_members").delete().eq("group_id", id);
+
+      // 5. Delete the group itself
+      const { error: groupError } = await supabase.from("groups").delete().eq("id", id);
+      if (groupError) throw groupError;
+
+      // 6. Broadcast change so Groups page updates live
+      supabase.channel("groups_live").send({ type: "broadcast", event: "groups_changed", payload: {} });
+
+      navigate("/groups");
+    } catch (e) {
+      setError(e.message || "Kon project niet verwijderen.");
+    }
+  };
+
   const handleFileSelect = (e) => {
     setPostFiles([...postFiles, ...Array.from(e.target.files)]);
     e.target.value = "";
@@ -212,8 +263,28 @@ export default function GroupDetail() {
 
         {/* Group header */}
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>{group.name}</div>
-          {group.description && <div style={{ fontSize: 14, color: "#6E6E72", fontWeight: 300, marginTop: 6 }}>{group.description}</div>}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>{group.name}</div>
+              {group.description && <div style={{ fontSize: 14, color: "#6E6E72", fontWeight: 300, marginTop: 6 }}>{group.description}</div>}
+            </div>
+            {isOwner && (
+              <button
+                onClick={handleDeleteGroup}
+                title="Project verwijderen"
+                style={{
+                  padding: "8px 12px", borderRadius: 2, border: "1px solid rgba(204,82,40,0.25)",
+                  background: "transparent", color: "#CC5228", fontSize: 11, fontWeight: 500,
+                  cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5,
+                  whiteSpace: "nowrap", flexShrink: 0, transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(204,82,40,0.08)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+              >
+                🗑️ Verwijderen
+              </button>
+            )}
+          </div>
           <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "14px 0", opacity: 0.3 }} />
         </div>
 
