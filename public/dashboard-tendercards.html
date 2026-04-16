@@ -1336,6 +1336,94 @@
     renderRequests();
   }
 
+  // Parse structured fields from the mail body (handles Formspree + generic "key: value" formats)
+  function parseRequestFields(body) {
+    if (!body) return { fields: {}, message: '' };
+    // Strip Formspree intro / footer
+    let text = body
+      .replace(/^[\s\S]*?Here's what they had to say:\s*/i, '')
+      .replace(/Submitted[\s\S]*$/i, '')
+      .replace(/You are receiving this[\s\S]*$/i, '')
+      .trim();
+
+    const fields = {};
+    // Match patterns like "label:\n\nvalue" (Formspree) OR "label: value" (generic)
+    const re = /^([a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9 _-]{0,40}):\s*\n+([^\n][^\n]*(?:\n(?!\s*[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9 _-]{0,40}:)[^\n]*)*)?/gm;
+    const singleLineRe = /^([a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9 _-]{0,40}):\s+(.+)$/gm;
+
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const key = m[1].trim().toLowerCase();
+      const val = (m[2] || '').trim();
+      if (val) fields[key] = val;
+    }
+    // Fallback single-line format (Name: John)
+    if (Object.keys(fields).length === 0) {
+      while ((m = singleLineRe.exec(text)) !== null) {
+        fields[m[1].trim().toLowerCase()] = m[2].trim();
+      }
+    }
+
+    // Extract the "bericht" / "message" / "comments" field separately
+    const messageKeys = ['bericht', 'message', 'opmerkingen', 'comments', 'notes', 'toelichting'];
+    let message = '';
+    for (const k of messageKeys) {
+      if (fields[k]) { message = fields[k]; delete fields[k]; break; }
+    }
+
+    return { fields, message, rawText: text };
+  }
+
+  function fieldLabel(key) {
+    const map = {
+      voornaam: 'Voornaam', achternaam: 'Achternaam', naam: 'Naam', name: 'Naam',
+      'first name': 'Voornaam', 'last name': 'Achternaam', fullname: 'Naam',
+      email: 'E-mail', 'e-mail': 'E-mail', mail: 'E-mail',
+      telefoon: 'Telefoon', phone: 'Telefoon', tel: 'Telefoon', mobiel: 'Telefoon',
+      bedrijf: 'Bedrijf', company: 'Bedrijf', organisatie: 'Bedrijf', organization: 'Bedrijf',
+      functie: 'Functie', role: 'Functie', position: 'Functie', title: 'Functie',
+      medewerkers: 'Aantal medewerkers', employees: 'Aantal medewerkers', 'team size': 'Teamgrootte',
+      sector: 'Sector', industry: 'Sector', branche: 'Branche',
+      website: 'Website', url: 'Website',
+      budget: 'Budget', pakket: 'Pakket', plan: 'Pakket',
+    };
+    return map[key] || key.charAt(0).toUpperCase() + key.slice(1);
+  }
+
+  function fieldIcon(key) {
+    if (/mail/.test(key)) return '✉';
+    if (/telefoon|phone|mobiel|tel$/.test(key)) return '☎';
+    if (/bedrijf|company|org/.test(key)) return '🏢';
+    if (/functie|role|position|title/.test(key)) return '👤';
+    if (/medewerkers|employees|team/.test(key)) return '👥';
+    if (/naam|name/.test(key)) return '👤';
+    if (/website|url/.test(key)) return '🌐';
+    if (/sector|industry|branche/.test(key)) return '🏷';
+    if (/pakket|plan|budget/.test(key)) return '📦';
+    return '•';
+  }
+
+  function displayName(parsed, fallbackFrom) {
+    const f = parsed.fields;
+    if (f.voornaam && f.achternaam) return `${f.voornaam} ${f.achternaam}`;
+    if (f.naam) return f.naam;
+    if (f.name) return f.name;
+    if (f.fullname) return f.fullname;
+    return fallbackFrom;
+  }
+
+  function displayCompany(parsed) {
+    return parsed.fields.bedrijf || parsed.fields.company || parsed.fields.organisatie || '';
+  }
+
+  function displayEmail(parsed, fallback) {
+    return parsed.fields.email || parsed.fields['e-mail'] || fallback || '';
+  }
+
+  function displayPhone(parsed) {
+    return parsed.fields.telefoon || parsed.fields.phone || parsed.fields.tel || parsed.fields.mobiel || '';
+  }
+
   function renderRequests() {
     const list = document.getElementById('req-list');
     const empty = document.getElementById('req-empty');
@@ -1368,24 +1456,41 @@
       const isNew = r.status === 'new';
       const date = new Date(r.received_at || r.created_at);
       const dateStr = date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-      const from = r.from_name || (r.from_email ? r.from_email.split('@')[0] : 'Onbekend');
-      const fromEsc = escapeHtml(from);
-      const emailEsc = escapeHtml(r.from_email || '');
+      const parsed = parseRequestFields(r.body_text);
+      const name = displayName(parsed, r.from_name || (r.from_email ? r.from_email.split('@')[0] : 'Onbekend'));
+      const company = displayCompany(parsed);
+      const email = displayEmail(parsed, r.from_email);
+      const phone = displayPhone(parsed);
+      const functie = parsed.fields.functie || parsed.fields.role || '';
+      const medewerkers = parsed.fields.medewerkers || parsed.fields.employees || '';
       const subjectEsc = escapeHtml(r.subject || '(geen onderwerp)');
-      const preview = escapeHtml((r.body_text || '').slice(0, 140)).replace(/\n/g, ' ');
-      const initial = (from || '?').charAt(0).toUpperCase();
+      const message = parsed.message || '';
+      const messagePreview = message ? escapeHtml(message.slice(0, 120)).replace(/\n/g, ' ') : '';
+      const initial = (name || '?').charAt(0).toUpperCase();
+
+      // Chips row — show only non-empty fields
+      const chips = [];
+      if (email) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">✉ ${escapeHtml(email)}</span>`);
+      if (phone) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">☎ ${escapeHtml(phone)}</span>`);
+      if (functie) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">👤 ${escapeHtml(functie)}</span>`);
+      if (medewerkers) chips.push(`<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.68rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.03);border-radius:999px;">👥 ${escapeHtml(medewerkers)}</span>`);
+
       return `
         <div onclick="openRequest('${r.id}')" class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;border-left:3px solid ${isNew ? 'var(--gold2)' : 'transparent'};">
-          <div style="width:36px;height:36px;border-radius:8px;background:${isNew ? 'rgba(196,150,61,0.15)' : 'rgba(255,255,255,0.04)'};color:${isNew ? 'var(--gold2)' : 'var(--muted)'};display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;flex-shrink:0;">${initial}</div>
+          <div style="width:42px;height:42px;border-radius:10px;background:${isNew ? 'rgba(196,150,61,0.15)' : 'rgba(255,255,255,0.04)'};color:${isNew ? 'var(--gold2)' : 'var(--muted)'};display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0;">${initial}</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;gap:0.5rem;">
-              <span style="font-size:0.82rem;font-weight:${isNew ? '600' : '500'};color:${isNew ? 'var(--white)' : 'rgba(255,255,255,0.7)'};">${fromEsc}</span>
-              <span style="font-size:0.68rem;color:var(--muted);white-space:nowrap;">${dateStr}</span>
+              <div style="display:flex;align-items:baseline;gap:0.5rem;min-width:0;">
+                <span style="font-size:0.92rem;font-weight:${isNew ? '700' : '600'};color:${isNew ? 'var(--white)' : 'rgba(255,255,255,0.8)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(name)}</span>
+                ${company ? `<span style="font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">· ${escapeHtml(company)}</span>` : ''}
+              </div>
+              <span style="font-size:0.68rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">${dateStr}</span>
             </div>
-            <div style="font-size:0.78rem;color:${isNew ? 'var(--white)' : 'var(--muted)'};font-weight:${isNew ? '500' : '400'};margin-bottom:0.2rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${subjectEsc}</div>
-            <div style="font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${preview || emailEsc}</div>
+            <div style="font-size:0.76rem;color:${isNew ? 'rgba(255,255,255,0.85)' : 'var(--muted)'};font-weight:${isNew ? '500' : '400'};margin-bottom:0.5rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${subjectEsc}</div>
+            ${chips.length ? `<div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:${messagePreview ? '0.5rem' : '0'};">${chips.join('')}</div>` : ''}
+            ${messagePreview ? `<div style="font-size:0.72rem;color:var(--muted);font-style:italic;line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">"${messagePreview}${message.length > 120 ? '…' : ''}"</div>` : ''}
           </div>
-          ${isNew ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--gold2);flex-shrink:0;margin-top:0.5rem;"></span>' : ''}
+          ${isNew ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--gold2);flex-shrink:0;margin-top:0.6rem;"></span>' : ''}
         </div>
       `;
     }).join('');
@@ -1397,31 +1502,108 @@
     if (r.status === 'new') updateRequestStatus(id, 'read');
     const modal = document.getElementById('req-modal');
     const body = document.getElementById('req-modal-body');
-    const date = new Date(r.received_at || r.created_at).toLocaleString('nl-NL');
-    const fromLine = r.from_name ? `${escapeHtml(r.from_name)} <${escapeHtml(r.from_email || '')}>` : escapeHtml(r.from_email || 'Onbekend');
-    const bodyContent = r.body_html
-      ? `<iframe srcdoc="${escapeHtml(r.body_html)}" style="width:100%;min-height:300px;border:0;background:#fff;border-radius:6px;"></iframe>`
-      : `<div style="white-space:pre-wrap;font-size:0.88rem;color:var(--white);line-height:1.6;">${escapeHtml(r.body_text || '(geen inhoud)')}</div>`;
+    const date = new Date(r.received_at || r.created_at).toLocaleString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+
+    const parsed = parseRequestFields(r.body_text);
+    const name = displayName(parsed, r.from_name || '');
+    const company = displayCompany(parsed);
+    const email = displayEmail(parsed, r.from_email);
+    const phone = displayPhone(parsed);
+    const functie = parsed.fields.functie || parsed.fields.role || parsed.fields.position || '';
+    const medewerkers = parsed.fields.medewerkers || parsed.fields.employees || '';
+    const message = parsed.message || '';
+    const initial = (name || '?').charAt(0).toUpperCase();
+
+    // "Other" fields (anything we haven't already shown as primary)
+    const usedKeys = new Set(['voornaam', 'achternaam', 'naam', 'name', 'fullname', 'email', 'e-mail', 'mail', 'telefoon', 'phone', 'tel', 'mobiel', 'bedrijf', 'company', 'organisatie', 'organization', 'functie', 'role', 'position', 'title', 'medewerkers', 'employees']);
+    const otherFields = Object.entries(parsed.fields).filter(([k]) => !usedKeys.has(k));
+
+    // Build contact grid items
+    const contactItems = [];
+    if (email) contactItems.push({ label: 'E-mail', value: email, icon: '✉', link: `mailto:${email}` });
+    if (phone) contactItems.push({ label: 'Telefoon', value: phone, icon: '☎', link: `tel:${phone.replace(/\s/g, '')}` });
+    if (company) contactItems.push({ label: 'Bedrijf', value: company, icon: '🏢' });
+    if (functie) contactItems.push({ label: 'Functie', value: functie, icon: '👤' });
+    if (medewerkers) contactItems.push({ label: 'Medewerkers', value: medewerkers, icon: '👥' });
+
+    const contactGridHtml = contactItems.length ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;margin-bottom:1.5rem;">
+        ${contactItems.map(item => `
+          <div style="padding:0.85rem 1rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.3rem;">
+              <span>${item.icon}</span> ${item.label}
+            </div>
+            ${item.link
+              ? `<a href="${item.link}" style="font-size:0.88rem;color:var(--white);font-weight:500;word-break:break-word;text-decoration:none;">${escapeHtml(item.value)}</a>`
+              : `<div style="font-size:0.88rem;color:var(--white);font-weight:500;word-break:break-word;">${escapeHtml(item.value)}</div>`
+            }
+          </div>
+        `).join('')}
+      </div>
+    ` : '';
+
+    const otherFieldsHtml = otherFields.length ? `
+      <div style="margin-bottom:1.5rem;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;">Overige gegevens</div>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;">
+          ${otherFields.map(([k, v]) => `
+            <div style="display:flex;gap:0.75rem;font-size:0.82rem;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.03);">
+              <span style="color:var(--muted);min-width:140px;flex-shrink:0;">${fieldIcon(k)} ${escapeHtml(fieldLabel(k))}</span>
+              <span style="color:var(--white);flex:1;">${escapeHtml(v)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    const messageHtml = message ? `
+      <div style="margin-bottom:1.5rem;padding:1.25rem;background:rgba(196,150,61,0.06);border:1px solid rgba(196,150,61,0.2);border-left:3px solid var(--gold2);border-radius:6px;">
+        <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:0.6rem;font-weight:600;">💬 Bericht / Opmerkingen</div>
+        <div style="font-size:0.92rem;color:var(--white);line-height:1.6;white-space:pre-wrap;">${escapeHtml(message)}</div>
+      </div>
+    ` : `
+      <div style="margin-bottom:1.5rem;padding:0.85rem 1.25rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-size:0.8rem;font-style:italic;">
+        Geen bericht/opmerkingen meegestuurd.
+      </div>
+    `;
+
+    const fallbackRaw = (contactItems.length === 0 && !message && otherFields.length === 0) ? `
+      <div style="margin-bottom:1.5rem;padding:1rem 1.25rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:6px;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;">Ruwe inhoud</div>
+        ${r.body_html
+          ? `<iframe srcdoc="${escapeHtml(r.body_html)}" style="width:100%;min-height:300px;border:0;background:#fff;border-radius:6px;"></iframe>`
+          : `<div style="white-space:pre-wrap;font-size:0.82rem;color:var(--white);line-height:1.6;">${escapeHtml(r.body_text || '(geen inhoud)')}</div>`
+        }
+      </div>
+    ` : '';
+
     body.innerHTML = `
-      <div style="margin-bottom:1rem;">
-        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Van</div>
-        <div style="font-size:0.9rem;color:var(--white);">${fromLine}</div>
+      <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.25rem;padding-right:2rem;">
+        <div style="width:56px;height:56px;border-radius:12px;background:rgba(196,150,61,0.15);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;flex-shrink:0;">${initial}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:1.35rem;font-weight:700;color:var(--white);line-height:1.2;">${escapeHtml(name || '(onbekend)')}</div>
+          ${company ? `<div style="font-size:0.88rem;color:var(--muted);margin-top:0.2rem;">${escapeHtml(company)}${functie ? ` · ${escapeHtml(functie)}` : ''}</div>` : ''}
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;">${date}</div>
+        </div>
       </div>
-      <div style="margin-bottom:1rem;">
-        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Onderwerp</div>
-        <div style="font-size:1.05rem;font-weight:600;color:var(--white);">${escapeHtml(r.subject || '(geen onderwerp)')}</div>
-      </div>
-      <div style="margin-bottom:1rem;">
-        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;">Ontvangen</div>
-        <div style="font-size:0.82rem;color:var(--muted);">${date}</div>
-      </div>
-      <hr style="border:0;border-top:1px solid var(--border);margin:1.25rem 0;">
-      ${bodyContent}
+
+      <div style="font-size:0.78rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;">Onderwerp</div>
+      <div style="font-size:0.98rem;color:var(--white);margin-bottom:1.5rem;font-weight:500;">${escapeHtml(r.subject || '(geen onderwerp)')}</div>
+
+      ${contactGridHtml}
+      ${messageHtml}
+      ${otherFieldsHtml}
+      ${fallbackRaw}
+
       <hr style="border:0;border-top:1px solid var(--border);margin:1.25rem 0;">
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <button onclick="replyInClaude('${r.id}')" style="background:var(--gold2);color:#000;border:none;border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;">✨ Opstellen reply met Claude</button>
-        ${r.from_email ? `<a href="mailto:${encodeURIComponent(r.from_email)}?subject=${encodeURIComponent('Re: ' + (r.subject || ''))}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;">✉ Beantwoord in je mail</a>` : ''}
-        ${r.status !== 'archived' ? `<button onclick="updateRequestStatus('${r.id}', 'archived'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">📁 Archiveer</button>` : `<button onclick="updateRequestStatus('${r.id}', 'read'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">↩ Terug naar inbox</button>`}
+        <button onclick="replyInClaude('${r.id}')" style="background:var(--gold2);color:#000;border:none;border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:0.4rem;">✨ Reply opstellen met Claude</button>
+        ${email ? `<a href="mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('Re: ' + (r.subject || ''))}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">✉ Beantwoord direct</a>` : ''}
+        ${phone ? `<a href="tel:${phone.replace(/\s/g, '')}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">☎ Bel</a>` : ''}
+        ${r.status !== 'archived'
+          ? `<button onclick="updateRequestStatus('${r.id}', 'archived'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">📁 Archiveer</button>`
+          : `<button onclick="updateRequestStatus('${r.id}', 'read'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">↩ Terug naar inbox</button>`
+        }
       </div>
     `;
     modal.style.display = 'flex';
@@ -1443,16 +1625,44 @@
   function replyInClaude(id) {
     const r = requests.find(x => x.id === id);
     if (!r) return;
-    const prompt = `Je bent assistent voor Tender Cards — we maken kaart-gebaseerde producten voor HR-teams om empathische verzuimbegeleiding te ondersteunen (Essentials €149/kw, Pro €349/kw, Maatwerk).
+    const parsed = parseRequestFields(r.body_text);
+    const name = displayName(parsed, r.from_name || 'Onbekend');
+    const company = displayCompany(parsed);
+    const email = displayEmail(parsed, r.from_email);
+    const phone = displayPhone(parsed);
+    const functie = parsed.fields.functie || parsed.fields.role || '';
+    const medewerkers = parsed.fields.medewerkers || parsed.fields.employees || '';
+    const message = parsed.message || '';
 
-**Inkomende aanvraag:**
-Van: ${r.from_name || r.from_email || 'Onbekend'}
-Onderwerp: ${r.subject || ''}
+    const contactBlock = [
+      `Naam: ${name}`,
+      company && `Bedrijf: ${company}`,
+      functie && `Functie: ${functie}`,
+      email && `E-mail: ${email}`,
+      phone && `Telefoon: ${phone}`,
+      medewerkers && `Aantal medewerkers: ${medewerkers}`,
+    ].filter(Boolean).join('\n');
 
-${r.body_text || '(geen tekst)'}
+    const prompt = `Je bent assistent voor Tender Cards — we maken kaart-gebaseerde producten voor HR-teams om empathische verzuimbegeleiding te ondersteunen. Pakketten: Essentials (€149/kw, 25 kaarten), Pro (€349/kw, 75 kaarten), Maatwerk (custom).
+
+**Inkomende aanvraag via formulier op tendercards.nl**
+
+**Contactgegevens:**
+${contactBlock}
+
+**Onderwerp:** ${r.subject || '(geen)'}
+
+**Bericht / opmerkingen van de indiener:**
+${message || '(geen expliciet bericht — alleen formulier ingevuld)'}
 
 **Opdracht:**
-Stel een professionele, empathische reply op in het Nederlands. Wees concreet: beantwoord vragen specifiek, stel een demo of vervolggesprek voor, en sluit af met duidelijke next steps. Gebruik een warme, zakelijke toon die past bij Tender Cards.`;
+Stel een persoonlijke, professionele reply op in het Nederlands. Start met hun voornaam. Wees concreet:
+- Erken hun interesse
+- Kies afhankelijk van hun bedrijfsgrootte (${medewerkers || 'onbekend'}) het meest passende pakket als suggestie
+- Stel een korte demo van 20 min voor, geef 2-3 concrete tijdopties
+- Sluit warm af met ondertekening namens Tender Cards
+
+Gebruik een warme, zakelijke toon die past bij onze missie (empathische verzuimbegeleiding). Geen marketing-fluff.`;
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
 
