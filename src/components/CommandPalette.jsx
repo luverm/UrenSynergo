@@ -7,6 +7,7 @@ const QUICK_ACTIONS = [
   { id: "a-holding", label: "Holding overview", hint: "Alle merken in één beeld", icon: "🏛", path: "/holding" },
   { id: "a-tasks", label: "Mijn taken", hint: "Toegewezen taken + deadlines", icon: "✓", path: "/mijn-taken" },
   { id: "a-calendar", label: "Kalender", hint: "Alle deadlines op een kalender", icon: "📅", path: "/kalender" },
+  { id: "a-week", label: "Week digest", hint: "Samenvatting van deze week", icon: "📊", path: "/week" },
   { id: "a-chat", label: "Chat", hint: "Open team chat", icon: "💬", path: "/chat" },
   { id: "a-groups", label: "Projecten", hint: "Bekijk alle projecten", icon: "📁", path: "/groups" },
   { id: "a-sales", label: "Sales dashboards", hint: "ELEV8 · FaithDrive · Tender Cards", icon: "📈", path: "/sales" },

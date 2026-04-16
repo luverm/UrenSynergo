@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import NewTaskModal from "../components/NewTaskModal";
+import { useFocusTimer } from "../context/FocusTimerContext";
 
 const BRAND_META = {
   elev8: { label: "ELEV8", color: "#FF6B35" },
@@ -81,7 +82,19 @@ export default function Calendar() {
   const [brandFilter, setBrandFilter] = useState("all");
   const [activeTask, setActiveTask] = useState(null);
   const [newTaskDate, setNewTaskDate] = useState(null);
+  const [draggedTaskId, setDraggedTaskId] = useState(null);
+  const [dragOverDate, setDragOverDate] = useState(null);
   const channelsRef = useRef([]);
+  const focus = useFocusTimer();
+
+  const rescheduleTask = async (taskId, newIso) => {
+    const t = tasks.find((x) => x.id === taskId);
+    if (!t || t.due_date === newIso) return;
+    // Optimistic update
+    setTasks((prev) => prev.map((x) => x.id === taskId ? { ...x, due_date: newIso } : x));
+    await supabase.from("tasks").update({ due_date: newIso }).eq("id", taskId);
+    supabase.channel("tasks_" + t.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
+  };
 
   const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
 
@@ -285,15 +298,28 @@ export default function Calendar() {
                     key={iso}
                     className="cal-day"
                     onClick={() => setNewTaskDate(iso)}
+                    onDragOver={(e) => { if (draggedTaskId) { e.preventDefault(); setDragOverDate(iso); } }}
+                    onDragLeave={() => setDragOverDate(null)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedTaskId) {
+                        rescheduleTask(draggedTaskId, iso);
+                        setDraggedTaskId(null);
+                        setDragOverDate(null);
+                      }
+                    }}
                     style={{
                       minHeight: view === "month" ? 100 : 180,
                       padding: "8px 8px 6px",
                       borderRadius: 3,
-                      background: isToday ? "rgba(255,107,53,0.05)" : (inCurrentMonth ? "rgba(255,255,255,0.015)" : "rgba(255,255,255,0.005)"),
-                      border: `1px solid ${isToday ? "rgba(255,107,53,0.25)" : "rgba(255,255,255,0.04)"}`,
+                      background: dragOverDate === iso
+                        ? "rgba(255,107,53,0.14)"
+                        : (isToday ? "rgba(255,107,53,0.05)" : (inCurrentMonth ? "rgba(255,255,255,0.015)" : "rgba(255,255,255,0.005)")),
+                      border: `1px solid ${dragOverDate === iso ? "#FF6B35" : (isToday ? "rgba(255,107,53,0.25)" : "rgba(255,255,255,0.04)")}`,
                       opacity: inCurrentMonth ? 1 : 0.4,
                       display: "flex", flexDirection: "column", gap: 4, overflow: "hidden",
                       position: "relative",
+                      transition: "background 0.15s, border-color 0.15s",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
@@ -323,6 +349,9 @@ export default function Calendar() {
                           <button
                             key={t.id}
                             onClick={(e) => { e.stopPropagation(); setActiveTask(t); }}
+                            draggable={!isDone}
+                            onDragStart={(e) => { e.stopPropagation(); setDraggedTaskId(t.id); e.dataTransfer.effectAllowed = "move"; }}
+                            onDragEnd={() => { setDraggedTaskId(null); setDragOverDate(null); }}
                             className="cal-task-pill"
                             style={{
                               display: "flex", alignItems: "center", gap: 4,
@@ -330,14 +359,15 @@ export default function Calendar() {
                               background: brand.color + (isDone ? "08" : "1A"),
                               borderLeft: `2px solid ${prio.color === "#F5F3EE" ? brand.color : prio.color}`,
                               color: isDone ? "#6E6E72" : "#F5F3EE",
-                              fontSize: 10, fontWeight: 500, cursor: "pointer",
+                              fontSize: 10, fontWeight: 500, cursor: isDone ? "pointer" : "grab",
                               fontFamily: "inherit", textAlign: "left",
                               textDecoration: isDone ? "line-through" : "none",
                               overflow: "hidden", whiteSpace: "nowrap",
                               transition: "all 0.15s", width: "100%", border: "none",
                               minWidth: 0,
+                              opacity: draggedTaskId === t.id ? 0.4 : 1,
                             }}
-                            title={t.title}
+                            title={isDone ? t.title : `${t.title}\n(sleep naar een andere dag om te verplaatsen)`}
                           >
                             {prio.emoji && <span style={{ fontSize: 8, flexShrink: 0 }}>{prio.emoji}</span>}
                             <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{t.title}</span>
@@ -433,18 +463,36 @@ export default function Calendar() {
               </div>
             </div>
 
-            <button
-              onClick={() => updateStatus(activeTask)}
-              style={{
-                width: "100%", padding: "12px", borderRadius: 4, border: "none",
-                background: activeTask.status === "done" ? "rgba(255,255,255,0.04)" : "#FF6B35",
-                color: activeTask.status === "done" ? "#F5F3EE" : "#0E0E10",
-                fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-                letterSpacing: 0.5,
-              }}
-            >
-              {activeTask.status === "done" ? "↺ Heropenen" : "✓ Markeer als afgerond"}
-            </button>
+            <div style={{ display: "flex", gap: 8 }}>
+              {activeTask.status !== "done" && (
+                <button
+                  onClick={() => {
+                    focus.start({ id: activeTask.id, title: activeTask.title, brand: activeTask.brand });
+                    setActiveTask(null);
+                  }}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 4, border: "1px solid rgba(76,175,125,0.3)",
+                    background: "rgba(76,175,125,0.1)", color: "#4CAF7D",
+                    fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  ▶ Start focus
+                </button>
+              )}
+              <button
+                onClick={() => updateStatus(activeTask)}
+                style={{
+                  flex: 2, padding: "12px", borderRadius: 4, border: "none",
+                  background: activeTask.status === "done" ? "rgba(255,255,255,0.04)" : "#FF6B35",
+                  color: activeTask.status === "done" ? "#F5F3EE" : "#0E0E10",
+                  fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                  letterSpacing: 0.5,
+                }}
+              >
+                {activeTask.status === "done" ? "↺ Heropenen" : "✓ Markeer als afgerond"}
+              </button>
+            </div>
           </div>
         </div>
       )}

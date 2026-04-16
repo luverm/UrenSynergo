@@ -1577,6 +1577,10 @@
 
       const stage = stageMeta(r.stage);
       const stageBadgeHtml = `<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.62rem;color:${stage.color};background:${stage.color}1A;border:1px solid ${stage.color}40;padding:0.12rem 0.45rem;border-radius:999px;font-weight:600;letter-spacing:0.04em;white-space:nowrap;">${stage.emoji} ${stage.short}</span>`;
+      const stale = isStaleLead(r);
+      const staleBadgeHtml = stale
+        ? `<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.62rem;color:#CC5228;background:rgba(204,82,40,0.12);border:1px solid rgba(204,82,40,0.3);padding:0.12rem 0.45rem;border-radius:999px;font-weight:700;letter-spacing:0.04em;white-space:nowrap;" title="Staat al ${daysInStage(r)} dagen in deze fase — tijd voor follow-up">⚠ Stale · ${daysInStage(r)}d</span>`
+        : '';
 
       return `
         <div onclick="openRequest('${r.id}')" class="card" style="padding:1rem 1.25rem;display:flex;gap:0.9rem;align-items:flex-start;cursor:pointer;transition:background 0.15s;border-left:3px solid ${stage.color};">
@@ -1587,6 +1591,7 @@
                 <span style="font-size:0.92rem;font-weight:${isNew ? '700' : '600'};color:${isNew ? 'var(--white)' : 'rgba(255,255,255,0.8)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(name)}</span>
                 ${company ? `<span style="font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">· ${escapeHtml(company)}</span>` : ''}
                 ${stageBadgeHtml}
+                ${staleBadgeHtml}
               </div>
               <span style="font-size:0.68rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">${dateStr}</span>
             </div>
@@ -1760,14 +1765,28 @@
       ${fallbackRaw}
 
       <hr style="border:0;border-top:1px solid var(--border);margin:1.25rem 0;">
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+
+      ${isStaleLead(r) ? `
+        <div style="padding:0.9rem 1.1rem;background:rgba(204,82,40,0.06);border:1px solid rgba(204,82,40,0.2);border-left:3px solid #CC5228;border-radius:6px;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:#CC5228;font-weight:700;margin-bottom:0.2rem;">⚠ Stale lead — ${daysInStage(r)} dagen geen contact</div>
+            <div style="font-size:0.76rem;color:var(--muted);">Tijd voor een follow-up om deze lead warm te houden.</div>
+          </div>
+          <button onclick="createFollowupTask('${r.id}')" style="background:#CC5228;color:#fff;border:none;border-radius:6px;padding:0.55rem 1rem;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;">🎯 Maak follow-up taak</button>
+        </div>
+      ` : ''}
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
         <button onclick="replyInClaude('${r.id}')" style="background:var(--gold2);color:#000;border:none;border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:0.4rem;">✨ Reply opstellen met Claude</button>
         ${email ? `<a href="mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('Re: ' + (r.subject || ''))}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">✉ Beantwoord direct</a>` : ''}
         ${phone ? `<a href="tel:${phone.replace(/\s/g, '')}" style="background:transparent;color:var(--white);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.4rem;">☎ Bel</a>` : ''}
+        ${!isStaleLead(r) && r.stage !== 'customer' && r.stage !== 'lost' ? `<button onclick="createFollowupTask('${r.id}')" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;">🎯 Follow-up taak</button>` : ''}
+        <div style="flex:1;"></div>
         ${r.status !== 'archived'
-          ? `<button onclick="updateRequestStatus('${r.id}', 'archived'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">📁 Archiveer</button>`
-          : `<button onclick="updateRequestStatus('${r.id}', 'read'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;">↩ Terug naar inbox</button>`
+          ? `<button onclick="updateRequestStatus('${r.id}', 'archived'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;">📁 Archiveer</button>`
+          : `<button onclick="updateRequestStatus('${r.id}', 'read'); closeRequestModal()" style="background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:0.7rem 1rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;">↩ Terug naar inbox</button>`
         }
+        <button onclick="deleteRequest('${r.id}')" title="Lead verwijderen" style="background:transparent;color:#CC5228;border:1px solid rgba(204,82,40,0.25);border-radius:6px;padding:0.7rem 0.9rem;font-size:0.78rem;font-weight:500;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='rgba(204,82,40,0.08)'" onmouseout="this.style.background='transparent'">🗑 Verwijder</button>
       </div>
     `;
     modal.style.display = 'flex';
@@ -1784,6 +1803,74 @@
     if (idx >= 0) requests[idx].status = status;
     renderRequests();
     reqChannel.send({ type: 'broadcast', event: 'requests_changed', payload: {} });
+  }
+
+  async function deleteRequest(id) {
+    const r = requests.find(x => x.id === id);
+    if (!r) return;
+    const who = r.from_name || r.from_email || 'deze aanvraag';
+    if (!confirm(`Weet je zeker dat je ${who} permanent wil verwijderen? Deze actie kan niet ongedaan worden gemaakt.`)) return;
+    const { error } = await reqSupa.from('requests').delete().eq('id', id);
+    if (error) { alert('Kon niet verwijderen: ' + error.message); return; }
+    requests = requests.filter(x => x.id !== id);
+    closeRequestModal();
+    renderRequests();
+    reqChannel.send({ type: 'broadcast', event: 'requests_changed', payload: {} });
+  }
+
+  // Stale lead detection — compute days in current stage
+  function daysInStage(r) {
+    const base = r.last_contacted_at || r.received_at || r.created_at;
+    if (!base) return 0;
+    return Math.floor((Date.now() - new Date(base).getTime()) / 86400000);
+  }
+
+  function isStaleLead(r) {
+    if (!r || r.status === 'archived') return false;
+    const stage = r.stage || 'lead';
+    // Final stages don't go stale
+    if (stage === 'customer' || stage === 'lost') return false;
+    const days = daysInStage(r);
+    // Different thresholds per stage
+    const thresholds = { lead: 2, contacted: 3, demo_scheduled: 5, demo_done: 3, offer_sent: 5 };
+    return days >= (thresholds[stage] || 3);
+  }
+
+  async function createFollowupTask(requestId) {
+    const r = requests.find(x => x.id === requestId);
+    if (!r) return;
+    const parsed = parseRequestFields(r.body_text);
+    const name = displayName(parsed, r.from_name || '');
+    const company = displayCompany(parsed);
+    const days = daysInStage(r);
+    const stage = stageMeta(r.stage);
+    const contact = [displayEmail(parsed, r.from_email), displayPhone(parsed)].filter(Boolean).join(' · ');
+
+    const title = `Follow-up: ${name}${company ? ' (' + company + ')' : ''} — ${stage.label.toLowerCase()}`;
+    const description = `Staat al ${days} dagen in "${stage.label}" zonder update.${contact ? '\nContact: ' + contact : ''}${parsed.message ? '\n\nOrigineel bericht: ' + parsed.message : ''}`;
+    const taskKey = `followup-${r.id}-${Date.now()}`.slice(0, 80);
+
+    const { error } = await reqSupa.from('tasks').insert({
+      brand: 'tendercards',
+      source: 'custom',
+      task_key: taskKey,
+      title,
+      description,
+      assigned_to: 'Shihab',
+      assigned_reason: 'Sales follow-up',
+      status: 'open',
+      priority: days >= 7 ? 'urgent' : 'high',
+      due_date: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+    });
+    if (error) { alert('Kon taak niet aanmaken: ' + error.message); return; }
+    reqSupa.channel('tasks_tendercards').send({ type: 'broadcast', event: 'tasks_changed', payload: {} });
+    // Update last_contacted_at as "acknowledgment" so lead doesn't stay stale
+    await reqSupa.from('requests').update({ last_contacted_at: new Date().toISOString() }).eq('id', requestId);
+    const idx = requests.findIndex(x => x.id === requestId);
+    if (idx >= 0) requests[idx].last_contacted_at = new Date().toISOString();
+    renderRequests();
+    reqChannel.send({ type: 'broadcast', event: 'requests_changed', payload: {} });
+    alert(`✓ Follow-up taak aangemaakt voor Shihab met deadline morgen.`);
   }
 
   function replyInClaude(id) {

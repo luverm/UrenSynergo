@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import NewTaskModal from "../components/NewTaskModal";
+import { useFocusTimer } from "../context/FocusTimerContext";
 
 const BRAND_META = {
   elev8: { label: "ELEV8", color: "#FF6B35" },
@@ -214,6 +215,7 @@ export default function MyTasks() {
   const [prioPopoverId, setPrioPopoverId] = useState(null);
   const [showNewModal, setShowNewModal] = useState(false);
   const channelRef = useRef(null);
+  const focus = useFocusTimer();
 
   const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
 
@@ -500,6 +502,38 @@ export default function MyTasks() {
 
                     {/* Action chips row */}
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                      {/* Focus timer play */}
+                      {!isDone && (
+                        (() => {
+                          const isActive = focus.active && focus.state?.taskId === t.id;
+                          return (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (isActive) {
+                                  if (focus.isPaused) focus.resume();
+                                  else focus.pause();
+                                } else {
+                                  focus.start({ id: t.id, title: t.title, brand: t.brand });
+                                }
+                              }}
+                              title={isActive ? (focus.isPaused ? "Hervatten" : "Pauzeren") : "Start focus timer"}
+                              style={{
+                                display: "inline-flex", alignItems: "center", gap: 4,
+                                padding: "3px 8px", borderRadius: 999,
+                                border: `1px solid ${isActive ? (focus.isPaused ? "#6E6E7255" : "#4CAF7D55") : "rgba(76,175,125,0.22)"}`,
+                                background: isActive ? (focus.isPaused ? "rgba(110,110,114,0.12)" : "rgba(76,175,125,0.14)") : "transparent",
+                                color: isActive && !focus.isPaused ? "#4CAF7D" : (isActive ? "#6E6E72" : "#4CAF7D"),
+                                fontSize: 10, fontWeight: 600, cursor: "pointer",
+                                fontFamily: "inherit", letterSpacing: 0.3,
+                              }}
+                            >
+                              {isActive ? (focus.isPaused ? "⏸ Pauze" : "● Focus") : "▶ Focus"}
+                            </button>
+                          );
+                        })()
+                      )}
+
                       {/* Priority */}
                       <div style={{ position: "relative" }}>
                         <button

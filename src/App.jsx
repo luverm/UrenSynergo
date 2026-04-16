@@ -14,6 +14,7 @@ import Family from "./pages/Family";
 import MyTasks from "./pages/MyTasks";
 import Holding from "./pages/Holding";
 import Calendar from "./pages/Calendar";
+import WeeklyDigest from "./pages/WeeklyDigest";
 
 function Spinner() {
   return (
@@ -67,6 +68,7 @@ export default function App() {
         <Route path="/sales" element={<Sales />} />
         <Route path="/holding" element={<Holding />} />
         <Route path="/kalender" element={<Calendar />} />
+        <Route path="/week" element={<WeeklyDigest />} />
         <Route path="/mijn-taken" element={<MyTasks />} />
         <Route path="/family" element={<Family />} />
         <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
