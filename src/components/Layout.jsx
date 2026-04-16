@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useIsMobile } from "../hooks/useIsMobile";
+import CommandPalette from "./CommandPalette";
 
 const NAV_ITEMS = [
   {
@@ -131,6 +132,8 @@ export default function Layout() {
           <Outlet />
         </div>
 
+        <CommandPalette />
+
         {/* Bottom tab bar */}
         <div style={{
           position: "fixed", bottom: 0, left: 0, right: 0, height: 64,
@@ -197,6 +200,28 @@ export default function Layout() {
             <line x1="16" y1="76" x2="16" y2="8" stroke="#FF6B35" strokeWidth="4" strokeLinecap="round"/>
             <polyline points="4,24 16,6 28,24" fill="none" stroke="#FF6B35" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
+        </div>
+
+        {/* Command palette trigger */}
+        <div style={{ padding: "0 12px 12px" }}>
+          <button
+            onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: !navigator.platform.toUpperCase().includes("MAC"), metaKey: navigator.platform.toUpperCase().includes("MAC") }))}
+            style={{
+              width: "100%", padding: "8px 12px", borderRadius: 2,
+              border: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.015)",
+              color: "#6E6E72", fontSize: 12, fontWeight: 400, fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer", transition: "all 0.15s",
+              display: "flex", alignItems: "center", gap: 8,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,107,53,0.15)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.015)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+            </svg>
+            <span style={{ flex: 1, textAlign: "left" }}>Zoeken…</span>
+            <kbd style={{ fontSize: 9.5, color: "#6E6E72", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3, fontFamily: "inherit", letterSpacing: 0.3 }}>⌘K</kbd>
+          </button>
         </div>
 
         {/* Nav */}
@@ -270,6 +295,8 @@ export default function Layout() {
       }}>
         <Outlet />
       </div>
+
+      <CommandPalette />
     </>
   );
 }

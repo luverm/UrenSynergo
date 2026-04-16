@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import DashboardWidgets from "../components/DashboardWidgets";
+import ActivityFeed from "../components/ActivityFeed";
 
 function getCurrentPeriod() {
   const now = new Date();
@@ -329,6 +330,8 @@ export default function Dashboard() {
             <div style={{ padding: "6px 14px", borderRadius: 2, background: "rgba(255,107,53,0.06)", fontSize: 13, fontWeight: 600, color: "#FF6B35" }}>Totaal: {totalHours} uur</div>
           )}
         </div>
+
+        <ActivityFeed />
       </div>
     </div>
   );
