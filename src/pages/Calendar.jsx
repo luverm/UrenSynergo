@@ -106,11 +106,31 @@ export default function Calendar() {
 
   useEffect(() => {
     load();
-    const channels = ["elev8", "faithdrive", "tendercards"].map((b) =>
-      supabase.channel("tasks_" + b).on("broadcast", { event: "tasks_changed" }, load).subscribe()
+
+    // 1. Direct database listener — fires on any task change regardless of sender
+    const dbChannel = supabase
+      .channel("calendar-tasks-db-" + Math.random().toString(36).slice(2))
+      .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, load)
+      .subscribe();
+
+    // 2. Broadcast fallback — same channel names as elsewhere
+    const broadcastChannels = ["elev8", "faithdrive", "tendercards"].map((b) =>
+      supabase.channel("calendar-bc-" + b).on("broadcast", { event: "tasks_changed" }, load).subscribe()
     );
-    channelsRef.current = channels;
-    return () => { channels.forEach((c) => supabase.removeChannel(c)); };
+
+    // 3. Window focus / visibility refresh — catches the case where changes happened while tab was inactive
+    const onFocus = () => load();
+    const onVisibility = () => { if (document.visibilityState === "visible") load(); };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    channelsRef.current = [dbChannel, ...broadcastChannels];
+    return () => {
+      supabase.removeChannel(dbChannel);
+      broadcastChannels.forEach((c) => supabase.removeChannel(c));
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   // Filter tasks

@@ -231,11 +231,31 @@ export default function MyTasks() {
 
   useEffect(() => {
     fetchTasks();
-    const channels = ["elev8", "faithdrive", "tendercards"].map((b) =>
-      supabase.channel("tasks_" + b).on("broadcast", { event: "tasks_changed" }, () => fetchTasks()).subscribe()
+
+    // postgres_changes — direct listener on table
+    const dbChannel = supabase
+      .channel("mytasks-db-" + Math.random().toString(36).slice(2))
+      .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, () => fetchTasks())
+      .subscribe();
+
+    // Broadcast fallback
+    const broadcastChannels = ["elev8", "faithdrive", "tendercards"].map((b) =>
+      supabase.channel("mytasks-bc-" + b).on("broadcast", { event: "tasks_changed" }, () => fetchTasks()).subscribe()
     );
-    channelRef.current = channels;
-    return () => { channels.forEach((c) => supabase.removeChannel(c)); };
+
+    // Focus / visibility refresh
+    const onFocus = () => fetchTasks();
+    const onVisibility = () => { if (document.visibilityState === "visible") fetchTasks(); };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    channelRef.current = [dbChannel, ...broadcastChannels];
+    return () => {
+      supabase.removeChannel(dbChannel);
+      broadcastChannels.forEach((c) => supabase.removeChannel(c));
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
     // eslint-disable-next-line
   }, [userFirst]);
 
