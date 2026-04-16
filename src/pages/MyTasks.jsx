@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import NewTaskModal from "../components/NewTaskModal";
 
 const BRAND_META = {
   elev8: { label: "ELEV8", color: "#FF6B35" },
@@ -11,6 +12,7 @@ const BRAND_META = {
 const SOURCE_META = {
   stappenplan: { label: "Stappenplan", icon: "🎯" },
   checklist: { label: "Lanceerchecklist", icon: "✅" },
+  custom: { label: "Zelf toegevoegd", icon: "✍" },
 };
 
 const PRIORITIES = [
@@ -210,6 +212,7 @@ export default function MyTasks() {
   const [brandFilter, setBrandFilter] = useState("all");
   const [duePopoverId, setDuePopoverId] = useState(null);
   const [prioPopoverId, setPrioPopoverId] = useState(null);
+  const [showNewModal, setShowNewModal] = useState(false);
   const channelRef = useRef(null);
 
   const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
@@ -257,6 +260,27 @@ export default function MyTasks() {
     const t = tasks.find((x) => x.id === taskId);
     if (t) supabase.channel("tasks_" + t.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
   };
+
+  const deleteTask = async (task) => {
+    if (!confirm(`Taak "${task.title}" verwijderen?`)) return;
+    await supabase.from("tasks").delete().eq("id", task.id);
+    await fetchTasks();
+    supabase.channel("tasks_" + task.brand).send({ type: "broadcast", event: "tasks_changed", payload: {} });
+  };
+
+  // Keyboard shortcut: N for new task
+  useEffect(() => {
+    const onKey = (e) => {
+      const tag = (e.target?.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.toLowerCase() === "n" && !showNewModal) {
+        e.preventDefault();
+        setShowNewModal(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showNewModal]);
 
   // Calculate stats including overdue
   const stats = useMemo(() => {
@@ -323,14 +347,35 @@ export default function MyTasks() {
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
         <div style={{ animation: "fadeUp 0.6s cubic-bezier(.22,1,.36,1) both", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Mijn taken</div>
-          <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
-          <div style={{ fontSize: 13, color: "#6E6E72", fontWeight: 300 }}>
-            {userFirst ? (
-              <>Automatisch toegewezen aan <span style={{ color: "#FF6B35", fontWeight: 500 }}>{userFirst}</span> op basis van skills.</>
-            ) : (
-              <>Kan je naam niet bepalen — check je profiel.</>
-            )}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: "#F5F3EE", letterSpacing: "-0.01em" }}>Mijn taken</div>
+              <div style={{ width: 40, height: 1, background: "#FF6B35", margin: "12px 0", opacity: 0.3 }} />
+              <div style={{ fontSize: 13, color: "#6E6E72", fontWeight: 300 }}>
+                {userFirst ? (
+                  <>Automatisch toegewezen aan <span style={{ color: "#FF6B35", fontWeight: 500 }}>{userFirst}</span> op basis van skills.</>
+                ) : (
+                  <>Kan je naam niet bepalen — check je profiel.</>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setShowNewModal(true)}
+              style={{
+                padding: "10px 18px", borderRadius: 2, border: "none",
+                background: "#FF6B35", color: "#0E0E10",
+                fontSize: 13, fontWeight: 600, cursor: "pointer",
+                fontFamily: "inherit", letterSpacing: 0.5,
+                display: "inline-flex", alignItems: "center", gap: 8, flexShrink: 0,
+                transition: "filter 0.15s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.1)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.filter = "brightness(1)"; }}
+            >
+              <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+              <span>Nieuwe taak</span>
+              <kbd style={{ fontSize: 9, color: "rgba(14,14,16,0.6)", background: "rgba(14,14,16,0.1)", padding: "1px 5px", borderRadius: 2, fontFamily: "inherit", letterSpacing: 0.3, marginLeft: 4 }}>N</kbd>
+            </button>
           </div>
         </div>
 
@@ -379,6 +424,13 @@ export default function MyTasks() {
           </div>
         )}
 
+        <NewTaskModal
+          open={showNewModal}
+          onClose={() => setShowNewModal(false)}
+          defaultAssignee={userFirst || "Lucas"}
+          onCreated={fetchTasks}
+        />
+
         {!loading && visible.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6, animation: "fadeUp 0.6s 0.15s cubic-bezier(.22,1,.36,1) both" }}>
             {visible.map((t) => {
@@ -426,6 +478,17 @@ export default function MyTasks() {
                       </span>
                       {isShared && (
                         <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 999, background: "rgba(255,107,53,0.08)", color: "#FF6B35", letterSpacing: 0.5, textTransform: "uppercase", fontWeight: 600 }}>gedeeld</span>
+                      )}
+                      {t.source === "custom" && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteTask(t); }}
+                          title="Verwijder taak"
+                          style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.18)", cursor: "pointer", fontSize: 12, padding: 2, transition: "color 0.15s" }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = "#CC5228"}
+                          onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.18)"}
+                        >
+                          🗑
+                        </button>
                       )}
                     </div>
                     <div style={{ fontSize: 14, fontWeight: 500, color: "#F5F3EE", marginBottom: t.description ? 3 : 0, textDecoration: isDone ? "line-through" : "none" }}>

@@ -50,7 +50,7 @@ export default function ActivityFeed() {
         timestamp: i.created_at,
         icon: "💡",
         color: "#4CAF7D",
-        onClick: () => navigate("/sales"),
+        onClick: () => navigate(`/sales?brand=${i.brand}&tab=ideeen`),
       });
     });
 
@@ -81,7 +81,7 @@ export default function ActivityFeed() {
         timestamp: r.received_at,
         icon: "📬",
         color: "#E8B458",
-        onClick: () => navigate("/sales"),
+        onClick: () => navigate(`/sales?brand=${r.brand}&tab=aanvragen`),
       });
     });
 

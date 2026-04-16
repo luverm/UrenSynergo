@@ -1231,6 +1231,16 @@
   const greet = h < 12 ? 'Goede<em>morgen</em>' : h < 18 ? 'Goede<em>middag</em>' : 'Goede<em>avond</em>';
   document.getElementById('topbar-title').innerHTML = greet;
 
+  // Deep-link: open specific tab based on URL hash (e.g. #aanvragen, #ideeen)
+  function openTabFromHash() {
+    const hash = (window.location.hash || '').replace('#', '');
+    if (!hash) return;
+    const navBtn = document.querySelector(`.nav-item[onclick*="showPage('${hash}'"]`);
+    if (navBtn) showPage(hash, navBtn);
+  }
+  openTabFromHash();
+  window.addEventListener('hashchange', openTabFromHash);
+
   // Date
   document.getElementById('current-date').textContent = new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'});
 

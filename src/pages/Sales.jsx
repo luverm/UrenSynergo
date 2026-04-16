@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const PROJECTS = [
   {
@@ -31,13 +32,34 @@ const PROJECTS = [
 ];
 
 export default function Sales() {
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const brandParam = searchParams.get("brand");
+  const tabParam = searchParams.get("tab");
+  const [selectedProject, setSelectedProject] = useState(() =>
+    brandParam ? PROJECTS.find((p) => p.id === brandParam) || null : null
+  );
+
+  // React to URL changes (e.g. clicking widget navigates with params)
+  useEffect(() => {
+    if (brandParam) {
+      const proj = PROJECTS.find((p) => p.id === brandParam);
+      if (proj) setSelectedProject(proj);
+    } else {
+      setSelectedProject(null);
+    }
+  }, [brandParam]);
+
+  const handleBack = () => {
+    setSelectedProject(null);
+    setSearchParams({});
+  };
 
   if (selectedProject) {
+    const iframeSrc = selectedProject.dashboardUrl + (tabParam ? `#${tabParam}` : "");
     return (
       <div style={{ height: "100%", display: "flex", flexDirection: "column", fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE" }}>
         <div style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-          <button onClick={() => setSelectedProject(null)} style={{
+          <button onClick={handleBack} style={{
             padding: "6px 14px", borderRadius: 2, border: "1px solid rgba(255,255,255,0.08)",
             background: "transparent", color: "#6E6E72", fontSize: 11, fontWeight: 500,
             cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase",
@@ -49,7 +71,7 @@ export default function Sales() {
           <span style={{ fontSize: 12, color: "#6E6E72", fontWeight: 300 }}>{selectedProject.sub}</span>
         </div>
         <iframe
-          src={selectedProject.dashboardUrl}
+          src={iframeSrc}
           style={{ flex: 1, border: "none", width: "100%", background: "#0D0D0D" }}
           title={`${selectedProject.name} Dashboard`}
         />
@@ -71,7 +93,7 @@ export default function Sales() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8, animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
           {PROJECTS.map((project) => (
-            <button key={project.id} onClick={() => setSelectedProject(project)} style={{
+            <button key={project.id} onClick={() => { setSelectedProject(project); setSearchParams({ brand: project.id }); }} style={{
               display: "flex", alignItems: "center", gap: 16, padding: "22px 24px", borderRadius: 2, width: "100%",
               background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
               cursor: "pointer", transition: "all 0.25s ease", textAlign: "left",

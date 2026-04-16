@@ -5,6 +5,12 @@ import { useAuth } from "../context/AuthContext";
 
 const TEAM_NAMES = ["Lucas", "Raymond", "Shihab"];
 
+const BRAND_LABEL = {
+  elev8: "ELEV8",
+  faithdrive: "FaithDrive",
+  tendercards: "Tender Cards",
+};
+
 function detectTeamName(profile, user) {
   const sources = [
     profile?.display_name,
@@ -47,7 +53,13 @@ function Widget({ icon, label, value, sub, color, onClick, loading }) {
 export default function DashboardWidgets() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState({ openTasks: 0, overdueTasks: 0, newRequests: 0, newIdeas: 0, checklistPct: 0, checklistDone: 0, checklistTotal: 0 });
+  const [data, setData] = useState({
+    openTasks: 0, overdueTasks: 0,
+    newRequests: 0, requestsBrand: null,
+    newIdeas: 0, ideasBrand: null,
+    checklistPct: 0, checklistDone: 0, checklistTotal: 0,
+    lowestChecklistBrand: null,
+  });
   const [loading, setLoading] = useState(true);
   const channelsRef = useRef([]);
 
@@ -67,24 +79,46 @@ export default function DashboardWidgets() {
       userFirst
         ? supabase.from("tasks").select("id", { count: "exact", head: true }).ilike("assigned_to", `%${userFirst}%`).eq("status", "open").lt("due_date", todayISO)
         : Promise.resolve({ count: 0 }),
-      supabase.from("requests").select("id", { count: "exact", head: true }).eq("status", "new"),
-      supabase.from("ideas").select("id", { count: "exact", head: true }).gte("created_at", yesterday),
-      supabase.from("tasks").select("status").eq("source", "checklist"),
+      supabase.from("requests").select("brand").eq("status", "new"),
+      supabase.from("ideas").select("brand").gte("created_at", yesterday),
+      supabase.from("tasks").select("status, brand").eq("source", "checklist"),
     ]);
+
+    // Find which brand has the most new requests (that's where to deep-link)
+    const reqsByBrand = {};
+    (requestsRes.data || []).forEach((r) => { reqsByBrand[r.brand] = (reqsByBrand[r.brand] || 0) + 1; });
+    const reqsBrand = Object.entries(reqsByBrand).sort((a, b) => b[1] - a[1])[0]?.[0] || "tendercards";
+
+    const ideasByBrand = {};
+    (ideasRes.data || []).forEach((i) => { ideasByBrand[i.brand] = (ideasByBrand[i.brand] || 0) + 1; });
+    const ideasBrand = Object.entries(ideasByBrand).sort((a, b) => b[1] - a[1])[0]?.[0] || "elev8";
 
     const checklist = checklistRes.data || [];
     const done = checklist.filter((t) => t.status === "done").length;
     const total = checklist.length;
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
+    // Find brand with lowest % checklist progress (priority to work on)
+    const perBrand = {};
+    checklist.forEach((t) => {
+      if (!perBrand[t.brand]) perBrand[t.brand] = { done: 0, total: 0 };
+      perBrand[t.brand].total++;
+      if (t.status === "done") perBrand[t.brand].done++;
+    });
+    const brandPcts = Object.entries(perBrand).map(([b, v]) => ({ brand: b, pct: v.total ? v.done / v.total : 1 }));
+    const lowestChecklistBrand = brandPcts.sort((a, b) => a.pct - b.pct)[0]?.brand || null;
+
     setData({
       openTasks: myTasksRes.count ?? 0,
       overdueTasks: overdueRes.count ?? 0,
-      newRequests: requestsRes.count ?? 0,
-      newIdeas: ideasRes.count ?? 0,
+      newRequests: requestsRes.data?.length ?? 0,
+      requestsBrand: reqsBrand,
+      newIdeas: ideasRes.data?.length ?? 0,
+      ideasBrand,
       checklistDone: done,
       checklistTotal: total,
       checklistPct: pct,
+      lowestChecklistBrand,
     });
     setLoading(false);
   };
@@ -136,19 +170,19 @@ export default function DashboardWidgets() {
           icon="📬"
           label="Nieuwe aanvragen"
           value={data.newRequests}
-          sub={data.newRequests === 0 ? "Inbox leeg" : "Wachten op reactie"}
+          sub={data.newRequests === 0 ? "Inbox leeg" : `Bij ${BRAND_LABEL[data.requestsBrand] || "Tender Cards"}`}
           color={data.newRequests > 0 ? "#E8B458" : "#F5F3EE"}
           loading={loading}
-          onClick={() => navigate("/sales")}
+          onClick={() => navigate(`/sales?brand=${data.requestsBrand || "tendercards"}&tab=aanvragen`)}
         />
         <Widget
           icon="💡"
           label="Ideeën <24u"
           value={data.newIdeas}
-          sub={data.newIdeas === 0 ? "Geen nieuwe" : "Nieuw ingediend"}
+          sub={data.newIdeas === 0 ? "Geen nieuwe" : `Bij ${BRAND_LABEL[data.ideasBrand] || "ELEV8"}`}
           color={data.newIdeas > 0 ? "#4CAF7D" : "#F5F3EE"}
           loading={loading}
-          onClick={() => navigate("/sales")}
+          onClick={() => navigate(`/sales?brand=${data.ideasBrand || "elev8"}&tab=ideeen`)}
         />
         <Widget
           icon="🚀"
@@ -157,7 +191,7 @@ export default function DashboardWidgets() {
           sub={loading ? "Laden…" : `${data.checklistDone}/${data.checklistTotal} afgerond`}
           color="#FF9B73"
           loading={loading}
-          onClick={() => navigate("/sales")}
+          onClick={() => navigate(data.lowestChecklistBrand ? `/sales?brand=${data.lowestChecklistBrand}&tab=checklist` : "/sales")}
         />
       </div>
     </div>

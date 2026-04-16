@@ -228,8 +228,8 @@ export default function Holding() {
             <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap", animation: "fadeUp 0.6s 0.1s cubic-bezier(.22,1,.36,1) both" }}>
               <Kpi label="Actieve merken" value="3" sub="ELEV8 · FaithDrive · TC" color="#FF6B35" />
               <Kpi label="Open taken" value={totals.openTasks} sub="Over alle merken" color="#FF9B73" onClick={() => navigate("/mijn-taken")} />
-              <Kpi label="Nieuwe aanvragen" value={totals.newReq} sub={totals.newReq === 0 ? "Inbox leeg" : "Wachten op reactie"} color={totals.newReq > 0 ? "#E8B458" : "#F5F3EE"} onClick={() => navigate("/sales")} />
-              <Kpi label="Ideeën deze week" value={totals.ideasLast7} sub="Laatste 7 dagen" color="#4CAF7D" />
+              <Kpi label="Nieuwe aanvragen" value={totals.newReq} sub={totals.newReq === 0 ? "Inbox leeg" : "Wachten op reactie"} color={totals.newReq > 0 ? "#E8B458" : "#F5F3EE"} onClick={() => navigate("/sales?brand=tendercards&tab=aanvragen")} />
+              <Kpi label="Ideeën deze week" value={totals.ideasLast7} sub="Laatste 7 dagen" color="#4CAF7D" onClick={() => navigate("/sales?brand=elev8&tab=ideeen")} />
               <Kpi label="Klanten" value={totals.customers} sub="Omgezet via funnel" color="#2DDB70" />
               <Kpi label="Team uren" value={totals.hoursThisWeek.toFixed(1)} sub="Laatste 7 dagen" color="#F5F3EE" />
             </div>
@@ -247,7 +247,7 @@ export default function Holding() {
                   <div
                     key={b.key}
                     className="brand-card"
-                    onClick={() => navigate("/sales")}
+                    onClick={() => navigate(`/sales?brand=${b.key}`)}
                     style={{
                       padding: "20px 22px", borderRadius: 4,
                       background: b.bg, border: "1px solid " + b.color + "22",

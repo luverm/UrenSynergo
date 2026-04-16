@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import NewTaskModal from "../components/NewTaskModal";
 
 const BRAND_META = {
   elev8: { label: "ELEV8", color: "#FF6B35" },
@@ -79,6 +80,7 @@ export default function Calendar() {
   const [scopeFilter, setScopeFilter] = useState("mine"); // mine | all
   const [brandFilter, setBrandFilter] = useState("all");
   const [activeTask, setActiveTask] = useState(null);
+  const [newTaskDate, setNewTaskDate] = useState(null);
   const channelsRef = useRef([]);
 
   const userFirst = useMemo(() => detectTeamName(profile, user), [profile, user]);
@@ -188,7 +190,11 @@ export default function Calendar() {
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#F5F3EE", padding: "32px 24px", boxSizing: "border-box" }}>
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes cmdk-fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes cmdk-slide { from { transform: translateY(-12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .cal-day { cursor: pointer; }
         .cal-day:hover .cal-day-num { color: #FF6B35 !important; }
+        .cal-day:hover .cal-add { opacity: 1 !important; }
         .cal-task-pill:hover { filter: brightness(1.15); transform: translateX(1px); }
       `}</style>
 
@@ -278,6 +284,7 @@ export default function Calendar() {
                   <div
                     key={iso}
                     className="cal-day"
+                    onClick={() => setNewTaskDate(iso)}
                     style={{
                       minHeight: view === "month" ? 100 : 180,
                       padding: "8px 8px 6px",
@@ -286,6 +293,7 @@ export default function Calendar() {
                       border: `1px solid ${isToday ? "rgba(255,107,53,0.25)" : "rgba(255,255,255,0.04)"}`,
                       opacity: inCurrentMonth ? 1 : 0.4,
                       display: "flex", flexDirection: "column", gap: 4, overflow: "hidden",
+                      position: "relative",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
@@ -300,8 +308,10 @@ export default function Calendar() {
                       >
                         {day.getDate()}
                       </span>
-                      {dayTasks.length > 3 && (
+                      {dayTasks.length > 3 ? (
                         <span style={{ fontSize: 9, color: "#6E6E72", fontWeight: 500 }}>+{dayTasks.length - 3}</span>
+                      ) : (
+                        <span className="cal-add" style={{ opacity: 0, fontSize: 12, color: "#FF6B35", fontWeight: 700, transition: "opacity 0.15s", lineHeight: 1 }}>+</span>
                       )}
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, overflow: "hidden" }}>
@@ -368,6 +378,14 @@ export default function Calendar() {
           </div>
         )}
       </div>
+
+      <NewTaskModal
+        open={!!newTaskDate}
+        onClose={() => setNewTaskDate(null)}
+        defaultDate={newTaskDate}
+        defaultAssignee={userFirst || "Lucas"}
+        onCreated={load}
+      />
 
       {/* Task detail modal */}
       {activeTask && (
