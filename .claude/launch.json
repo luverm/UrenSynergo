@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "uren-synergo",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "elev8-site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "C:/Users/Lucas/Desktop/ELEV8", "-l", "3000"],
+      "port": 3000
+    }
+  ]
+}
