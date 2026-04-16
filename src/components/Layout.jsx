@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useBadgeCounts } from "../hooks/useBadgeCounts";
 import CommandPalette from "./CommandPalette";
 
 const NAV_ITEMS = [
@@ -35,9 +36,20 @@ const NAV_ITEMS = [
     ),
   },
   {
+    path: "/holding",
+    label: "Holding",
+    match: (p) => p === "/holding",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+    ),
+  },
+  {
     path: "/sales",
     label: "Sales",
     match: (p) => p === "/sales",
+    badgeKey: "requests",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -48,6 +60,7 @@ const NAV_ITEMS = [
     path: "/mijn-taken",
     label: "Mijn taken",
     match: (p) => p === "/mijn-taken",
+    badgeKey: "tasks",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
@@ -111,9 +124,22 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const badges = useBadgeCounts(user, profile);
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "Gebruiker";
   const items = isViewer ? VIEWER_ITEMS : (isAdmin ? [...NAV_ITEMS, ...ADMIN_ITEMS] : NAV_ITEMS);
+
+  const Badge = ({ count, color = "#FF6B35" }) => (
+    count > 0 ? (
+      <span style={{
+        marginLeft: "auto", minWidth: 20, height: 18, padding: "0 6px",
+        borderRadius: 999, background: color, color: "#0E0E10",
+        fontSize: 10, fontWeight: 700, fontFamily: "'DM Sans', sans-serif",
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        letterSpacing: 0,
+      }}>{count > 99 ? "99+" : count}</span>
+    ) : null
+  );
 
   if (isMobile) {
     return (
@@ -143,15 +169,25 @@ export default function Layout() {
         }}>
           {items.map((item) => {
             const active = item.match(location.pathname);
+            const badgeCount = item.badgeKey ? badges[item.badgeKey] : 0;
             return (
               <button key={item.path} onClick={() => navigate(item.path)} style={{
                 background: "none", border: "none", cursor: "pointer", padding: "8px 16px",
                 display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
                 color: active ? "#FF6B35" : "#6E6E72", transition: "color 0.15s ease",
                 transform: active ? "scale(1.05)" : "scale(1)",
+                position: "relative",
               }}>
                 {item.icon}
                 {active && <div style={{ width: 4, height: 4, borderRadius: 99, background: "#FF6B35" }} />}
+                {badgeCount > 0 && (
+                  <span style={{
+                    position: "absolute", top: 2, right: 8, minWidth: 16, height: 16,
+                    padding: "0 4px", borderRadius: 999, background: item.badgeKey === "tasks" ? "#FF6B35" : "#E8B458",
+                    color: "#0E0E10", fontSize: 9, fontWeight: 700, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                  }}>{badgeCount > 99 ? "99+" : badgeCount}</span>
+                )}
               </button>
             );
           })}
@@ -247,7 +283,8 @@ export default function Layout() {
                 onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
               >
                 {item.icon}
-                {item.label}
+                <span style={{ flex: 1, textAlign: "left" }}>{item.label}</span>
+                {item.badgeKey && <Badge count={badges[item.badgeKey]} color={item.badgeKey === "tasks" ? "#FF6B35" : "#E8B458"} />}
               </button>
             );
           })}
